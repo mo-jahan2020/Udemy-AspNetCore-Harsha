@@ -40,12 +40,12 @@ var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
- app.UseDeveloperExceptionPage();
+    app.UseDeveloperExceptionPage();
 }
 else
 {
- app.UseExceptionHandler("/error"); // Custom error handling endpoint
- app.UseHsts(); // Enable HTTPS Strict Transport Security (HSTS) in non-development environments
+    app.UseExceptionHandler("/error"); // Custom error handling endpoint
+    app.UseHsts(); // Enable HTTPS Strict Transport Security (HSTS) in non-development environments
 }
 
 app.UseRouting();
