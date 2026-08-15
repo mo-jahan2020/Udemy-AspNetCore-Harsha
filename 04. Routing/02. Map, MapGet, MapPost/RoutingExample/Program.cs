@@ -1,21 +1,48 @@
+
 var builder = WebApplication.CreateBuilder(args);
 var app = builder.Build();
 
-//Routing is automatically enabled.
-//No need for app.UseRouting() anymore
+// ---------------------------------------------------------
+// تعریف مسیرها (Endpoints)
+// اینجا دقیقاً مثل ساختن دکمه در فرم و تعریف رویداد (Event) برای آن‌هاست.
+// ---------------------------------------------------------
 
-//creating endpoints
+// مسیر اول: متد GET
+// MapGet یعنی: "وقتی کاربر آدرس /map1 را در مرورگر تایپ کرد (درخواست GET)، کدهای لامبدای سمت راست را اجرا کن"
 app.MapGet("map1", async (context) => {
- await context.Response.WriteAsync("In Map 1");
+    // WriteAsync دقیقاً معادل MessageBox.Show در ویندوز است، با این تفاوت که متن را مستقیماً در صفحه مرورگر چاپ می‌کند.
+    await context.Response.WriteAsync("GET Map 1");
 });
 
-app.MapPost("map2", async (context) => {
- await context.Response.WriteAsync("In Map 2");
+// مسیر دوم: متد POST
+// MapPost یعنی: "این مسیر برای دریافت داده‌هاست. مثلاً وقتی کاربر یک فرم را پر می‌کند و دکمه Submit را می‌زند (درخواست POST)، این کد اجرا شود"
+// (نکته: اگر کاربر فقط در مرورگر این آدرس را تایپ کند، ارور می‌گیرد چون مرورگر به صورت پیش‌فرض GET می‌فرستد)
+app.MapPost("map1", async (context) => {
+    await context.Response.WriteAsync("POST Map 1");
 });
 
-//Fallback for any other requests
+// ---------------------------------------------------------
+// مسیر جایگزین یا پیش‌فرض (Fallback)
+// این دقیقاً معادل بلوک `else` در یک دستور `if/else` است.
+// ---------------------------------------------------------
+
+// MapFallback یعنی: "اگر کاربر هر آدرس دیگری غیر از map1 و map2 را زد، و هیچ مسیر دیگری پیدا نشد، این کد اجرا شود"
 app.MapFallback(async context => {
- await context.Response.WriteAsync($"Request received at {context.Request.Path}");
+    // context.Request.Path یعنی: "آدرسی که کاربر تایپ کرده را به من بده"
+    // علامت $ برای ترکیب رشته‌ها (String Interpolation) است که در سی‌شارپ به آن آشنا هستی.
+    await context.Response.WriteAsync($"Request received at {context.Request.Path}");
 });
+
 
 app.Run();
+/*
+ مهم :
+mapGet and endpoints.MapGet("url", ...) فقط گت را قبول میکنند
+mapPost and  endpoints.MapPost("url", ...) فقط پست را قبول میکنند
+app.Map تمام متد ها را قبول میکند حتی حذف و پوت و ...
+app.Run(async context => این اصلاً برای مسیر یابی نیست 
+این یک میان افزار پایانی برای اجرای کد داخل آن و پایان دادن به برنامه است
+app.MapFallback(async context => این دستور نجات است یعنی اگر هیچ کدام از مسیر های قبلی یافت نشده
+به کاربر خطا ندهد این فالبک اجرا شود پی تمام متد ها را قبول میکند و همه پارامتر ها را
+ولی نکته اینجاست که مثل app.Run به برنامه خاتمه نمیدهد بلکه ادامه را به خط لوله بعدی منتقل میکند
+ * */

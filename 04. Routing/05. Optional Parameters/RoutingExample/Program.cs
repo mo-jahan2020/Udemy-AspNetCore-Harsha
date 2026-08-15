@@ -13,7 +13,7 @@ app.Map("files/{filename}.{extension}", async context =>
  await context.Response.WriteAsync($"In files - {fileName} - {extension}");
 });
 
-
+//مقدار پیش فرض
 //Eg: employee/profile/john
 app.Map("employee/profile/{EmployeeName=scott}", async context =>
 {
@@ -22,9 +22,12 @@ app.Map("employee/profile/{EmployeeName=scott}", async context =>
 });
 
 
+//عنصر آی دی میتواند پاس نشود و نال باشد
 //Eg: products/details/1
+//Eg: products/details  ///Product details - id is not supplied
 app.Map("products/details/{id?}", async context =>
 {
+    //این خط باید اضافه شود
  if (context.Request.RouteValues.ContainsKey("id"))
  {
   int id = Convert.ToInt32(context.Request.RouteValues["id"]);

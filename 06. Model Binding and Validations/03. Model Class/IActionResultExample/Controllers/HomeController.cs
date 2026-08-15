@@ -6,8 +6,32 @@ namespace IActionResultExample.Controllers
   public class HomeController : Controller
   { 
     [Route("bookstore/{bookid?}/{isloggedin?}")]
-    //Url: /bookstore/1/false?bookid=20&isloggedin=true&author=harsha
-    public IActionResult Index([FromQuery]int? bookid, [FromRoute]bool? isloggedin, Book book)
+        //http://localhost:5202/bookstore/?bookid=20&isloggedin=true
+        //bookid=20 from Query:?bookid=20 ([FromQuery]int? bookid)
+        //isloggedin=null zira isloggedin=true is Query is not Rout ([FromRoute]bool? isloggedin)
+        //Books.BookId =20  har chand BookId!=bookid vali books.BookId is [FromQuery] then match
+        //در ASP.NET Core، Model Binding به طور پیش‌فرض Case-Insensitive است، یعنی:  bookid = BookId = BOOKID
+        //Books.author=null beacuse author is not in 1- Route Data AND Not IN 2- Query String
+
+        //http://localhost:5202/bookstore/?bookid=20&isloggedin=true&author=harsha
+        //bookid=20 from Query:?bookid=20 ([FromQuery]int? bookid)
+        //isloggedin=null beacuse isloggedin=true is Query is not Rout ([FromRoute]bool? isloggedin)
+        //Books.BookId =20  har chand BookId!=bookid vali books.BookId is [FromQuery] then match()
+        //در ASP.NET Core، Model Binding به طور پیش‌فرض Case-Insensitive است، یعنی:  bookid = BookId = BOOKID
+        //Books.author=harsha beacuse author is not in 1- Route Data AND is IN 2- Query String(Matched)
+
+
+        //bookid=20 beacuse bookid FromQuery  -- isloggedin=null beacuse isloggedin FromRoute 
+
+        //http://localhost:5202/bookstore/isloggedin/true?bookid=20&author=harsha
+        //bookid=20 from Query:?bookid=20 ([FromQuery]int? bookid)
+        //isloggedin=true beacuse isloggedin=true is in Route ([FromRoute]bool? isloggedin)
+        //Books.BookId =20  har chand BookId!=bookid vali books.BookId is [FromQuery] then match()
+        //در ASP.NET Core، Model Binding به طور پیش‌فرض Case-Insensitive است، یعنی:  bookid = BookId = BOOKID
+        //Books.author=harsha beacuse author is not in 1- Route Data but is IN 2- Query String(Matched)
+        // author=Author Case-Insensitive
+
+        public IActionResult Index([FromQuery]int? bookid, [FromRoute]bool? isloggedin, Book book)
     {
       //Book id should be applied
       if (bookid.HasValue == false)
@@ -34,7 +58,7 @@ namespace IActionResultExample.Controllers
         return StatusCode(401);
       }
 
-      return Content($"Book id: {bookid}, Book: {book}", "text/plain");
+      return Content($"Book id: {bookid},isloggedin:{isloggedin}, Book: {book}", "text/plain");
     }
   }
 }

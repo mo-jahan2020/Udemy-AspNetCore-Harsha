@@ -9,10 +9,15 @@ using OrderManagement.RepositoryContracts;
 using OrderManagement.ServiceContracts;
 using OrderManagement.Services;
 
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllers();
+
+// اضافه کردن سرویس‌های Swagger
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 // Add DbContext
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -38,8 +43,18 @@ builder.Services.AddScoped<IOrderItemsUpdaterService, OrderItemsUpdaterService>(
 // Configure the HTTP request pipeline.
 var app = builder.Build();
 
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+    // این خط دیتابیس و Migration ها را بررسی و اعمال می‌کند
+    dbContext.Database.Migrate();
+}
+
 if (app.Environment.IsDevelopment())
 {
+    app.UseSwagger();
+    app.UseSwaggerUI();
     app.UseDeveloperExceptionPage();
 }
 else

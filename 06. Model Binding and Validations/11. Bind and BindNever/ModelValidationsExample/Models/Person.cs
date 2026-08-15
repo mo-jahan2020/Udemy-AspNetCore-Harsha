@@ -7,6 +7,7 @@ namespace ModelValidationsExample.Models
 {
   public class Person : IValidatableObject
   {
+        
     [Required(ErrorMessage = "{0} can't be empty or null")]
     [Display(Name = "Person Name")]
     [StringLength(40, MinimumLength = 3, ErrorMessage = "{0} should be between {2} and {1} characters long")]
@@ -20,7 +21,7 @@ namespace ModelValidationsExample.Models
 
 
     [Phone(ErrorMessage = "{0} should contain 10 digits")]
-    //[ValidateNever]
+    [ValidateNever]// با این گزینه همه فیلد های بایند میشوند بجز این فیلد
     public string? Phone { get; set; }
 
 
@@ -49,6 +50,7 @@ namespace ModelValidationsExample.Models
     [DateRangeValidator("FromDate", ErrorMessage = "'From Date' should be older than or equal to 'To date'")]
     public DateTime? ToDate { get; set; }
 
+   
     public int? Age { get; set; }
 
 
@@ -57,12 +59,12 @@ namespace ModelValidationsExample.Models
       return $"Person object - Person name: {PersonName}, Email: {Email}, Phone: {Phone}, Password: {Password}, Confirm Password: {ConfirmPassword}, Price: {Price}";
     }
 
-    public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
-    {
-      if (DateOfBirth.HasValue == false && Age.HasValue == false)
-      {
-        yield return new ValidationResult("Either of Date of Birth or Age must be supplied", new[] { nameof(Age) });
-      }
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            if (DateOfBirth.HasValue == false && Age.HasValue == false)
+            {
+                yield return new ValidationResult("Either of Date of Birth or Age must be supplied", new[] { nameof(Age) });
+            }
+        }
     }
-  }
 }

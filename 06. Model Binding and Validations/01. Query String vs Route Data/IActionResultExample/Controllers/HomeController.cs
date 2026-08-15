@@ -6,6 +6,7 @@ namespace IActionResultExample.Controllers
   {
     [Route("bookstore/{bookid?}/{isloggedin?}")]
     //Url: /bookstore?bookid=10&isloggedin=true
+    // مقادیر وارد شده از بالا را میتوان بصورت متغییر به داخل متد ایندکس پاس داد
     public IActionResult Index(int? bookid, bool? isloggedin)
     {
       //Book id should be applied

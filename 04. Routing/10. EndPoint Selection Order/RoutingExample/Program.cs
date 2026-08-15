@@ -63,6 +63,7 @@ app.Map("cities/{cityid:guid}", async (context) =>
 
 
 //Eg: sales-report/2024/jan
+
 app.Map("sales-report/{year:int:min(1900)}/{month:months}", async context =>
 {
  int year = Convert.ToInt32(context.Request.RouteValues["year"]);
@@ -73,11 +74,29 @@ app.Map("sales-report/{year:int:min(1900)}/{month:months}", async context =>
 
 
 //Eg: sales-report/2024/jan
+//بر اساس توضیح پایین با فراخوانی آدرس بالا این اندپوینت اجرا میشود و اندپوینت بالایی اصلاً اجرا نمیشود
 app.Map("sales-report/2024/jan", async (context) => 
 {
  await context.Response.WriteAsync($"Sales report exclusively for 2024 - jan");
 });
 
+//قوانین اولویت بندی اجرای endpoint ها:
+//۱. تطابق دقیق (Literal Match)
+//app.MapGet("/products/5", () => "Exact Match");      // اولویت ۱
+//app.MapGet("/products/{id}", (int id) => $"Product {id}"); // اولویت ۲
+
+//۲. محدودیت‌های مسیر (Route Constraints)
+//app.MapGet("/products/{id:int}", (int id) => $"Int: {id}");     // اولویت ۱
+//app.MapGet("/products/{id:alpha}", (string id) => $"Alpha: {id}"); // اولویت ۲
+//app.MapGet("/products/{id}", (string id) => $"Any: {id}");      // اولویت ۳
+
+//۳. الگوهای مسیر (Route Patterns)
+//app.MapGet("/products/electronics/{id}", () => "Electronics/ID");    // اولویت ۱
+//app.MapGet("/products/{category}/{id}", () => "Category/ID");        // اولویت ۲
+
+//۴. پارامترهای اختیاری و پیش‌فرض
+//app.MapGet("/products/{id}", (int id) => $"Required: {id}");        // اولویت ۱
+//app.MapGet("/products/{id?}", (int? id) => $"Optional: {id ?? 0}"); // اولویت ۲
 
 //Fallback for any other requests
 app.MapFallback(async (context) =>

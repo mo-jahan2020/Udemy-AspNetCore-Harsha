@@ -1,10 +1,10 @@
 using MiddlewareExample.CustomMiddleware;
 
 var builder = WebApplication.CreateBuilder(args);
+
 builder.Services.AddTransient<MyCustomMiddleware>();
+
 var app = builder.Build();
-
-
 
 //middlware 1
 app.Use(async (HttpContext context, RequestDelegate next) => {

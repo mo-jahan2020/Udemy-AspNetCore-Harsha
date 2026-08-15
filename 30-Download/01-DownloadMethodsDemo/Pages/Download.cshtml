@@ -1,0 +1,20 @@
+@page
+@* اتصال این صفحه به PageModel مربوطه *@
+@model DownloadMethodsDemo.Pages.DownloadModel
+@{
+    ViewData["Title"] = "دانلود با Razor Page";
+}
+
+<h1>دانلود با Razor Page</h1>
+<p>این صفحه یک Razor Page است که چند Handler برای دانلود دارد.</p>
+
+@* فرم POST به Handler ای به نام Post *@
+<form method="post">
+    <button type="submit" class="btn">دانلود از طریق POST Handler</button>
+</form>
+
+@* لینک GET به Handler ای به نام Pdf (OnGetPdf) *@
+<a class="btn" asp-page-handler="Pdf">دانلود از طریق GET Handler</a>
+
+@* بازگشت به صفحه اصلی *@
+<a class="btn" href="/">بازگشت</a>

@@ -5,7 +5,9 @@ namespace ModelValidationsExample.Controllers
 {
   public class HomeController : Controller
   {
-    [Route("register")]
+        // in postman /register Get form Data OR X-www-from-urlencoded
+        //PersonName=ali hadi ,...
+        [Route("register")]
     public IActionResult Index(Person person)
     {
       if (!ModelState.IsValid)

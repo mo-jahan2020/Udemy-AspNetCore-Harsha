@@ -1,0 +1,15 @@
+@page "/blazor-download"
+@* استفاده از فضای نام Rendering برای رندر کامپوننت Blazor *@
+@using Microsoft.AspNetCore.Mvc.Rendering
+@{
+    ViewData["Title"] = "دانلود با Blazor";
+}
+
+<h1>دانلود با Blazor Server</h1>
+<p>این صفحه میزبان یک کامپوننت Blazor است که روش دانلود از داخل Blazor را نمایش می‌دهد.</p>
+
+@* رندر کامپوننت Blazor به صورت Server-Side interactive *@
+<component type="typeof(DownloadMethodsDemo.Components.DownloadComponent)" render-mode="ServerPrerendered" />
+
+@* اسکریپت پایه Blazor Server برای فعال‌سازی SignalR *@
+<script src="_framework/blazor.server.js"></script>

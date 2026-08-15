@@ -1,0 +1,783 @@
+@* ====================================================================
+   Index.cshtml - صفحه اصلی - نمایش تمام روش‌های دانلود
+   ====================================================================
+   این صفحه شامل ۱۴ روش مختلف دانلود فایل در ASP.NET Core است.
+   هر روش در یک کارت مجزا نمایش داده شده و شامل:
+   - شماره و نام روش
+   - توضیحات آموزشی
+   - بلاک کد کلیدی
+   - دکمه دانلود
+   ==================================================================== *@
+
+@{
+    // عنوان صفحه
+    ViewData["Title"] = "آموزش روش‌های دانلود فایل";
+}
+
+<!-- ====================================================================
+     مقدمه
+     ==================================================================== -->
+<div class="alert alert-info mb-4">
+    <h5 class="alert-heading"><i class="bi bi-info-circle"></i> راهنمای استفاده</h5>
+    <p class="mb-1">
+        هر یک از ۱۴ روش زیر یک روش متفاوت برای دانلود فایل <code>sample.pdf</code>
+        از پوشه <code>wwwroot</code> را نشان می‌دهد. با کلیک بر روی هر دکمه،
+        فایل با نام سفارشی مخصوص آن روش دانلود می‌شود.
+    </p>
+    <p class="mb-0">
+        <strong>توصیه:</strong> نام فایل دانلود شده را بررسی کنید تا تفاوت روش‌ها را ببینید.
+    </p>
+</div>
+
+<!-- ====================================================================
+     دسته‌بندی ۱: روش‌های HTML (بدون نیاز به سرور)
+     ==================================================================== -->
+<h4 class="text-primary mb-3 mt-4">
+    <i class="bi bi-filetype-html"></i>
+    دسته‌بندی ۱: روش‌های HTML خالص (بدون کنترلر و بدون جاوااسکریپت)
+</h4>
+
+<!-- ====================================================================
+     روش ۱: لینک مستقیم HTML (بدون کنترلر)
+     ==================================================================== -->
+<div class="card method-card">
+    <div class="card-header d-flex align-items-center">
+        <span class="method-number">۱</span>
+        <div>
+            <strong>لینک مستقیم HTML (بدون کنترلر)</strong>
+            <span class="category-badge bg-success text-white me-2">HTML</span>
+            <span class="category-badge bg-secondary text-white">بدون سرور</span>
+        </div>
+    </div>
+    <div class="card-body">
+        <p class="method-description">
+            ساده‌ترین روش دانلود! فقط یک تگ <code>&lt;a&gt;</code> معمولی که به فایل
+            استاتیک در پوشه <code>wwwroot</code> اشاره می‌کند.
+            بدون هیچ کنترلری، بدون جاوااسکریپت، بدون هیچ تنظیم خاصی.
+            فقط HTML خالص!
+        </p>
+        <!-- بلاک کد -->
+        <div class="code-block">
+            <span class="comment">&lt;!-- ساده‌ترین روش: لینک مستقیم به فایل استاتیک --&gt;</span><br />
+            <span class="keyword">&lt;a</span> <span class="param">href</span>=<span class="string">"/sample.pdf"</span><span class="keyword">&gt;</span><br />
+            &nbsp;&nbsp;دانلود مستقیم (PDF در مرورگر باز می‌شود)<br />
+            <span class="keyword">&lt;/a&gt;</span>
+        </div>
+        <div class="note-box">
+            <i class="bi bi-exclamation-triangle"></i>
+            <strong>نکته مهم:</strong> این روش فایل PDF را در مرورگر باز می‌کند (نه دانلود).
+            برای اجبار به دانلود، از روش ۲ استفاده کنید.
+        </div>
+        <!-- دکمه دانلود -->
+        <a href="/sample.pdf" class="btn btn-success btn-download mt-2">
+            <i class="bi bi-box-arrow-up-left me-1"></i>
+            باز کردن PDF در مرورگر
+        </a>
+    </div>
+</div>
+
+<!-- ====================================================================
+     روش ۲: HTML5 با ویژگی download
+     ==================================================================== -->
+<div class="card method-card">
+    <div class="card-header d-flex align-items-center">
+        <span class="method-number">۲</span>
+        <div>
+            <strong>HTML5 با ویژگی <code>download</code></strong>
+            <span class="category-badge bg-success text-white me-2">HTML5</span>
+            <span class="category-badge bg-secondary text-white">بدون سرور</span>
+        </div>
+    </div>
+    <div class="card-body">
+        <p class="method-description">
+            ویژگی <code>download</code> در HTML5 به مرورگر می‌گوید که فایل را به جای
+            نمایش، دانلود کند. با <code>download="name.pdf"</code> می‌توانید نام
+            فایل دانلودی را نیز تغییر دهید.
+        </p>
+        <div class="code-block">
+            <span class="comment">&lt;!-- با ویژگی download فایل اجباراً دانلود می‌شود --&gt;</span><br />
+            <span class="comment">&lt;!-- می‌توانید نام فایل را هم تغییر دهید --&gt;</span><br />
+            <span class="keyword">&lt;a</span> <span class="param">href</span>=<span class="string">"/sample.pdf"</span> <span class="param">download</span>=<span class="string">"html5-download.pdf"</span><span class="keyword">&gt;</span><br />
+            &nbsp;&nbsp;دانلود با نام سفارشی<br />
+            <span class="keyword">&lt;/a&gt;</span>
+        </div>
+        <div class="note-box">
+            <i class="bi bi-exclamation-triangle"></i>
+            <strong>محدودیت:</strong> ویژگی <code>download</code> فقط برای فایل‌های هم‌مبدأ (same-origin) کار می‌کند.
+            فایل‌های از دامنه دیگر در مرورگر باز می‌شوند.
+        </div>
+        <a href="/sample.pdf" download="html5-download.pdf" class="btn btn-success btn-download mt-2">
+            <i class="bi bi-download me-1"></i>
+            دانلود با HTML5 Download
+        </a>
+    </div>
+</div>
+
+<!-- ====================================================================
+     دسته‌بندی ۲: روش‌های کنترلر MVC
+     ==================================================================== -->
+<h4 class="text-primary mb-3 mt-4">
+    <i class="bi bi-controller"></i>
+    دسته‌بندی ۲: روش‌های کنترلر MVC (۶ روش)
+</h4>
+
+<!-- ====================================================================
+     روش ۳: FileResult
+     ==================================================================== -->
+<div class="card method-card">
+    <div class="card-header d-flex align-items-center">
+        <span class="method-number">۳</span>
+        <div>
+            <strong>File() - FileResult</strong>
+            <span class="category-badge bg-primary text-white me-2">Controller</span>
+            <span class="category-badge bg-info text-white">FileResult</span>
+        </div>
+    </div>
+    <div class="card-body">
+        <p class="method-description">
+            ساده‌ترین روش در کنترلر. متد <code>File()</code> یک
+            <code>FileResult</code> برمی‌گرداند. مسیر فیزیکی فایل را می‌گیرد
+            و آن را برای دانلود ارسال می‌کند.
+        </p>
+        <div class="code-block">
+            <span class="keyword">public</span> IActionResult <span class="method">FileResultMethod</span>()<br />
+            {<br />
+            &nbsp;&nbsp;<span class="keyword">var</span> <span class="param">filePath</span> = Path.<span class="method">Combine</span>(_env.WebRootPath, <span class="string">"sample.pdf"</span>);<br />
+            &nbsp;&nbsp;<span class="keyword">return</span> <span class="method">File</span>(<span class="param">filePath</span>, <span class="string">"application/pdf"</span>, <span class="string">"file-result-download.pdf"</span>);<br />
+            }
+        </div>
+        <!-- از asp-action برای ساخت لینک به اکشن کنترلر استفاده می‌شود -->
+        <a asp-controller="Download" asp-action="FileResultMethod" class="btn btn-primary btn-download mt-2">
+            <i class="bi bi-download me-1"></i>
+            دانلود با FileResult
+        </a>
+    </div>
+</div>
+
+<!-- ====================================================================
+     روش ۴: PhysicalFile
+     ==================================================================== -->
+<div class="card method-card">
+    <div class="card-header d-flex align-items-center">
+        <span class="method-number">۴</span>
+        <div>
+            <strong>PhysicalFile()</strong>
+            <span class="category-badge bg-primary text-white me-2">Controller</span>
+            <span class="category-badge bg-info text-white">PhysicalFileResult</span>
+        </div>
+    </div>
+    <div class="card-body">
+        <p class="method-description">
+            <code>PhysicalFile()</code> فقط مسیر فیزیکی (absolute path) قبول می‌کند.
+            از <code>FileStream</code> برای خواندن فایل استفاده می‌کند و
+            پشتیبانی از Resume دانلود (ادامه دانلود) را فعال کردیم.
+        </p>
+        <div class="code-block">
+            <span class="keyword">public</span> IActionResult <span class="method">PhysicalFileMethod</span>()<br />
+            {<br />
+            &nbsp;&nbsp;<span class="keyword">var</span> <span class="param">filePath</span> = Path.<span class="method">Combine</span>(_env.WebRootPath, <span class="string">"sample.pdf"</span>);<br />
+            &nbsp;&nbsp;<span class="keyword">var</span> <span class="param">result</span> = <span class="method">PhysicalFile</span>(<span class="param">filePath</span>, <span class="string">"application/pdf"</span>, <span class="string">"physical-file-download.pdf"</span>);<br />
+            &nbsp;&nbsp;<span class="param">result</span>.EnableRangeProcessing = <span class="keyword">true</span>; <span class="comment">// پشتیبانی Resume</span><br />
+            &nbsp;&nbsp;<span class="keyword">return</span> <span class="param">result</span>;<br />
+            }
+        </div>
+        <div class="note-box">
+            <i class="bi bi-lightbulb"></i>
+            <strong>تفاوت با File():</strong> PhysicalFile فقط مسیر فیزیکی قبول می‌کند و
+            داخلیاً از FileStream استفاده می‌کند. <code>EnableRangeProcessing</code> برای
+            پشتیبانی از ادامه دانلود (Resume) است.
+        </div>
+        <a asp-controller="Download" asp-action="PhysicalFileMethod" class="btn btn-primary btn-download mt-2">
+            <i class="bi bi-download me-1"></i>
+            دانلود با PhysicalFile
+        </a>
+    </div>
+</div>
+
+<!-- ====================================================================
+     روش ۵: VirtualFile
+     ==================================================================== -->
+<div class="card method-card">
+    <div class="card-header d-flex align-items-center">
+        <span class="method-number">۵</span>
+        <div>
+            <strong>VirtualFile()</strong>
+            <span class="category-badge bg-primary text-white me-2">Controller</span>
+            <span class="category-badge bg-info text-white">VirtualFileResult</span>
+        </div>
+    </div>
+    <div class="card-body">
+        <p class="method-description">
+            <code>VirtualFile()</code> مسیر مجازی (نسبت به <code>wwwroot</code>) را
+            می‌گیرد. کاراکتر <code>~</code> به پوشه WebRoot اشاره دارد.
+            از <code>IFileProvider</code> برای پیدا کردن فایل استفاده می‌کند.
+        </p>
+        <div class="code-block">
+            <span class="keyword">public</span> IActionResult <span class="method">VirtualFileMethod</span>()<br />
+            {<br />
+            &nbsp;&nbsp;<span class="comment">// مسیر ~/sample.pdf یعنی wwwroot/sample.pdf</span><br />
+            &nbsp;&nbsp;<span class="keyword">return</span> <span class="method">VirtualFile</span>(<span class="string">"~/sample.pdf"</span>, <span class="string">"application/pdf"</span>, <span class="string">"virtual-file-download.pdf"</span>);<br />
+            }
+        </div>
+        <div class="note-box">
+            <i class="bi bi-exclamation-triangle"></i>
+            <strong>محدودیت:</strong> فقط فایل‌های داخل <code>wwwroot</code> را می‌خواند.
+            برای فایل‌های خارج از wwwroot از <code>File()</code> یا <code>PhysicalFile()</code> استفاده کنید.
+        </div>
+        <a asp-controller="Download" asp-action="VirtualFileMethod" class="btn btn-primary btn-download mt-2">
+            <i class="bi bi-download me-1"></i>
+            دانلود با VirtualFile
+        </a>
+    </div>
+</div>
+
+<!-- ====================================================================
+     روش ۶: FileStreamResult
+     ==================================================================== -->
+<div class="card method-card">
+    <div class="card-header d-flex align-items-center">
+        <span class="method-number">۶</span>
+        <div>
+            <strong>FileStreamResult (Stream)</strong>
+            <span class="category-badge bg-primary text-white me-2">Controller</span>
+            <span class="category-badge bg-warning text-dark">FileStreamResult</span>
+        </div>
+    </div>
+    <div class="card-body">
+        <p class="method-description">
+            فایل به صورت <code>Stream</code> خوانده و ارسال می‌شود.
+            این روش برای فایل‌های حجیم مناسب است زیرا کل فایل یکجا در حافظه
+            بارگذاری نمی‌شود. <code>FileStream</code> به صورت خودکار پس از ارسال بسته می‌شود.
+        </p>
+        <div class="code-block">
+            <span class="keyword">public</span> IActionResult <span class="method">FileStreamMethod</span>()<br />
+            {<br />
+            &nbsp;&nbsp;<span class="keyword">var</span> <span class="param">filePath</span> = Path.<span class="method">Combine</span>(_env.WebRootPath, <span class="string">"sample.pdf"</span>);<br />
+            &nbsp;&nbsp;<span class="comment">// باز کردن فایل به صورت جریان (Stream)</span><br />
+            &nbsp;&nbsp;<span class="keyword">var</span> <span class="param">stream</span> = <span class="keyword">new</span> <span class="method">FileStream</span>(<span class="param">filePath</span>, FileMode.Open, FileAccess.Read);<br />
+            &nbsp;&nbsp;<span class="keyword">return</span> <span class="method">File</span>(<span class="param">stream</span>, <span class="string">"application/pdf"</span>, <span class="string">"filestream-download.pdf"</span>);<br />
+            }
+        </div>
+        <div class="note-box">
+            <i class="bi bi-lightbulb"></i>
+            <strong>بهترین برای فایل‌های بزرگ:</strong> Stream به صورت تکه‌تکه فایل را
+            می‌خواند و ارسال می‌کند. حافظه کمتری مصرف می‌کند.
+            همچنین می‌توانید از هر نوع Stream (مثل MemoryStream) استفاده کنید.
+        </div>
+        <a asp-controller="Download" asp-action="FileStreamMethod" class="btn btn-primary btn-download mt-2">
+            <i class="bi bi-download me-1"></i>
+            دانلود با FileStream
+        </a>
+    </div>
+</div>
+
+<!-- ====================================================================
+     روش ۷: FileContentResult
+     ==================================================================== -->
+<div class="card method-card">
+    <div class="card-header d-flex align-items-center">
+        <span class="method-number">۷</span>
+        <div>
+            <strong>FileContentResult (Byte Array)</strong>
+            <span class="category-badge bg-primary text-white me-2">Controller</span>
+            <span class="category-badge bg-warning text-dark">FileContentResult</span>
+        </div>
+    </div>
+    <div class="card-body">
+        <p class="method-description">
+            کل محتوای فایل به صورت آرایه بایتی (<code>byte[]</code>) در حافظه
+            بارگذاری می‌شود. برای فایل‌های کوچک مناسب است. می‌توانید
+            قبل از ارسال، محتوا را تغییر دهید (مثلاً رمزنگاری، واترمارک).
+        </p>
+        <div class="code-block">
+            <span class="keyword">public</span> IActionResult <span class="method">FileContentMethod</span>()<br />
+            {<br />
+            &nbsp;&nbsp;<span class="keyword">var</span> <span class="param">filePath</span> = Path.<span class="method">Combine</span>(_env.WebRootPath, <span class="string">"sample.pdf"</span>);<br />
+            &nbsp;&nbsp;<span class="comment">// خواندن کل فایل در حافظه</span><br />
+            &nbsp;&nbsp;<span class="keyword">var</span> <span class="param">fileBytes</span> = System.IO.File.<span class="method">ReadAllBytes</span>(<span class="param">filePath</span>);<br />
+            &nbsp;&nbsp;<span class="keyword">return</span> <span class="method">File</span>(<span class="param">fileBytes</span>, <span class="string">"application/pdf"</span>, <span class="string">"filecontent-download.pdf"</span>);<br />
+            }
+        </div>
+        <div class="note-box">
+            <i class="bi bi-exclamation-triangle"></i>
+            <strong>هشدار حافظه:</strong> برای فایل‌های بزرگ (چند مگابایت به بالا) مناسب نیست
+            زیرا کل فایل در RAM بارگذاری می‌شود. برای فایل‌های بزرگ از FileStream (روش ۶) استفاده کنید.
+        </div>
+        <a asp-controller="Download" asp-action="FileContentMethod" class="btn btn-primary btn-download mt-2">
+            <i class="bi bi-download me-1"></i>
+            دانلود با Byte Array
+        </a>
+    </div>
+</div>
+
+<!-- ====================================================================
+     روش ۱۴: Response Headers سفارشی
+     ==================================================================== -->
+<div class="card method-card">
+    <div class="card-header d-flex align-items-center">
+        <span class="method-number">۱۴</span>
+        <div>
+            <strong>تنظیم دستی Response Headers</strong>
+            <span class="category-badge bg-primary text-white me-2">Controller</span>
+            <span class="category-badge bg-dark text-white">پایین‌ترین سطح</span>
+        </div>
+    </div>
+    <div class="card-body">
+        <p class="method-description">
+            پایین‌ترین سطح کنترل: هدرهای HTTP را دستی تنظیم می‌کنیم.
+            این روش برای زمانی مناسب است که می‌خواهید کنترل کاملی روی
+            پاسخ HTTP داشته باشید (مثلاً Cache-Control سفارشی).
+        </p>
+        <div class="code-block">
+            <span class="keyword">public</span> IActionResult <span class="method">ManualResponseMethod</span>()<br />
+            {<br />
+            &nbsp;&nbsp;<span class="keyword">var</span> <span class="param">fileBytes</span> = System.IO.File.<span class="method">ReadAllBytes</span>(<span class="param">filePath</span>);<br />
+            <br />
+            &nbsp;&nbsp;<span class="comment">// تنظیم دستی هدرها</span><br />
+            &nbsp;&nbsp;Response.Headers.<span class="method">Append</span>(<span class="string">"Content-Disposition"</span>, <span class="string">"attachment; filename=..."</span>);<br />
+            &nbsp;&nbsp;Response.ContentType = <span class="string">"application/pdf"</span>;<br />
+            &nbsp;&nbsp;Response.Headers.<span class="method">Append</span>(<span class="string">"Content-Length"</span>, <span class="param">fileBytes</span>.Length.<span class="method">ToString</span>());<br />
+            <br />
+            &nbsp;&nbsp;<span class="keyword">return</span> <span class="method">File</span>(<span class="param">fileBytes</span>, <span class="string">"application/pdf"</span>);<br />
+            }
+        </div>
+        <a asp-controller="Download" asp-action="ManualResponseMethod" class="btn btn-primary btn-download mt-2">
+            <i class="bi bi-download me-1"></i>
+            دانلود با Response Headers
+        </a>
+    </div>
+</div>
+
+<!-- ====================================================================
+     دسته‌بندی ۳: روش‌های جاوااسکریپت
+     ==================================================================== -->
+<h4 class="text-primary mb-3 mt-4">
+    <i class="bi bi-filetype-js"></i>
+    دسته‌بندی ۳: روش‌های جاوااسکریپت (۴ روش)
+</h4>
+
+<!-- ====================================================================
+     روش ۸: Fetch API
+     ==================================================================== -->
+<div class="card method-card">
+    <div class="card-header d-flex align-items-center">
+        <span class="method-number">۸</span>
+        <div>
+            <strong>Fetch API</strong>
+            <span class="category-badge bg-warning text-dark me-2">JavaScript</span>
+            <span class="category-badge bg-secondary text-white">Client-side</span>
+        </div>
+    </div>
+    <div class="card-body">
+        <p class="method-description">
+            <code>Fetch API</code> روش مدرن درخواست HTTP در جاوااسکریپت.
+            فایل به صورت <code>Blob</code> دریافت شده، URL موقت ایجاد شده
+            و با یک لینک موقت دانلود می‌شود. مبتنی بر <code>async/await</code>.
+        </p>
+        <div class="code-block">
+            <span class="keyword">async function</span> <span class="method">downloadWithFetch</span>(<span class="param">url</span>, <span class="param">fileName</span>) {<br />
+            &nbsp;&nbsp;<span class="keyword">const</span> <span class="param">response</span> = <span class="keyword">await</span> <span class="method">fetch</span>(<span class="param">url</span>);<br />
+            &nbsp;&nbsp;<span class="keyword">const</span> <span class="param">blob</span> = <span class="keyword">await</span> <span class="param">response</span>.<span class="method">blob</span>();<br />
+            &nbsp;&nbsp;<span class="keyword">const</span> <span class="param">blobUrl</span> = URL.<span class="method">createObjectURL</span>(<span class="param">blob</span>);<br />
+            &nbsp;&nbsp;<span class="keyword">const</span> <span class="param">link</span> = document.<span class="method">createElement</span>(<span class="string">'a'</span>);<br />
+            &nbsp;&nbsp;<span class="param">link</span>.href = <span class="param">blobUrl</span>;<br />
+            &nbsp;&nbsp;<span class="param">link</span>.download = <span class="param">fileName</span>;<br />
+            &nbsp;&nbsp;<span class="param">link</span>.<span class="method">click</span>();<br />
+            &nbsp;&nbsp;URL.<span class="method">revokeObjectURL</span>(<span class="param">blobUrl</span>); <span class="comment">// آزادسازی حافظه</span><br />
+            }
+        </div>
+        <button onclick="downloadWithFetch('/sample.pdf', 'fetch-api-download.pdf')"
+                class="btn btn-warning btn-download mt-2 text-dark">
+            <i class="bi bi-download me-1"></i>
+            دانلود با Fetch API
+        </button>
+    </div>
+</div>
+
+<!-- ====================================================================
+     روش ۹: XMLHttpRequest
+     ==================================================================== -->
+<div class="card method-card">
+    <div class="card-header d-flex align-items-center">
+        <span class="method-number">۹</span>
+        <div>
+            <strong>XMLHttpRequest (XHR)</strong>
+            <span class="category-badge bg-warning text-dark me-2">JavaScript</span>
+            <span class="category-badge bg-secondary text-white">Client-side</span>
+        </div>
+    </div>
+    <div class="card-body">
+        <p class="method-description">
+            روش قدیمی‌تر اما با مزیت <code>onprogress</code> برای نمایش
+            نوار پیشرفت دانلود. همچنین امکان لغو درخواست با <code>abort()</code>.
+            <code>responseType = 'blob'</code> بسیار مهم است!
+        </p>
+        <div class="code-block">
+            <span class="keyword">function</span> <span class="method">downloadWithXHR</span>(<span class="param">url</span>, <span class="param">fileName</span>) {<br />
+            &nbsp;&nbsp;<span class="keyword">const</span> <span class="param">xhr</span> = <span class="keyword">new</span> <span class="method">XMLHttpRequest</span>();<br />
+            &nbsp;&nbsp;<span class="param">xhr</span>.<span class="method">open</span>(<span class="string">'GET'</span>, <span class="param">url</span>, <span class="keyword">true</span>);<br />
+            &nbsp;&nbsp;<span class="param">xhr</span>.responseType = <span class="string">'blob'</span>; <span class="comment">// بسیار مهم!</span><br />
+            <br />
+            &nbsp;&nbsp;<span class="param">xhr</span>.onprogress = <span class="keyword">function</span>(<span class="param">e</span>) {<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">const</span> <span class="param">percent</span> = (e.loaded / e.total) * 100;<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;console.<span class="method">log</span>(<span class="string">`پیشرفت: ${percent}%`</span>);<br />
+            &nbsp;&nbsp;};<br />
+            <br />
+            &nbsp;&nbsp;<span class="param">xhr</span>.onload = <span class="keyword">function</span>() {<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">const</span> <span class="param">blobUrl</span> = URL.<span class="method">createObjectURL</span>(<span class="param">xhr</span>.response);<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// ... ایجاد لینک و کلیک ...</span><br />
+            &nbsp;&nbsp;};<br />
+            &nbsp;&nbsp;<span class="param">xhr</span>.<span class="method">send</span>();<br />
+            }
+        </div>
+        <button onclick="downloadWithXHR('/sample.pdf', 'xhr-download.pdf')"
+                class="btn btn-warning btn-download mt-2 text-dark">
+            <i class="bi bi-download me-1"></i>
+            دانلود با XMLHttpRequest
+        </button>
+    </div>
+</div>
+
+<!-- ====================================================================
+     روش ۱۰: لینک موقت DOM
+     ==================================================================== -->
+<div class="card method-card">
+    <div class="card-header d-flex align-items-center">
+        <span class="method-number">۱۰</span>
+        <div>
+            <strong>ایجاد لینک موقت در DOM</strong>
+            <span class="category-badge bg-warning text-dark me-2">JavaScript</span>
+            <span class="category-badge bg-secondary text-white">Client-side</span>
+        </div>
+    </div>
+    <div class="card-body">
+        <p class="method-description">
+            ساده‌ترین روش جاوااسکریپتی: یک تگ <code>&lt;a&gt;</code> به صورت
+            برنامه‌ای (programmatically) در DOM ایجاد کرده و روی آن کلیک می‌کنیم.
+            بدون درخواست HTTP اضافی!
+        </p>
+        <div class="code-block">
+            <span class="keyword">function</span> <span class="method">downloadWithTempLink</span>(<span class="param">url</span>, <span class="param">fileName</span>) {<br />
+            &nbsp;&nbsp;<span class="keyword">const</span> <span class="param">link</span> = document.<span class="method">createElement</span>(<span class="string">'a'</span>);<br />
+            &nbsp;&nbsp;<span class="param">link</span>.href = <span class="param">url</span>;<br />
+            &nbsp;&nbsp;<span class="param">link</span>.download = <span class="param">fileName</span>;<br />
+            &nbsp;&nbsp;<span class="param">link</span>.style.display = <span class="string">'none'</span>;<br />
+            &nbsp;&nbsp;document.body.<span class="method">appendChild</span>(<span class="param">link</span>);<br />
+            &nbsp;&nbsp;<span class="param">link</span>.<span class="method">click</span>();<br />
+            &nbsp;&nbsp;document.body.<span class="method">removeChild</span>(<span class="param">link</span>);<br />
+            }
+        </div>
+        <div class="note-box">
+            <i class="bi bi-lightbulb"></i>
+            <strong>سریع‌ترین روش جاوااسکریپتی:</strong> بدون درخواست HTTP.
+            مرورگر رفتار download attribute لینک را اجرا می‌کند.
+            فقط برای فایل‌های هم‌مبدأ (same-origin) کار می‌کند.
+        </div>
+        <button onclick="downloadWithTempLink('/sample.pdf', 'temp-link-download.pdf')"
+                class="btn btn-warning btn-download mt-2 text-dark">
+            <i class="bi bi-download me-1"></i>
+            دانلود با لینک موقت
+        </button>
+    </div>
+</div>
+
+<!-- ====================================================================
+     دسته‌بندی ۴: Razor Pages
+     ==================================================================== -->
+<h4 class="text-primary mb-3 mt-4">
+    <i class="bi bi-file-earmark-code"></i>
+    دسته‌بندی ۴: Razor Pages
+</h4>
+
+<!-- ====================================================================
+     روش ۱۱: Razor Page Handler
+     ==================================================================== -->
+<div class="card method-card">
+    <div class="card-header d-flex align-items-center">
+        <span class="method-number">۱۱</span>
+        <div>
+            <strong>Razor Page Handler</strong>
+            <span class="category-badge bg-danger text-white me-2">Razor Page</span>
+            <span class="category-badge bg-secondary text-white">OnGet Handler</span>
+        </div>
+    </div>
+    <div class="card-body">
+        <p class="method-description">
+            در Razor Page به جای اکشن متد از <strong>Handler متد</strong> استفاده می‌شود.
+            نام <code>OnGetDownload</code> به این معنی:
+            متد <code>GET</code> با نام Handler <code>Download</code>.
+            فراخوانی: <code>/Download?handler=Download</code>
+        </p>
+        <div class="code-block">
+            <span class="comment">// فایل: Pages/Download.cshtml.cs</span><br />
+            <span class="keyword">public</span> IActionResult <span class="method">OnGetDownload</span>()<br />
+            {<br />
+            &nbsp;&nbsp;<span class="keyword">var</span> <span class="param">filePath</span> = Path.<span class="method">Combine</span>(_env.WebRootPath, <span class="string">"sample.pdf"</span>);<br />
+            &nbsp;&nbsp;<span class="keyword">var</span> <span class="param">fileBytes</span> = System.IO.File.<span class="method">ReadAllBytes</span>(<span class="param">filePath</span>);<br />
+            &nbsp;&nbsp;<span class="keyword">return</span> <span class="method">File</span>(<span class="param">fileBytes</span>, <span class="string">"application/pdf"</span>, <span class="string">"razor-page-download.pdf"</span>);<br />
+            }
+        </div>
+        <div class="note-box">
+            <i class="bi bi-lightbulb"></i>
+            <strong>مزیت Razor Page:</strong> ساده‌تر و متمرکزتر از MVC.
+            کد و ویو در یک پوشه هستند. برای صفحات مستقل ایده‌آل.
+        </div>
+        <a href="/Download?handler=Download" class="btn btn-danger btn-download mt-2">
+            <i class="bi bi-download me-1"></i>
+            دانلود با Razor Page
+        </a>
+    </div>
+</div>
+
+<!-- ====================================================================
+     دسته‌بندی ۵: Blazor
+     ==================================================================== -->
+<h4 class="text-primary mb-3 mt-4">
+    <i class="bi bi-filetype-cs"></i>
+    دسته‌بندی ۵: Blazor Server
+</h4>
+
+<!-- ====================================================================
+     روش ۱۲: Blazor Server Component
+     ==================================================================== -->
+<div class="card method-card">
+    <div class="card-header d-flex align-items-center">
+        <span class="method-number">۱۲</span>
+        <div>
+            <strong>Blazor Server Component</strong>
+            <span class="category-badge bg-dark text-white me-2">Blazor</span>
+            <span class="category-badge bg-info text-white">JS Interop</span>
+        </div>
+    </div>
+    <div class="card-body">
+        <p class="method-description">
+            در Blazor Server، کامپوننت روی سرور اجرا می‌شود و از طریق
+            <strong>WebSocket</strong> با مرورگر ارتباط دارد.
+            برای عملیات‌های مرورگر (مثل دانلود) باید از
+            <code>JavaScript Interop</code> استفاده کنیم.
+        </p>
+        <div class="code-block">
+            <span class="comment">// فایل: Components/DownloadComponent.razor</span><br />
+            <span class="keyword">&#64;code</span> {<br />
+            &nbsp;&nbsp;[Inject] <span class="keyword">private</span> IJSRuntime? JS { <span class="keyword">get</span>; <span class="keyword">set</span>; }<br />
+            <br />
+            &nbsp;&nbsp;<span class="keyword">private async</span> Task <span class="method">DownloadFile</span>()<br />
+            &nbsp;&nbsp;{<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// فراخوانی تابع جاوااسکریپت از C#</span><br />
+            &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">await</span> JS.<span class="method">InvokeVoidAsync</span>(<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"blazorDownloadFile"</span>,<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"/Download?handler=Download"</span>,<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"blazor-download.pdf"</span>);<br />
+            &nbsp;&nbsp;}<br />
+            }
+        </div>
+        <div class="note-box">
+            <i class="bi bi-lightbulb"></i>
+            <strong>نکته مهم Blazor:</strong> Blazor Server دسترسی مستقیمی به DOM ندارد.
+            هر عملیات مرورگری (دانلود، Focus، اسکرول) باید از طریق JS Interop انجام شود.
+            کامپوننت Blazor زیر در همین صفحه رندر می‌شود:
+        </div>
+        <!-- ====================================================================
+             رندر کامپوننت Blazor
+             ====================================================================
+             render-mode="Server" یعنی کامپوننت فقط روی سرور رندر می‌شود
+             (نه ServerPrerendered که هم سرور و هم کلاینت رندر می‌کند)
+             ==================================================================== -->
+        <component type="typeof(DownloadMethods.Components.DownloadComponent)"
+                   render-mode="Server" />
+    </div>
+</div>
+
+<!-- ====================================================================
+     دسته‌بندی ۶: Minimal API
+     ==================================================================== -->
+<h4 class="text-primary mb-3 mt-4">
+    <i class="bi bi-braces"></i>
+    دسته‌بندی ۶: Minimal API
+</h4>
+
+<!-- ====================================================================
+     روش ۱۳: Minimal API
+     ==================================================================== -->
+<div class="card method-card">
+    <div class="card-header d-flex align-items-center">
+        <span class="method-number">۱۳</span>
+        <div>
+            <strong>Minimal API Endpoint</strong>
+            <span class="category-badge bg-dark text-white me-2">Minimal API</span>
+            <span class="category-badge bg-success text-white">بدون کنترلر</span>
+        </div>
+    </div>
+    <div class="card-body">
+        <p class="method-description">
+            <code>Minimal API</code> از .NET 6 معرفی شد. بدون نیاز به کنترلر
+            و با چند خط کد یک Endpoint تعریف می‌شود.
+            <code>Results.File()</code> فایل را برمی‌گرداند (مشابه FileResult).
+        </p>
+        <div class="code-block">
+            <span class="comment">// فایل: Program.cs</span><br />
+            app.<span class="method">MapGet</span>(<span class="string">"/api/download/minimal"</span>, (<span class="param">IWebHostEnvironment</span> env) =&gt;<br />
+            {<br />
+            &nbsp;&nbsp;<span class="keyword">var</span> <span class="param">filePath</span> = Path.<span class="method">Combine</span>(env.WebRootPath, <span class="string">"sample.pdf"</span>);<br />
+            &nbsp;&nbsp;<span class="keyword">var</span> <span class="param">fileBytes</span> = System.IO.File.<span class="method">ReadAllBytes</span>(<span class="param">filePath</span>);<br />
+            &nbsp;&nbsp;<span class="keyword">return</span> Results.<span class="method">File</span>(<span class="param">fileBytes</span>, <span class="string">"application/pdf"</span>, <span class="string">"minimal-api-download.pdf"</span>);<br />
+            });
+        </div>
+        <div class="note-box">
+            <i class="bi bi-lightbulb"></i>
+            <strong>بهترین برای API ساده:</strong> بدون کنترلر، بدون ویو، بدون صفحه.
+            فقط یک Lambda و تمام! برای میکروسرویس‌ها و API های سبک ایده‌آل.
+        </div>
+        <a href="/api/download/minimal" class="btn btn-dark btn-download mt-2">
+            <i class="bi bi-download me-1"></i>
+            دانلود با Minimal API
+        </a>
+    </div>
+</div>
+
+<!-- ====================================================================
+     جدول مقایسه روش‌ها
+     ==================================================================== -->
+<div class="card method-card mt-5">
+    <div class="card-header bg-primary text-white">
+        <h5 class="mb-0"><i class="bi bi-table"></i> جدول مقایسه روش‌ها</h5>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-striped table-hover mb-0">
+                <thead class="table-dark">
+                    <tr>
+                        <th>#</th>
+                        <th>روش</th>
+                        <th>نوع</th>
+                        <th>مناسب برای فایل بزرگ</th>
+                        <th>نوار پیشرفت</th>
+                        <th>سطح کنترل</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>۱</td>
+                        <td>لینک مستقیم HTML</td>
+                        <td>HTML</td>
+                        <td class="text-success"><i class="bi bi-check-circle"></i></td>
+                        <td class="text-danger"><i class="bi bi-x-circle"></i></td>
+                        <td>بسیار کم</td>
+                    </tr>
+                    <tr>
+                        <td>۲</td>
+                        <td>HTML5 Download</td>
+                        <td>HTML5</td>
+                        <td class="text-success"><i class="bi bi-check-circle"></i></td>
+                        <td class="text-danger"><i class="bi bi-x-circle"></i></td>
+                        <td>کم</td>
+                    </tr>
+                    <tr>
+                        <td>۳</td>
+                        <td>FileResult</td>
+                        <td>Controller</td>
+                        <td class="text-success"><i class="bi bi-check-circle"></i></td>
+                        <td class="text-danger"><i class="bi bi-x-circle"></i></td>
+                        <td>متوسط</td>
+                    </tr>
+                    <tr>
+                        <td>۴</td>
+                        <td>PhysicalFile</td>
+                        <td>Controller</td>
+                        <td class="text-success"><i class="bi bi-check-circle"></i></td>
+                        <td class="text-success"><i class="bi bi-check-circle"></i> (Resume)</td>
+                        <td>متوسط</td>
+                    </tr>
+                    <tr>
+                        <td>۵</td>
+                        <td>VirtualFile</td>
+                        <td>Controller</td>
+                        <td class="text-success"><i class="bi bi-check-circle"></i></td>
+                        <td class="text-danger"><i class="bi bi-x-circle"></i></td>
+                        <td>متوسط</td>
+                    </tr>
+                    <tr>
+                        <td>۶</td>
+                        <td>FileStream</td>
+                        <td>Controller</td>
+                        <td class="text-success"><i class="bi bi-check-circle"></i> (بهترین)</td>
+                        <td class="text-success"><i class="bi bi-check-circle"></i> (ممکن)</td>
+                        <td>بالا</td>
+                    </tr>
+                    <tr>
+                        <td>۷</td>
+                        <td>FileContent (Byte[])</td>
+                        <td>Controller</td>
+                        <td class="text-danger"><i class="bi bi-x-circle"></i></td>
+                        <td class="text-danger"><i class="bi bi-x-circle"></i></td>
+                        <td>بالا</td>
+                    </tr>
+                    <tr>
+                        <td>۸</td>
+                        <td>Fetch API</td>
+                        <td>JavaScript</td>
+                        <td class="text-success"><i class="bi bi-check-circle"></i></td>
+                        <td class="text-success"><i class="bi bi-check-circle"></i> (ReadableStream)</td>
+                        <td>بالا</td>
+                    </tr>
+                    <tr>
+                        <td>۹</td>
+                        <td>XMLHttpRequest</td>
+                        <td>JavaScript</td>
+                        <td class="text-success"><i class="bi bi-check-circle"></i></td>
+                        <td class="text-success"><i class="bi bi-check-circle"></i> (onprogress)</td>
+                        <td>بالا</td>
+                    </tr>
+                    <tr>
+                        <td>۱۰</td>
+                        <td>لینک موقت DOM</td>
+                        <td>JavaScript</td>
+                        <td class="text-success"><i class="bi bi-check-circle"></i></td>
+                        <td class="text-danger"><i class="bi bi-x-circle"></i></td>
+                        <td>کم</td>
+                    </tr>
+                    <tr>
+                        <td>۱۱</td>
+                        <td>Razor Page Handler</td>
+                        <td>Razor Page</td>
+                        <td class="text-success"><i class="bi bi-check-circle"></i></td>
+                        <td class="text-danger"><i class="bi bi-x-circle"></i></td>
+                        <td>متوسط</td>
+                    </tr>
+                    <tr>
+                        <td>۱۲</td>
+                        <td>Blazor Server</td>
+                        <td>Blazor</td>
+                        <td class="text-success"><i class="bi bi-check-circle"></i></td>
+                        <td class="text-success"><i class="bi bi-check-circle"></i> (ممکن)</td>
+                        <td>بالا</td>
+                    </tr>
+                    <tr>
+                        <td>۱۳</td>
+                        <td>Minimal API</td>
+                        <td>Minimal API</td>
+                        <td class="text-success"><i class="bi bi-check-circle"></i></td>
+                        <td class="text-danger"><i class="bi bi-x-circle"></i></td>
+                        <td>متوسط</td>
+                    </tr>
+                    <tr>
+                        <td>۱۴</td>
+                        <td>Response Headers</td>
+                        <td>Controller</td>
+                        <td class="text-success"><i class="bi bi-check-circle"></i></td>
+                        <td class="text-success"><i class="bi bi-check-circle"></i> (ممکن)</td>
+                        <td>بسیار بالا</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- ====================================================================
+    Scripts - اسکریپت‌های خاص این صفحه
+     ==================================================================== -->
+@section Scripts {
+    <!-- بارگذاری فایل جاوااسکریپت دانلود (شامل توابع روش ۸، ۹، ۱۰) -->
+    <script src="~/js/download.js"></script>
+}

@@ -39,8 +39,12 @@ namespace IActionResultExample.Controllers
         return StatusCode(401);
       }
 
-      //return new RedirectToActionResult("Books", "Store", new { }); //302 - Found
-      return new RedirectToActionResult("Books", "Store", new { }, permanent: true); //301 - Moved Permanently
+
+            //302: موقتاً منتقل شده - اعتبار صفحه‌ی قدیمی حفظ میشه - ❌ معمولاً کش نمیشه	
+            //301: برای همیشه منتقل شده - ✅ معمولاً کش میشه - اعتبار به صفحه‌ی جدید منتقل میشه
+            //return new RedirectToActionResult("Books", "Store", new { }); //302 - Found
+            return new RedirectToActionResult("Books", "Store", new { }, permanent: true); //301 - Moved Permanently
+            //Books=Action Name  - Store: Controller Name - new { } : Rouring Value - permanent: true/false
     }
   }
 }

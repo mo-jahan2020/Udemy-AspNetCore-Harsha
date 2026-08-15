@@ -1,6 +1,9 @@
 using RoutingExample.CustomConstraints;
 
-var builder = WebApplication.CreateBuilder(args);
+var builder = WebApplication.CreateBuilder(new WebApplicationOptions()
+{
+    WebRootPath = "wwwroot"//میتوان آن را اینجا عوض کرد
+});
 
 builder.Services.AddRouting(options =>
 {
@@ -11,6 +14,13 @@ var app = builder.Build();
 
 //Routing is automatically enabled.
 //No need for app.UseRouting() anymore
+
+
+app.UseStaticFiles();
+// /TextFile.txt
+//open file TextFile.txt IN wwwroot
+//با این دستور متن داخل فایل در مرورگر نمایش داده خواهد شد
+// پس مواظب باشید کاربران به این پوشه دسترسی دارند
 
 // Eg: files/sample.txt
 app.Map("files/{filename}.{extension}", async context =>

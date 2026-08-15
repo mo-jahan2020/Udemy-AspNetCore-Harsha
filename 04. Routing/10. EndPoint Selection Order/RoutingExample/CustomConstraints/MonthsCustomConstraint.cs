@@ -5,12 +5,8 @@ namespace RoutingExample.CustomConstraints;
 //Eg: sales-report/2040/apr
 public class MonthsCustomConstraint : IRouteConstraint
 {
- public bool Match(
-  HttpContext? httpContext, 
-  IRouter? route, 
-  string routeKey, 
-  RouteValueDictionary values, 
-  RouteDirection routeDirection)
+ public bool Match(HttpContext? httpContext, IRouter? route, string routeKey, RouteValueDictionary values,
+     RouteDirection routeDirection)
  {
   //check whether the value exists
   if (!values.ContainsKey(routeKey)) //month

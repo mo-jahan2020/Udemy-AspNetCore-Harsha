@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<!-- ====================================================================
+     _Layout.cshtml - لایه اصلی برنامه
+     ====================================================================
+     این فایل لایه مشترک تمام صفحات MVC است.
+     شامل هدر، فوتر و بخش‌های مشترک است.
+     ==================================================================== -->
+<html lang="fa" dir="rtl">
+<head>
+    <!-- ====================================================================
+         متاتگ‌ها
+         ==================================================================== -->
+    <meta charset="utf-8" />
+    <!-- تنظیم ویوپورت برای واکنش‌گرایی (Responsive) -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>آموزش روش‌های دانلود فایل - ASP.NET Core</title>
+
+    <!-- ====================================================================
+         Bootstrap CSS - فریمورک CSS برای طراحی واکنش‌گرا
+         ==================================================================== -->
+    <!-- Bootstrap 5 از CDN - شامل کلاس‌های آماده برای طراحی سریع -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css"
+          rel="stylesheet" />
+
+    <!-- Bootstrap Icons - آیکون‌های رایگان -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+          rel="stylesheet" />
+
+    <!-- ====================================================================
+         استایل‌های سفارشی
+         ==================================================================== -->
+    <style>
+        /* تنظیم فونت فارسی */
+        body {
+            font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+            background-color: #f8f9fa;
+            direction: rtl;
+        }
+
+        /* هدر صفحه */
+        .app-header {
+            background: linear-gradient(135deg, #0d6efd, #6610f2);
+            color: white;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .app-header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .app-header p {
+            opacity: 0.9;
+            font-size: 1rem;
+            margin: 0;
+        }
+
+        /* کارت هر روش */
+        .method-card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-bottom: 1.25rem;
+            overflow: hidden;
+        }
+
+        .method-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+        }
+
+        /* هدر کارت */
+        .method-card .card-header {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-bottom: 1px solid #dee2e6;
+            padding: 0.75rem 1.25rem;
+        }
+
+        /* شماره روش */
+        .method-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #0d6efd, #6610f2);
+            color: white;
+            font-weight: 700;
+            font-size: 0.9rem;
+            margin-left: 0.75rem;
+        }
+
+        /* بلاک کد */
+        .code-block {
+            background-color: #1e1e1e;
+            color: #d4d4d4;
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+            font-size: 0.8rem;
+            direction: ltr;
+            text-align: left;
+            overflow-x: auto;
+            margin: 0.5rem 0;
+            line-height: 1.6;
+        }
+
+        .code-block .comment { color: #6a9955; }
+        .code-block .keyword { color: #569cd6; }
+        .code-block .string { color: #ce9178; }
+        .code-block .method { color: #dcdcaa; }
+        .code-block .param { color: #9cdcfe; }
+
+        /* دکمه‌ها */
+        .btn-download {
+            border-radius: 8px;
+            font-weight: 600;
+            padding: 0.5rem 1.5rem;
+            transition: all 0.2s;
+        }
+
+        .btn-download:hover {
+            transform: scale(1.03);
+        }
+
+        /* بج دسته‌بندی */
+        .category-badge {
+            font-size: 0.7rem;
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        /* فوتر */
+        .app-footer {
+            background-color: #343a40;
+            color: #adb5bd;
+            padding: 1.5rem 0;
+            text-align: center;
+            margin-top: 3rem;
+            font-size: 0.85rem;
+        }
+
+        /* بخش توضیحات */
+        .method-description {
+            color: #495057;
+            font-size: 0.9rem;
+            line-height: 1.8;
+        }
+
+        /* نکته مهم */
+        .note-box {
+            background-color: #fff3cd;
+            border: 1px solid #ffc107;
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            font-size: 0.8rem;
+            color: #856404;
+            margin-top: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ====================================================================
+         هدر اصلی
+         ==================================================================== -->
+    <header class="app-header">
+        <div class="container">
+            <h1><i class="bi bi-cloud-download"></i> آموزش روش‌های مختلف دانلود فایل</h1>
+            <p>ASP.NET Core 8 - ۱۴ روش مختلف برای دانلود فایل</p>
+        </div>
+    </header>
+
+    <!-- ====================================================================
+         محتوای اصلی - جایگزین با محتوای هر صفحه
+         ==================================================================== -->
+    <main class="container pb-4">
+        @RenderBody()
+    </main>
+
+    <!-- ====================================================================
+         فوتر
+         ==================================================================== -->
+    <footer class="app-footer">
+        <div class="container">
+            آموزش روش‌های دانلود فایل در ASP.NET Core 8 | تمامی کامنت‌ها به زبان فارسی نوشته شده‌اند
+        </div>
+    </footer>
+
+    <!-- ====================================================================
+         اسکریپت‌ها
+         ==================================================================== -->
+
+    <!-- Bootstrap JS (شامل Popper برای Dropdown وTooltip) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Blazor Server Script - بدون این خط کامپوننت‌های Blazor کار نمی‌کنند -->
+    <!-- این اسکریپت اتصال WebSocket بین سرور و مرورگر را برقرار می‌کند -->
+    <script src="_framework/blazor.server.js"></script>
+
+    <!-- ====================================================================
+         بخش انتظار برای بارگذاری Blazor
+         ====================================================================
+         این بخش تا زمانی که Blazor لود شود نمایش داده می‌شود.
+         بعد از لود شدن Blazor، محتوای کامپوننت جایگزین می‌شود.
+         ==================================================================== -->
+    <script>
+        // پنهان کردن بخش Blazor تا زمان بارگذاری کامل
+        document.addEventListener('DOMContentLoaded', function () {
+            console.log('صفحه بارگذاری شد. در انتظار Blazor...');
+        });
+    </script>
+
+    <!-- محل رندر اسکریپت‌های صفحه‌ای -->
+    @await RenderSectionAsync("Scripts", required: false)
+
+</body>
+</html>

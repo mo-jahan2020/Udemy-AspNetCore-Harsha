@@ -22,19 +22,6 @@ app.Map("employee/profile/{EmployeeName:length(4, 7):alpha=scott}", async contex
 });
 
 
-//Eg: products/details/1
-app.Map("products/details/{id:int:range(1, 1000)?}", async context =>
-{
- if (context.Request.RouteValues.ContainsKey("id"))
- {
-  int id = Convert.ToInt32(context.Request.RouteValues["id"]);
-  await context.Response.WriteAsync($"Product details - {id}");
- }
- else
- {
-  await context.Response.WriteAsync($"Product details - id is not supplied");
- }
-});
 
 
 //Eg: daily-digest-report/{reportdate}
@@ -68,6 +55,20 @@ app.Map("sales-report/{year:int:min(1900)}/{month:regex(^(apr|jul|oct|jan)$)}", 
  {
   await context.Response.WriteAsync($"{month} month is not allowed for sales report");
  }
+});
+
+//Eg: products/details/1
+app.Map("products/details/{id:int:range(1, 1000)?}", async context =>
+{
+    if (context.Request.RouteValues.ContainsKey("id"))
+    {
+        int id = Convert.ToInt32(context.Request.RouteValues["id"]);
+        await context.Response.WriteAsync($"Product details - {id}");
+    }
+    else
+    {
+        await context.Response.WriteAsync($"Product details - id is not supplied");
+    }
 });
 
 

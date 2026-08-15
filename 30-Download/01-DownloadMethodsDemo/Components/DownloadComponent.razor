@@ -1,0 +1,45 @@
+@* کامپوننت Blazor برای نمایش روش دانلود در Blazor *@
+@using Microsoft.AspNetCore.Components
+@using Microsoft.JSInterop
+@using Microsoft.AspNetCore.Hosting
+@using System.IO
+@* تزریق سرویس‌های مورد نیاز *@
+@inject IJSRuntime JS
+@inject IWebHostEnvironment Env
+
+<div class="section">
+    <h2>دانلود از داخل Blazor</h2>
+    @* دکمه Blazor که به متد C# متصل است *@
+    <button class="btn" @onclick="DownloadFile">دانلود فایل با Blazor</button>
+    <a class="btn" href="/">بازگشت به صفحه اصلی</a>
+</div>
+
+@code {
+    // متد اجرا شونده هنگام کلیک روی دکمه
+    private async Task DownloadFile()
+    {
+        // خواندن بایت‌های فایل از wwwroot
+        var path = Path.Combine(Env.WebRootPath, "sample.pdf");
+        var bytes = await File.ReadAllBytesAsync(path);
+        // تبدیل به Base64 برای ارسال به سمت کلاینت از طریق JSInterop
+        var base64 = Convert.ToBase64String(bytes);
+        // فراخوانی تابع جاوا اسکریپت که در ادامه در همان صفحه تعریف می‌شود
+        // تابع دانلود عمومی که در صفحه اصلی تعریف شده استفاده می‌شود
+        await JS.InvokeVoidAsync("blazorDownloadFile", "sample-blazor.pdf", "application/pdf", base64);
+    }
+}
+
+@* اسکریپت کمکی برای دانلود فایل از داخل Blazor *@
+<script>
+    // تابعی که Blazor آن را از طریق JSInterop صدا می‌زند
+    window.blazorDownloadFile = (fileName, contentType, base64Data) => {
+        // ساخت data URI با اطلاعات دریافتی از سرور
+        const link = document.createElement('a');
+        link.href = `data:${contentType};base64,${base64Data}`;
+        link.download = fileName;
+        // شبیه‌سازی کلیک برای شروع دانلود در مرورگر
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+    };
+</script>

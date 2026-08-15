@@ -1,0 +1,29 @@
+@* Layout مشترک تمام ویوها *@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    @* تعیین کدگذاری کاراکترها *@
+    <meta charset="utf-8" />
+    @* تنظیم نمایش موبایلی *@
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    @* عنوان صفحه که از هر ویو مقدار می‌گیرد *@
+    <title>@ViewData["Title"] - آموزش روش‌های دانلود</title>
+    <style>
+        /* استایل ساده برای صفحه */
+        body { font-family: Tahoma, sans-serif; padding: 20px; background: #f5f5f5; }
+        h1 { color: #333; }
+        .btn {
+            display: inline-block; margin: 6px; padding: 10px 18px;
+            background: #2563eb; color: white; text-decoration: none;
+            border: none; border-radius: 6px; cursor: pointer; font-size: 14px;
+        }
+        .btn:hover { background: #1d4ed8; }
+        .section { background: white; padding: 16px; margin: 12px 0; border-radius: 8px; }
+        h2 { color: #2563eb; font-size: 18px; }
+    </style>
+</head>
+<body>
+    @* محل رندر شدن محتوای هر ویو *@
+    @RenderBody()
+</body>
+</html>

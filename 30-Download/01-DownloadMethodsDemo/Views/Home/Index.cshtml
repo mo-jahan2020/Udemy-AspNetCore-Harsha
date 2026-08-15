@@ -1,0 +1,115 @@
+@{
+    // تعیین عنوان صفحه که در Layout استفاده می‌شود
+    ViewData["Title"] = "صفحه اصلی";
+}
+
+@* عنوان اصلی صفحه *@
+<h1>آموزش روش‌های مختلف دانلود فایل در ASP.NET Core</h1>
+<p>با کلیک روی هر دکمه، فایل <code>sample.pdf</code> با روش مربوطه دانلود می‌شود.</p>
+
+@* ------------------ بخش ۱: دانلود بدون کنترلر (فایل استاتیک) ------------------ *@
+<div class="section">
+    <h2>۱- دانلود بدون کنترلر (فایل استاتیک از wwwroot)</h2>
+    @* لینک مستقیم به فایل استاتیک - نیازی به کد سمت سرور ندارد *@
+    <a class="btn" href="/sample.pdf" download>دانلود مستقیم استاتیک</a>
+</div>
+
+@* ------------------ بخش ۲: دانلود از طریق کنترلر با روش‌های مختلف ------------------ *@
+<div class="section">
+    <h2>۲- دانلود با کنترلر (روش‌های مختلف MVC)</h2>
+    @* هر لینک به یک اکشن مختلف در HomeController اشاره دارد *@
+    <a class="btn" asp-controller="Home" asp-action="DownloadByteArray">Byte Array</a>
+    <a class="btn" asp-controller="Home" asp-action="DownloadFileStream">FileStream</a>
+    <a class="btn" asp-controller="Home" asp-action="DownloadPhysicalFile">PhysicalFile</a>
+    <a class="btn" asp-controller="Home" asp-action="DownloadVirtualFile">Virtual Path</a>
+    <a class="btn" asp-controller="Home" asp-action="DownloadManualResult">FileContentResult دستی</a>
+    <a class="btn" asp-controller="Home" asp-action="DownloadRawResponse">نوشتن مستقیم روی Response</a>
+</div>
+
+@* ------------------ بخش ۳: دانلود با جاوا اسکریپت ------------------ *@
+<div class="section">
+    <h2>۳- دانلود با JavaScript</h2>
+
+    @* روش ۳-الف: استفاده از fetch برای گرفتن Blob و ساخت لینک دانلود *@
+    <button class="btn" onclick="downloadWithFetch()">دانلود با fetch + Blob</button>
+
+    @* روش ۳-ب: گرفتن Base64 از سرور و تبدیل به فایل در مرورگر *@
+    <button class="btn" onclick="downloadFromBase64()">دانلود از Base64 (JSON)</button>
+
+    @* روش ۳-ج: ساخت المان anchor به صورت دینامیک و شبیه‌سازی کلیک *@
+    <button class="btn" onclick="downloadWithAnchor()">دانلود با ساخت <a> پویا</button>
+</div>
+
+@* ------------------ بخش ۴: دانلود مستقیم با HTML ------------------ *@
+<div class="section">
+    <h2>۴- دانلود مستقیم با HTML (attribute download)</h2>
+    @* استفاده از ویژگی download برای اجبار مرورگر به دانلود به جای باز کردن *@
+    <a class="btn" href="/sample.pdf" download="sample-html.pdf">دانلود با ویژگی download</a>
+</div>
+
+@* ------------------ بخش ۵ و ۶: لینک به Razor Page و Blazor ------------------ *@
+<div class="section">
+    <h2>۵- دانلود با Razor Pages</h2>
+    @* لینک به Razor Page ای که Handler دانلود دارد *@
+    <a class="btn" href="/Download">رفتن به صفحه Razor Page</a>
+    <a class="btn" href="/Download?handler=Pdf">دانلود مستقیم از Razor Page Handler</a>
+</div>
+
+<div class="section">
+    <h2>۶- دانلود با صفحات Blazor</h2>
+    @* لینک به کامپوننت Blazor ای که روش دانلود را نمایش می‌دهد *@
+    <a class="btn" href="/blazor-download">رفتن به صفحه Blazor</a>
+</div>
+
+@* ------------------ اسکریپت‌های سمت کلاینت ------------------ *@
+<script>
+    // تابع دانلود با استفاده از fetch API و Blob
+    async function downloadWithFetch() {
+        // درخواست فایل از سرور (فایل استاتیک)
+        const response = await fetch('/sample.pdf');
+        // تبدیل پاسخ به Blob (نمایش دودویی فایل در مرورگر)
+        const blob = await response.blob();
+        // ساخت یک URL موقت برای Blob
+        const url = window.URL.createObjectURL(blob);
+        // ساخت یک المان anchor مخفی
+        const a = document.createElement('a');
+        a.href = url;
+        // نام فایل هنگام ذخیره
+        a.download = 'sample-fetch.pdf';
+        // افزودن به body و شبیه‌سازی کلیک برای شروع دانلود
+        document.body.appendChild(a);
+        a.click();
+        // پاک‌سازی المان و آزادسازی حافظه URL
+        a.remove();
+        window.URL.revokeObjectURL(url);
+    }
+
+    // تابع دانلود با استفاده از داده Base64 که سرور در قالب JSON برمی‌گرداند
+    async function downloadFromBase64() {
+        // درخواست به اکشن GetFileAsBase64 در HomeController
+        const res = await fetch('/Home/GetFileAsBase64');
+        // تبدیل پاسخ به JSON
+        const json = await res.json();
+        // ساخت data URI با استفاده از contentType و رشته Base64
+        const dataUri = `data:${json.contentType};base64,${json.data}`;
+        // ساخت anchor برای دانلود
+        const a = document.createElement('a');
+        a.href = dataUri;
+        a.download = json.fileName;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+    }
+
+    // تابع دانلود با ساختن anchor به صورت پویا و مقداردهی href و download
+    function downloadWithAnchor() {
+        // ایجاد المان <a>
+        const a = document.createElement('a');
+        // آدرس فایل روی سرور
+        a.href = '/sample.pdf';
+        // اجبار به دانلود با نام مشخص
+        a.download = 'sample-anchor.pdf';
+        // شبیه‌سازی کلیک برای شروع دانلود
+        a.click();
+    }
+</script>
