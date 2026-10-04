@@ -1,4 +1,5 @@
 ﻿@model IEnumerable<string>
+<!--در قدم بعدی اینجا تزریق وابستگی کرده-->
 @inject ICitiesService citiesServiceInView
 
 @{
@@ -6,6 +7,7 @@
 }
 
 <h1>Cities</h1>
+<!--اینجا متغیر را ساخته-->
 @{
     List<string> citiesFromServieInView = citiesServiceInView.GetCities();
 }
@@ -19,7 +21,8 @@
 <div>@ViewBag.InstanceId_CitiesService_1</div>
 <div>@ViewBag.InstanceId_CitiesService_2</div>
 <div>@ViewBag.InstanceId_CitiesService_3</div>
-<div>@citiesServiceInView.ServiceInstanceId</div>
+<!--و اینجا استفاده میکنیم-->
+<div>inject in View:@citiesServiceInView.ServiceInstanceId</div>
 <div class="box">
     @ViewBag.InstanceId_CitiesService_InScope
 </div>

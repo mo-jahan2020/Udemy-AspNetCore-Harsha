@@ -1,0 +1,29 @@
+﻿@{ ViewData["Title"] = "V7.1.2/V7.1.3: لاگ و مدیریت خطا"; }
+<div class="text-center mt-5" dir="rtl">
+    <h2>بندهای V7.1.2 و V7.1.3: لاگ‌گذاری امن و مدیریت خطا</h2>
+    <div class="row mx-auto" style="max-width: 800px;">
+        <div class="col-md-6 mb-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">V7.1.2: تست لاگ‌گذاری</h5>
+                    <form asp-controller="Logging" asp-action="TestLogging" method="post">
+                        <input type="text" name="creditCard" class="form-control mb-2" value="6037-9911-1234-5678" required />
+                        <input type="password" name="password" class="form-control mb-2" value="SuperSecret123!" required />
+                        <button type="submit" class="btn btn-warning w-100">ثبت لاگ</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">V7.1.3: مدیریت خطا</h5>
+                    <form asp-controller="Logging" asp-action="ErrorHandlingDemo" method="post">
+                        <button type="submit" class="btn btn-danger w-100">شبیه‌سازی خطا</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <a asp-controller="Home" asp-action="Index" class="btn btn-secondary mt-3">بازگشت</a>
+</div>

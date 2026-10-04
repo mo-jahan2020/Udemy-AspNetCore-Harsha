@@ -24,9 +24,13 @@
    @RenderBody()
   </div>
 
+  <!-- اینجا آن سکشن تعریف شده را صدا میکنیم-->
+  @if (Context.Request.Path.Equals("/contact-support"))
+{
   <div class="footer-content">
       @RenderSection("footer_section", false)
   </div>
+}
  </div>
 
  

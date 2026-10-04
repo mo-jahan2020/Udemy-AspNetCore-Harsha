@@ -1,0 +1,70 @@
+نقش تو: تو یک معمار ارشد نرم‌افزار و توسعه‌دهنده حرفه‌ای .NET و Python هستی.
+
+═══════════════════════════════════════
+هدف پروژه: ساخت یک سرویس کامل Text-to-SQL
+═══════════════════════════════════════
+یک سرویس Web API حرفه‌ای با زبان C# و فریم‌ورک ASP.NET Core (.NET 10) بساز که شمای دیتابیس SQL Server را دریافت کرده، پرامپت زبانی کاربر را گرفته و با استفاده از هوش مصنوعی محلی (Ollama + کتابخانه Vanna.ai) یک Query SQL حرفه‌ای تولید کند. تاریخچه هر Session را نیز در SQL Server Express محلی ذخیره کند.
+
+═══════════════════════════════════════
+معماری (دقیقاً رعایت شود)
+═══════════════════════════════════════
+چون Vanna.ai فقط برای Python است، معماری سه‌لایه زیر را پیاده‌سازی کن:
+
+۱) سرویس اصلی: ASP.NET Core Web API (C# / .NET 10)
+۲) میکروسرویس Vanna: یک سرویس کوچک Python با FastAPI که Vanna.ai را با بک‌اند Ollama اجرا می‌کند (آدرس پیش‌فرض Ollama: http://localhost:11434 و مدل قابل تنظیم مثل qwen2.5-coder)
+۳) دیتابیس‌ها:
+   - دیتابیس هدف کاربر: SQL Server که با Connection String از appsettings.json خوانده می‌شود
+   - دیتابیس سشن: SQL Server Express محلی که تاریخچه چت کاربران را نگه می‌دارد
+
+═══════════════════════════════════════
+نیازمندی‌های الزامی
+═══════════════════════════════════════
+۱. سرویس اتصال به Ollama (C#):
+   - HttpClient با آدرس و نام مدل قابل تنظیم در appsettings.json
+   - Health-Check برای Ollama (آیا سرویس بالا است؟)
+   - حالت Fallback: اگر میکروسرویس Vanna در دسترس نبود، درخواست مستقیماً با endpoint رسمی Ollama (/api/generate) و تزریق شمای دیتابیس در System Prompt ارسال شود
+
+۲. سرویس اتصال به SQL Server (C#):
+   - دریافت Connection String از appsettings.json (بخش ConnectionStrings)
+   - Endpoint برای ثبت/به‌روزرسانی شمای دیتابیس (DDL جداول، کلیدهای خارجی، نمونه داده اختیاری) که این شما برای آموزش Vanna ارسال شود
+   - استفاده از Microsoft.Data.SqlClient
+
+۳. Endpoint تولید Query:
+   - POST /api/texttosql/generate با بدنه { sessionId, prompt }
+   - خروجی JSON شامل: SQL تولیدشده، SessionId، زمان پاسخ، نام مدل
+   - Endpoint اختیاری اجرای کوئری: POST /api/texttosql/execute — فقط در حالت Read-Only و با بلاک‌کردن دستورات مخرب (DROP / DELETE / UPDATE / TRUNCATE / ALTER) با Regex و لیست سیاه
+
+۴. مدیریت Session با EF Core:
+   - جدول Sessions: شناسه، نام کاربر، زمان ایجاد
+   - جدول SessionMessages: شناسه، SessionId (کلید خارجی)، نقش پیام (User/Assistant)، متن پرامپت، SQL تولیدشده، زمان
+   - Endpoint‌های CRUD کامل: ایجاد سشن جدید، دریافت تاریخچه یک سشن، لیست سشن‌های یک کاربر، حذف سشن
+   - Migrations با EF Core برای SQL Server Express
+
+═══════════════════════════════════════
+الزامات کیفی
+═══════════════════════════════════════
+- مستندسازی کامل با Swagger (OpenAPI)
+- لاگ‌گیری ساختاریافته با ILogger یا Serilog
+- Global Exception Handling با پاسخ خطای استاندارد ProblemDetails
+- پشتیبانی از CORS
+- Health-Check Endpoint
+- اصول Clean Architecture: لایه Controller / Service / Repository / Models جدا باشند
+- Unit Test حداقلی برای سرویس‌های کلیدی
+- تمام تنظیمات (آدرس Ollama، مدل، دو Connection String، پورت‌ها) در appsettings.json و قابل Override با Environment Variable
+
+═══════════════════════════════════════
+فایل‌های تحویلی
+═══════════════════════════════════════
+- کل سورس‌کد سرویس .NET 10 و میکروسرویس Python (requirements.txt هم بده)
+- اسکریپت SQL ایجاد جداول سشن (به‌عنوان جایگزین Migration)
+- فایل README کامل به زبان فارسی شامل: مراحل نصب Ollama، دستور دانلود مدل (ollama pull)، نصب پیش‌نیازهای Python، تنظیم Connection String، اجرای هر دو سرویس، و چند نمونه تست با curl
+- فایل docker-compose.yml اختیاری برای اجرای کل مجموعه
+
+═══════════════════════════════════════
+قوانین تحویل (بدون استثنا)
+═══════════════════════════════════════
+- هیچ سوالی نپرس؛ در صورت ابهام، بهترین فرض منطقی را انتخاب کن و در README مستند کن
+- کد باید کامل، تست‌شده و بدون Section ناتمام باشد
+- هیچ TODO یا بخش «به عنوان تمرین» در کد نگذار
+- در پایان، کل پروژه را به‌صورت یکجا و آماده دانلود تحویل بده
+- هر متد یا فانکشن باید یک امنت توضیح داشته باشد

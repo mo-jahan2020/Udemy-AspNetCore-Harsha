@@ -1,0 +1,10 @@
+@model AsvsLab.Models.DemoResult
+@{
+    ViewData["Title"] = "خطا";
+}
+
+<div class="alert alert-danger mt-4">
+    <h4 class="alert-heading">⛔ @Model.Title</h4>
+    <p class="mb-2">@Model.Explanation</p>
+    <a class="btn btn-outline-danger" asp-controller="Home" asp-action="Index">🏠 بازگشت به داشبورد</a>
+</div>

@@ -1,0 +1,51 @@
+@model DemoFormViewModel
+@{
+    ViewData["Title"] = Model.Title;
+    var refs = Model.AsvsRef.Split(',', StringSplitOptions.TrimEntries);
+}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">داشبورد</a></li>
+        <li class="breadcrumb-item active">@Model.Title</li>
+    </ol>
+</nav>
+
+<h2 class="mb-2">✍️ @Model.Title</h2>
+<div class="mb-3">
+    @foreach (var r in refs)
+    {
+        <span class="badge text-bg-success">@r</span>
+    }
+</div>
+
+<div class="asvs-card p-3 mb-4">
+    <div class="fw-bold mb-1">📜 متن رسمی بند (ASVS 5.0):</div>
+    <div class="req-en">@Model.AsvsSummaryEn</div>
+    <hr class="my-2" />
+    <div><b>🇮🇷 توضیح فارسی:</b> این فرم ورودی واقعی است — داده‌ای بفرستید تا اعمال بند بالا را ببینید.</div>
+</div>
+
+<div class="chapter-card p-3 mb-4">
+    <form action="@Model.Action" method="post" enctype="@(Model.IsUpload ? "multipart/form-data" : "application/x-www-form-urlencoded")">
+        @Html.AntiForgeryToken()
+        @if (Model.IsUpload)
+        {
+            <label class="form-label fw-bold" for="@Model.FieldName">@Model.FieldLabel</label>
+            <input type="file" class="form-control" id="@Model.FieldName" name="@Model.FieldName" required />
+        }
+        else
+        {
+            <label class="form-label fw-bold" for="@Model.FieldName">@Model.FieldLabel</label>
+            <input type="text" class="form-control" id="@Model.FieldName" name="@Model.FieldName"
+                   placeholder="@Model.Placeholder" dir="auto" />
+        }
+        @if (!string.IsNullOrEmpty(Model.Hint))
+        {
+            <div class="form-text">@Model.Hint</div>
+        }
+        <button type="submit" class="btn btn-success mt-3">▶ اجرای دمو</button>
+    </form>
+</div>
+
+<a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary">🏠 داشبورد</a>

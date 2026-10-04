@@ -1,0 +1,9 @@
+﻿@{ ViewData["Title"] = "V6.1.1: رمزنگاری داده"; }
+<div class="text-center mt-5" dir="rtl">
+    <h2>بند V6.1.1: رمزنگاری داده‌های حساس</h2>
+    <form asp-controller="Cryptography" asp-action="EncryptData" method="post" class="mx-auto" style="max-width: 500px;">
+        <input type="text" name="sensitiveData" class="form-control mb-3" value="شماره ملی: 1234567890" required />
+        <button type="submit" class="btn btn-info w-100 text-white">رمزنگاری و رمزگشایی</button>
+    </form>
+    <a asp-controller="Home" asp-action="Index" class="btn btn-secondary mt-3">بازگشت</a>
+</div>

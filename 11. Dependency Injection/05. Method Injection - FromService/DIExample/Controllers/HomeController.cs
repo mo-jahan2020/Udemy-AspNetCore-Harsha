@@ -15,6 +15,7 @@ namespace DIExample.Controllers
       _citiesService = citiesService; //new CitiesService();
     }
     */
+    // به این مدل تزریق method injection میگویند
     [Route("/")]
     public IActionResult Index([FromServices]ICitiesService _citiesService)
     {

@@ -54,6 +54,7 @@ namespace ViewsExample.Controllers
     {
       return View();
       //Views/Home/All.cshtml
+      // چنانچه میبینید از تمام اکشن های تمام کنترلر ها در دسترس است
       //Views/Shared/All.cshtml
     }
   }

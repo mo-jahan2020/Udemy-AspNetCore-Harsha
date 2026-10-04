@@ -4,22 +4,24 @@ using ServiceContracts;
 
 namespace DIExample.Controllers
 {
-  public class HomeController : Controller
-  {
-    private readonly ICitiesService _citiesService;
-
-    //constructor
-    public HomeController()
+    public class HomeController : Controller
     {
-      //create object of CitiesService class
-      _citiesService = null; //new CitiesService();
-    }
+        private readonly ICitiesService _citiesService;
 
-    [Route("/")]
-    public IActionResult Index()
-    {
-      List<string> cities = _citiesService.GetCities();
-      return View(cities);
+        //constructor
+        public HomeController()
+        {
+            //create object of CitiesService class
+            //_citiesService = null; //new CitiesService();
+        }
+
+        [Route("/")]
+        public IActionResult Index()
+        {
+            // اجرای برنامه در اینجا خطا خواهد داد زیرا تزریق وابستگی در برنامه صورت نگرفته است .
+            // در درس بعدی این مشکل حل خواهد شد
+            List<string> cities = _citiesService.GetCities();
+            return View(cities);
+        }
     }
-  }
 }

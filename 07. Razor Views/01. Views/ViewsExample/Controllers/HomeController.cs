@@ -1,15 +1,17 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
+
 namespace ViewsExample.Controllers
 {
-  public class HomeController : Controller
-  {
-    [Route("home")]
-    public IActionResult Index()
+
+    public class HomeController : Controller
     {
-      return View(); //Views/Home/Index.cshtml
-      //return View("abc"); //abc.cshtml
-      //return new ViewResult() { ViewName = "abc" };
+        [Route("/")]
+        public IActionResult Index()
+        {
+            return View();// منظور Views/Home/index.cshtml
+            //return View("abc"); // منظور Views/Home/abc.cshtml
+            //return new ViewResult() { ViewName = "abc" };
+        }
     }
-  }
 }

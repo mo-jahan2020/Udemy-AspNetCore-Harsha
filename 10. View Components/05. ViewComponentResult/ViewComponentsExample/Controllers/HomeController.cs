@@ -20,6 +20,7 @@ namespace ViewComponentsExample.Controllers
     [Route("friends-list")]
     public IActionResult LoadFriendsList()
     {
+            // ابتدا کلاس پرسون بصورت کاستوم ایجاد شده
       PersonGridModel personGridModel = new PersonGridModel()
       {
         GridTitle = "Friends",
@@ -30,7 +31,7 @@ namespace ViewComponentsExample.Controllers
         new Person() { PersonName = "Avva", JobTitle = "QA" }
     }
       };
-
+            // پس از این از کلاس ViewComponentResult استفاده می شود
       return ViewComponent("Grid", new { grid = personGridModel });
     }
   }

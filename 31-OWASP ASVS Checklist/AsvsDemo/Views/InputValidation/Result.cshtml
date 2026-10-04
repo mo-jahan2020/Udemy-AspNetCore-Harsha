@@ -1,0 +1,6 @@
+﻿@{ ViewData["Title"] = "نتیجه XSS"; }
+<div class="text-center mt-5" dir="rtl">
+    <div class="alert alert-danger mx-auto" style="max-width: 700px;"><strong>ورودی خام:</strong><br/>@ViewBag.RawInput</div>
+    <div class="alert alert-success mx-auto" style="max-width: 700px;"><strong>خروجی کدگذاری شده:</strong><br/>@Html.Raw(ViewBag.SafeInput)</div>
+    <a asp-controller="InputValidation" asp-action="Index" class="btn btn-secondary">بازگشت</a>
+</div>

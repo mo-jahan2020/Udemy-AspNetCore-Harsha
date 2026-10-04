@@ -1,0 +1,12 @@
+﻿@{ ViewData["Title"] = "V4.1.1: کنترل دسترسی"; }
+<div class="text-center mt-5" dir="rtl">
+    <h2>بند V4.1.1: کنترل دسترسی مبتنی بر نقش</h2>
+    <form asp-controller="Authorization" asp-action="CheckAccess" method="post" class="mx-auto" style="max-width: 500px;">
+        <select name="username" class="form-control mb-3">
+            <option value="admin">admin (دسترسی دارد)</option>
+            <option value="user">user (دسترسی ندارد)</option>
+        </select>
+        <button type="submit" class="btn btn-primary w-100">بررسی مجوز</button>
+    </form>
+    <a asp-controller="Home" asp-action="Index" class="btn btn-secondary mt-3">بازگشت</a>
+</div>

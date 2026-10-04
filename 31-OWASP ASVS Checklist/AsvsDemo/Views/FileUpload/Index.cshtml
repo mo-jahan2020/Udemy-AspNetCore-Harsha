@@ -1,0 +1,9 @@
+﻿@{ ViewData["Title"] = "V12.3.3: آپلود امن فایل"; }
+<div class="text-center mt-5" dir="rtl">
+    <h2>بند V12.3.3: اعتبارسنجی آپلود فایل</h2>
+    <form asp-controller="FileUpload" asp-action="FileUploadDemo" method="post" enctype="multipart/form-data" class="mx-auto" style="max-width: 500px;">
+        <input type="file" name="file" class="form-control mb-3" required />
+        <button type="submit" class="btn btn-secondary w-100">آپلود و اعتبارسنجی</button>
+    </form>
+    <a asp-controller="Home" asp-action="Index" class="btn btn-secondary mt-3">بازگشت</a>
+</div>

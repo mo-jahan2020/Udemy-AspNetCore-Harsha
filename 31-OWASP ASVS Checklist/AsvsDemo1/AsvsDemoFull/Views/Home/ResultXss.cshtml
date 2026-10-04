@@ -1,0 +1,7 @@
+﻿@{ ViewData["Title"] = "نتیجه XSS"; }
+<div class="text-center mt-5" dir="rtl">
+    <h2>نتیجه بررسی XSS (V5.1.2)</h2>
+    <div class="alert alert-danger mx-auto" style="max-width: 700px;"><strong>ورودی خام (خطرناک):</strong><br/>@ViewBag.RawInput</div>
+    <div class="alert alert-success mx-auto" style="max-width: 700px;"><strong>خروجی کدگذاری شده (امن):</strong><br/>@Html.Raw(ViewBag.SafeInput)</div>
+    <a asp-action="Index" class="btn btn-secondary mt-3">بازگشت</a>
+</div>

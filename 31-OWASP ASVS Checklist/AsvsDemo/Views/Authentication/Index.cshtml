@@ -1,0 +1,9 @@
+﻿@{ ViewData["Title"] = "V2.1.1: اعتبارسنجی رمز عبور"; }
+<div class="text-center mt-5" dir="rtl">
+    <h2>بند V2.1.1: اعتبارسنجی طول و پیچیدگی رمز عبور</h2>
+    <form asp-controller="Authentication" asp-action="CheckPassword" method="post" class="mx-auto" style="max-width: 500px;">
+        <input type="password" name="password" class="form-control mb-3" placeholder="رمز عبور را وارد کنید" required />
+        <button type="submit" class="btn btn-primary w-100">بررسی رمز عبور</button>
+    </form>
+    <a asp-controller="Home" asp-action="Index" class="btn btn-secondary mt-3">بازگشت</a>
+</div>

@@ -1,8 +1,10 @@
 ﻿<h1>Home</h1>
-
+<!-- این خط عینا از فایل مورد نظر جایگزین خواهد شد و ویو دیتای آن همان ویو دیتای پیش فرض داخل کنترلر است-->
+<!--چون ما هنور ویو دیتا را مقدار جدید نداده ایم-->
 <partial name="_ListPartialView"></partial>
 
 @{
+    
  var myViewData = new ViewDataDictionary(ViewData);
 
  myViewData["ListTitle"] = "Countries";
@@ -15,7 +17,9 @@
       };
 }
 <div class="box">
+        <!-- در بالا خودمان یک ویو دیتای جدید ساخته بودیم و اینجا آن را به فایل _ListPartialView  میفرستیم  -->
+        <!-- پس مقادیر بالا در اینجا جایگزین میشود-->
  <partial name="_ListPartialView" view-data="myViewData"></partial>
 </div>
-
+        <!-- این مقدار از مقدار ارسالی از کنترلر خوانده میشود: Cities-->
 <h3>ListTitle in View: @ViewData["ListTitle"]</h3>

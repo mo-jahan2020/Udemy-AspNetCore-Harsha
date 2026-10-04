@@ -16,7 +16,11 @@ namespace ViewComponentsExample.ViewComponents
           new Person() { PersonName = "William", JobTitle = "Clerk" },
         }
       };
-      return View("Sample", personGridModel); //invoked a partial view Views/Shared/Components/Grid/Default.cshtml
+            // در برنامه قبلی به این شکل مدل پاس داده شده است
+            // ViewData["Grid"] = model;
+            //return View("Sample");
+            // ولی حالا مستقیم با ویو مدل آن هم به ویو ارسال میشود
+            return View("Sample", personGridModel); //invoked a partial view Views/Shared/Components/Grid/Default.cshtml
     }
   }
 }

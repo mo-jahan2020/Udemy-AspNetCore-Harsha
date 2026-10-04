@@ -1,0 +1,54 @@
+@model LoginViewModel
+@{
+    ViewData["Title"] = "ورود";
+}
+<div class="row justify-content-center">
+    <div class="col-md-5">
+        <div class="chapter-card p-4">
+            <h3 class="mb-1">🔑 ورود به آزمایشگاه</h3>
+            <p class="text-muted small">
+                احراز هویت واقعی با کوکی امن — بند V6.3.1 (قفل‌گذاری) و V7.2.4 (تمدید سشن) در همین فرم فعال است.
+            </p>
+
+            @if (!string.IsNullOrEmpty(Model.Error))
+            {
+                <div class="alert alert-danger">@Model.Error</div>
+            }
+
+            <form asp-action="Login" method="post">
+                @Html.AntiForgeryToken()
+                <div class="mb-3">
+                    <label class="form-label" for="Username">نام کاربری</label>
+                    <input type="text" id="Username" name="Username" value="@Model.Username" class="form-control" dir="ltr" autocomplete="username" />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="Password">گذرواژه</label>
+                    <input type="password" id="Password" name="Password" class="form-control" dir="ltr" autocomplete="current-password" />
+                </div>
+                <button type="submit" class="btn btn-success w-100">ورود</button>
+            </form>
+
+            <hr />
+            <div class="small">
+                <b>کاربران دمو:</b>
+                <div class="row g-1 mt-1">
+                    <div class="col-6">
+                        <div class="border rounded p-2">
+                            <code dir="ltr">admin / Admin123!</code><br />
+                            <span class="text-muted">نقش Admin — برای دموی V8</span>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="border rounded p-2">
+                            <code dir="ltr">ali / Ali12345!</code><br />
+                            <span class="text-muted">نقش User — برای دموی IDOR</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-2">
+                    حساب ندارید؟ <a asp-action="Register">ثبت‌نام کنید</a> — سیاست گذرواژه V6.2 روی ثبت‌نام واقعاً اعمال می‌شود!
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,8 @@
+﻿@{ ViewData["Title"] = "نتیجه بررسی XSS"; }
+<div class="text-center mt-5" dir="rtl">
+    <h2>نتیجه بررسی کدگذاری خروجی (XSS)</h2>
+    <p class="text-muted">بند OWASP ASVS: V5.1.2</p>
+    <div class="alert alert-danger mx-auto" style="max-width: 600px;"><strong>ورودی خام (خطرناک):</strong><br/>@ViewBag.RawInput</div>
+    <div class="alert alert-success mx-auto" style="max-width: 600px;"><strong>خروجی کدگذاری شده (امن):</strong><br/>@Html.Raw(ViewBag.SafeInput)</div>
+    <a asp-action="Index" class="btn btn-secondary">بازگشت</a>
+</div>

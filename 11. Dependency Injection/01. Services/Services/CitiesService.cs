@@ -1,23 +1,33 @@
-﻿namespace Services
+﻿// سرویس ها کلاس هایی هستند که شامل منطق بیزینس ما میباشند.
+// مانند محاسبات ، منطق های مختلف ، validates ...
+// مهم : سرویس ها لایه دیتا نمی باشند بلکه واسط بین لایه های مختلف  - مانند ارائه و لایه دیتا - میباشند
+// آنها لایه بیزینس را از لایه های دیگر مانند لایه دیتا یا لایه ارائه یا لایه اپلیکیشن جدا میکنند
+// دلیل ایجاد این مکانیزم: راحتی عیب یابی و استفاده مجدد و راحتی تست میباشد
+// سرویس های می توانند توسط کنترلر ها درخواست شوند : invoke
+// می تونستیم سرویس های مختلف را در همان برنامه در یک کلاس تعریف کنیم و ارائه دهیم
+// ولی ما یک class libraray ایجاد میکنیم و تمام منطق بیزینس را اینجا بصورت سرویس طراحی می کنیم
+// پس پروژه دوم یک class libarary است
+namespace Services
 {
-  public class CitiesService
-  {
-    private List<string> _cities;
-
-    public CitiesService()
+    public class CitiesService
     {
-      _cities = new List<string>() { 
+        private List<string> _cities;
+        // define a class
+        public CitiesService()
+        {
+            _cities = new List<string>() {
         "London",
         "Paris",
         "New York",
         "Tokyo",
         "Rome"
       };
-    }
+        }
 
-    public List<string> GetCities()
-    {
-      return _cities;
+        public List<string> GetCities()
+        {
+            // در محیط حقیقی قبل از باز گرداندن اطلاعات به کنترلر ، کار خواندن از دیتابیس و ...  اینجا انجام میشود
+            return _cities;
+        }
     }
-  }
 }

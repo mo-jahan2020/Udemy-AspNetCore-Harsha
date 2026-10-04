@@ -50,7 +50,11 @@ namespace ModelValidationsExample.Models
   public DateTime? ToDate { get; set; }
 
   public int? Age { get; set; }
-
+        // یک مجموعه از تگ ها را قبول میکند
+        // در پوست من:
+        // Tags[0] = "C#"
+        // Tags[1] = "Java"
+        // حال اگر مقادیر یالا ارسال شود مقدار tags=دارای دو عنصر فوق خواهد شد
   public List<string?> Tags { get; set; } = new List<string?>();
 
 

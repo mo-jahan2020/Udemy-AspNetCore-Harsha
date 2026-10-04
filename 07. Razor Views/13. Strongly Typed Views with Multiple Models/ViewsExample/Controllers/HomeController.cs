@@ -44,7 +44,7 @@ namespace ViewsExample.Controllers
       Person person = new Person() { Name = "Sara", PersonGender = Gender.Female, DateOfBirth = Convert.ToDateTime("2004-07-01") };
 
       Product product = new Product() { ProductId = 1, ProductName = "Air Conditioner" };
-
+            // ارسال دو کلاس به View مورد نظر: person و product
       PersonAndProductWrapperModel personAndProductWrapperModel = new PersonAndProductWrapperModel() {  PersonData = person, ProductData = product };
       return View(personAndProductWrapperModel);
     }

@@ -1,4 +1,6 @@
 ﻿@using ViewsExample.Models
+<!-- فقط یک پرسون وارد این ویو میشود-->
+<!-- مقدار پاس داده شده در model ریخته میشود-->
 @model Person
 
 <!DOCTYPE html>
@@ -12,6 +14,7 @@
  <div class="page-content">
   <h1>Person Details</h1>
   <div class="box">
+            <!-- و اینجا استفاده میشود-->
    <h3>@Model.Name</h3>
    <table class="table w-100">
     <tbody>

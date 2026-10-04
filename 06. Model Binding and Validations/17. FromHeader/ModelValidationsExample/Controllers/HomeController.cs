@@ -7,7 +7,10 @@ namespace ModelValidationsExample.Controllers
   public class HomeController : Controller
   {
     [Route("register")]
-    public IActionResult Index(Person person, [FromHeader(Name = "User-Agent")] string UserAgent)
+        // user-agent پیش فرض از طرف فرستنده در هدر ست میشود
+        //بجای مقدار فوق میتوان KEY گذاشت .
+        // در آن صورت باید در هدر پوستمن باید آن را مقدار دهی شود
+        public IActionResult Index(Person person, [FromHeader(Name = "User-Agent")] string UserAgent)
     {
       if (!ModelState.IsValid)
       {
@@ -16,7 +19,7 @@ namespace ModelValidationsExample.Controllers
   
         return BadRequest(errors);
       }
-
+      // علاوه بر پرسن آن مقدار هم برگشت داده میشود
       return Content($"{person}, {UserAgent}");
     }
   }

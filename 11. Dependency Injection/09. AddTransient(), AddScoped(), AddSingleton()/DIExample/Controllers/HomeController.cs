@@ -31,7 +31,16 @@ namespace DIExample.Controllers
 
       ViewBag.InstanceId_CitiesService_3 = _citiesService3.ServiceInstanceId;
 
-      using (IServiceScope scope = _serviceScopeFactory.CreateScope())
+            /*
+             * این کد به‌صورت دستی یک Scope جدید می‌سازد 
+             * و از داخل آن یک نمونه از ICitiesService می‌گیرد.
+             * معمولاً 
+             * این الگو برای آزمایش و نمایش تفاوت رفتار Lifetime‌ها (Transient / Scoped / Singleton) 
+             * در یک Controller نوشته می‌شود — یعنی می‌خواهید نشان دهید که یک سرویس Scoped وقتی از یک
+             * Scope دستی جدید گرفته شود،
+             * نمونه‌ی متفاوتی نسبت به سرویسی دارد که DI به‌صورت خودکار در Constructor کنترلر تزریق کرده است.
+             * */
+            using (IServiceScope scope = _serviceScopeFactory.CreateScope())
       {
         //Inject CitiesService
         ICitiesService citiesService = scope.ServiceProvider.GetRequiredService<ICitiesService>();

@@ -1,4 +1,6 @@
 ﻿@using ViewsExample.Models
+<!-- مجموعه ای از پرسون ها وارد این ویو میشود-->
+<!-- مقدار پاس داده شده در model ریخته میشود-->
 @model IEnumerable<Person>
 
 <!DOCTYPE html>
@@ -11,7 +13,7 @@
 <body>
  <div class="page-content">
   <h1>Persons</h1>
-
+  <!-- و اینجا استفاده میشود-->
   @foreach (Person person in Model)
   {
    <div class="box float-left w-50">

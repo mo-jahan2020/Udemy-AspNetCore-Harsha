@@ -1,0 +1,128 @@
+@{
+    ViewData["Title"] = "آزمایشگاه OWASP ASVS";
+}
+
+<!-- معرفی برنامه -->
+<div class="p-4 mb-4 bg-dark text-white rounded-3">
+    <h1 class="display-6 fw-bold">🛡️ آزمایشگاه OWASP ASVS 4.0.3</h1>
+    <p class="mb-1">
+        با زدن هر دکمه، یکی از بندهای استاندارد امنیتی OWASP ASVS به‌صورت «عملی» اجرا و توضیح داده می‌شود.
+        شماره بند مربوطه در هر صفحه نتیجه، داخل کادر مشکی نمایش داده می‌شود.
+    </p>
+    <small class="text-warning">
+        ⚠️ بخش‌هایی که به سرویس جانبی نیاز دارند (مانند دموی Redis) داخل کامنت کد و روی دکمه مشخص شده‌اند؛
+        بندهایی که امکان اجرای واقعی ندارند، به‌صورت متنی توضیح داده شده‌اند.
+    </small>
+</div>
+
+<!-- ردیف اول: V2 تا V4 -->
+<div class="row g-3 mb-3">
+
+    <!-- کارت V2 -->
+    <div class="col-12 col-md-6 col-xl-4">
+        <div class="card section-card shadow-sm">
+            <div class="card-header bg-success text-white">🔐 V2 — احراز هویت</div>
+            <div class="card-body d-grid gap-2">
+                <a class="btn btn-outline-success" asp-controller="Authentication" asp-action="PasswordHash">هش امن رمز عبور با PBKDF2 + Salt</a>
+                <a class="btn btn-outline-success" asp-controller="Authentication" asp-action="PasswordPolicy">بررسی سیاست رمز عبور (فرم ورودی)</a>
+                <a class="btn btn-outline-success" asp-controller="Authentication" asp-action="RedisLockout">قفل‌سازی حساب با Redis ⚠️</a>
+                <a class="btn btn-outline-success" asp-controller="Authentication" asp-action="InMemoryLockout">قفل‌سازی حساب درون‌حافظه‌ای</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- کارت V3 -->
+    <div class="col-12 col-md-6 col-xl-4">
+        <div class="card section-card shadow-sm">
+            <div class="card-header bg-info text-dark">⏳ V3 — مدیریت نشست</div>
+            <div class="card-body d-grid gap-2">
+                <a class="btn btn-outline-info" asp-controller="SessionManagement" asp-action="CookieFlags">پرچم‌های امنیتی کوکی</a>
+                <a class="btn btn-outline-info" asp-controller="SessionManagement" asp-action="SessionTimeout">انقضای خودکار نشست</a>
+                <a class="btn btn-outline-info" asp-controller="SessionManagement" asp-action="LogoutInvalidation">ابطال کامل نشست هنگام خروج</a>
+                <a class="btn btn-outline-info" asp-controller="SessionManagement" asp-action="SessionFixation">ضد Session Fixation</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- کارت V4 -->
+    <div class="col-12 col-md-6 col-xl-4">
+        <div class="card section-card shadow-sm">
+            <div class="card-header bg-danger text-white">🚪 V4 — کنترل دسترسی</div>
+            <div class="card-body d-grid gap-2">
+                <a class="btn btn-outline-danger" asp-controller="AccessControl" asp-action="DenyByDefault">انکار به‌صورت پیش‌فرض + حداقل دسترسی</a>
+                <a class="btn btn-outline-danger" asp-controller="AccessControl" asp-action="Idor">تست حمله IDOR (فرم ورودی)</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ردیف دوم: V5 تا V6 -->
+<div class="row g-3 mb-3">
+
+    <!-- کارت V5 -->
+    <div class="col-12 col-md-6 col-xl-6">
+        <div class="card section-card shadow-sm">
+            <div class="card-header bg-warning text-dark">🧹 V5 — اعتبارسنجی ورودی</div>
+            <div class="card-body d-grid gap-2">
+                <a class="btn btn-outline-warning" asp-controller="InputValidation" asp-action="SqlInjection">SQL Injection با دیتابیس واقعی (فرم ورودی)</a>
+                <a class="btn btn-outline-warning" asp-controller="InputValidation" asp-action="Xss">حمله XSS و انکدینگ خروجی (فرم ورودی)</a>
+                <a class="btn btn-outline-warning" asp-controller="InputValidation" asp-action="PathTraversal">Path Traversal / فایل غیرمجاز (فرم ورودی)</a>
+                <a class="btn btn-outline-warning" asp-controller="InputValidation" asp-action="AllowList">اعتبارسنجی Allow-List کد ملی (فرم ورودی)</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- کارت V6 -->
+    <div class="col-12 col-md-6 col-xl-6">
+        <div class="card section-card shadow-sm">
+            <div class="card-header bg-primary text-white">🔑 V6 — رمزنگاری</div>
+            <div class="card-body d-grid gap-2">
+                <a class="btn btn-outline-primary" asp-controller="Cryptography" asp-action="AesGcm">AES-256-GCM و تشخیص دستکاری</a>
+                <a class="btn btn-outline-primary" asp-controller="Cryptography" asp-action="WeakCrypto">چرا MD5 و ECB ممنوع‌اند</a>
+                <a class="btn btn-outline-primary" asp-controller="Cryptography" asp-action="RandomToken">توکن تصادفی امن (CSPRNG)</a>
+                <a class="btn btn-outline-primary" asp-controller="Cryptography" asp-action="Hmac">امضای پیام با HMAC-SHA256</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ردیف سوم: V7 تا V14 -->
+<div class="row g-3">
+
+    <!-- کارت V7 -->
+    <div class="col-12 col-md-6 col-xl-4">
+        <div class="card section-card shadow-sm">
+            <div class="card-header bg-secondary text-white">📋 V7 — لاگ و مدیریت خطا</div>
+            <div class="card-body d-grid gap-2">
+                <a class="btn btn-outline-secondary" asp-controller="ErrorLogging" asp-action="SafeError">خطای عمومی + شناسه یکتا</a>
+                <a class="btn btn-outline-secondary" asp-controller="ErrorLogging" asp-action="LogInjection">حمله Log Injection (فرم ورودی)</a>
+                <a class="btn btn-outline-secondary" asp-controller="ErrorLogging" asp-action="NoSensitiveLogs">ممنوعیت داده حساس در لاگ</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- کارت V8 -->
+    <div class="col-12 col-md-6 col-xl-4">
+        <div class="card section-card shadow-sm">
+            <div class="card-header bg-dark text-white">🛡️ V8 — محافظت از داده</div>
+            <div class="card-body d-grid gap-2">
+                <a class="btn btn-outline-dark" asp-controller="DataProtection" asp-action="DataProtectionApi">Data Protection API و Purpose</a>
+                <a class="btn btn-outline-dark" asp-controller="DataProtection" asp-action="NoCache">جلوگیری از کش داده حساس</a>
+                <a class="btn btn-outline-dark" asp-controller="DataProtection" asp-action="PiiStorage">ذخیره امن کد ملی (PII)</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- کارت V14 -->
+    <div class="col-12 col-md-6 col-xl-4">
+        <div class="card section-card shadow-sm">
+            <div class="card-header bg-body-secondary text-dark">⚙️ V14 — پیکربندی امن</div>
+            <div class="card-body d-grid gap-2">
+                <a class="btn btn-outline-secondary" asp-controller="Configuration" asp-action="SecurityHeaders">هدرهای امنیتی HTTP</a>
+                <a class="btn btn-outline-secondary" asp-controller="Configuration" asp-action="NoVersionInfo">عدم افشای نسخه سرور</a>
+                <a class="btn btn-outline-secondary" asp-controller="Configuration" asp-action="SecretsManagement">مدیریت امن Secrets</a>
+                <a class="btn btn-outline-secondary" asp-controller="Configuration" asp-action="SriExplanation">یکپارچگی CDN با SRI (متنی)</a>
+            </div>
+        </div>
+    </div>
+</div>

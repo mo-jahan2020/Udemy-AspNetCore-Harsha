@@ -1,0 +1,9 @@
+﻿@{ ViewData["Title"] = "V5.1.2: جلوگیری از XSS"; }
+<div class="text-center mt-5" dir="rtl">
+    <h2>بند V5.1.2: کدگذاری خروجی برای جلوگیری از XSS</h2>
+    <form asp-controller="InputValidation" asp-action="XssDemo" method="post" class="mx-auto" style="max-width: 500px;">
+        <input type="text" name="userInput" class="form-control mb-3" value="<script>alert('XSS')</script>" required />
+        <button type="submit" class="btn btn-warning w-100">بررسی کدگذاری</button>
+    </form>
+    <a asp-controller="Home" asp-action="Index" class="btn btn-secondary mt-3">بازگشت</a>
+</div>

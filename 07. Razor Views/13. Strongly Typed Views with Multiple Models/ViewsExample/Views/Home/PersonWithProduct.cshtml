@@ -1,4 +1,6 @@
 ﻿@using ViewsExample.Models
+<!-- دریافت هر دو کلاس در قالب یک کلاس-->
+<!-- ریخت آن در Model-->
 @model PersonAndProductWrapperModel
 
 <!DOCTYPE html>
@@ -18,6 +20,7 @@
     <tbody>
      <tr>
       <td>Person Name</td>
+      <!-- استفاده از کلاس persondata -->
       <td>@Model.PersonData.Name</td>
      </tr>
      <tr>
@@ -34,6 +37,7 @@
     <tbody>
      <tr>
       <td>Product Id</td>
+      <!-- استفاده از کلاس productdata -->
       <td>@Model.ProductData.ProductId</td>
      </tr>
      <tr>

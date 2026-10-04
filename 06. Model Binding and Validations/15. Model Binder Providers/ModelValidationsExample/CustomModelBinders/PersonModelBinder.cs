@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
 using ModelValidationsExample.Models;
-
+// بجای کلاس پیش فرض از این کلاس کاستوم استفاده کنیم
 namespace ModelValidationsExample.CustomModelBinders
 {
  public class PersonModelBinder : IModelBinder

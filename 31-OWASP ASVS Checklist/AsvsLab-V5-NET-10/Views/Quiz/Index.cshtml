@@ -1,0 +1,36 @@
+@model List<QuizChapterRow>
+@{
+    ViewData["Title"] = "کوییز ASVS";
+}
+<h2 class="mb-1">🧪 کوییز فصل‌های ASVS 5.0</h2>
+<p class="text-muted small">
+    برای هر فصل ۲ سوال چهارگزینه‌ای — بهترین نمره شما در سشن ذخیره می‌شود. نمره ۶۰٪ و بالاتر یعنی «قبول».
+</p>
+
+<div class="row g-3">
+    @foreach (var row in Model)
+    {
+        <div class="col-md-6 col-xl-4">
+            <div class="chapter-card p-3 d-flex justify-content-between align-items-center h-100">
+                <div>
+                    <span class="chapter-badge">V@row.Chapter</span> @row.FaTitle
+                    <div class="small text-muted mt-1">@row.QuestionCount سوال</div>
+                </div>
+                <div class="text-center">
+                    @if (row.BestScore >= 0)
+                    {
+                        <div class="@(row.BestScore >= 60 ? "text-success" : "text-danger") fw-bold">@row.BestScore٪</div>
+                    }
+                    <a asp-action="Chapter" asp-route-ch="@row.Chapter" class="btn btn-sm btn-outline-success mt-1">
+                        @(row.BestScore >= 0 ? "تکرار" : "شروع")
+                    </a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<form asp-action="Reset" method="post" class="mt-4">
+    @Html.AntiForgeryToken()
+    <button type="submit" class="btn btn-sm btn-outline-danger">بازنشانی همه نمرات و پیشرفت</button>
+</form>

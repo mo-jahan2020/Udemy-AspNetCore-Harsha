@@ -1,0 +1,9 @@
+﻿@{ ViewData["Title"] = "V8.1.1: محافظت CSRF"; }
+<div class="text-center mt-5" dir="rtl">
+    <h2>بند V8.1.1: محافظت در برابر CSRF</h2>
+    <form asp-controller="RequestProtection" asp-action="CsrfAction" method="post" class="mx-auto" style="max-width: 500px;">
+        @Html.AntiForgeryToken()
+        <button type="submit" class="btn btn-success w-100">ارسال درخواست امن</button>
+    </form>
+    <a asp-controller="Home" asp-action="Index" class="btn btn-secondary mt-3">بازگشت</a>
+</div>

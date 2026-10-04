@@ -3,6 +3,10 @@
 }
 
 <h1>Home</h1>
+<!--پاس دادن پرسون کاستوم برای هر ویر-->
+<!-- راه اول اینجاست و راه دوم در ابوت-->
+
+<!--کلاس سفارشی ساخته شده-->
 @{
  PersonGridModel personGridModel = new PersonGridModel()
    {
@@ -15,6 +19,7 @@
     }
    };
 }
+<!--و برای استفاده به ویو کامپاننت پاس داده میشود-->
 @await Component.InvokeAsync("Grid", new {
    grid = personGridModel
 })

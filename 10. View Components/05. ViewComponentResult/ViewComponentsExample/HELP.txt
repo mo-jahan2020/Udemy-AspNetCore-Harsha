@@ -1,0 +1,88 @@
+﻿۱. شروع از سمت کاربر (مرورگر)
+
+در Views/Home/Index.cshtml یک دکمه هست:
+
+html
+<button id="load-friends-button">Load Friends</button>
+<div id="list"></div>
+<script src="~/friends.js"></script>
+
+فایل friends.js روی این دکمه یک event listener می‌بنده:
+
+js
+document.querySelector("#load-friends-button").addEventListener("click", async function () {
+    var response = await fetch("friends-list", { method: "GET" });
+    var responseBody = await response.text();
+    document.querySelector("#list").innerHTML = responseBody;
+});
+
+یعنی وقتی کاربر کلیک می‌کنه، یک درخواست AJAX (fetch) به مسیر friends-list می‌فرسته — این یک full page reload نیست، فقط یک HTTP GET پس‌زمینه است.
+
+۲. رسیدن به Controller
+
+مسیر /friends-list روی این اکشن مپ شده:
+
+csharp
+[Route("friends-list")]
+public IActionResult LoadFriendsList()
+{
+    PersonGridModel personGridModel = new PersonGridModel() { ... };
+    return ViewComponent("Grid", new { grid = personGridModel });
+}
+
+اینجا کنترلر داده رو می‌سازه (مدل PersonGridModel) و به‌جای View()، متد ViewComponent(...) رو صدا می‌زنه. این متد یک شیء از نوع ViewComponentResult برمی‌گردونه، نه HTML مستقیم.
+
+نکته‌ی مهم پاس دادن داده: پارامتر دوم new { grid = personGridModel } یک anonymous object است که property‌هاش باید با نام پارامترهای متد InvokeAsync در ViewComponent مچ بشه.
+
+۳. اجرای ViewComponentResult → پیدا کردن ViewComponent
+
+فریم‌ورک وقتی به ViewComponentResult می‌رسه، باید View Component رو با نام "Grid" پیدا کنه. طبق قرارداد نام‌گذاری، دنبال کلاسی می‌گرده که یا اسمش GridViewComponent باشه یا با [ViewComponent(Name="Grid")] مزین شده باشه:
+
+csharp
+public class GridViewComponent : ViewComponent
+{
+    public async Task<IViewComponentResult> InvokeAsync(PersonGridModel grid)
+    {
+        return View("Sample", grid);
+    }
+}
+
+پارامتر grid در InvokeAsync دقیقاً با کلید grid که در کنترلر پاس دادیم مچ می‌شه (model binding مانند controller نیست؛ اینجا از طریق reflection/matching نام آرگومان‌ها انجام می‌شه، نه از query string یا body).
+
+۴. ViewComponent → انتخاب View جزئی
+
+داخل InvokeAsync، با View("Sample", grid) یک ViewViewComponentResult ساخته می‌شه که می‌گه: «ویویی به نام Sample رو با این مدل رندر کن». چون این View Component مستقیماً از کنترلر (نه از داخل یک View دیگه) صدا زده شده، مسیر جست‌وجوش می‌ره سراغ پوشه‌ی Shared:
+
+Views/Shared/Components/Grid/Sample.cshtml
+
+(الگوی مسیر: Views/Shared/Components/{نام کامپوننت}/{نام ویو})
+
+۵. رندر شدن Sample.cshtml
+cshtml
+@model PersonGridModel
+<div class="box">
+ <h3>@Model.GridTitle</h3>
+ <table>...@foreach (Person person in Model.Persons) {...}</table>
+</div>
+
+همون مدلی که در کنترلر ساختیم و به ViewComponent پاس دادیم، اینجا مصرف می‌شه و یک تکه HTML (فقط یک div با جدول، نه یک صفحه‌ی کامل با layout) تولید می‌شه.
+
+۶. برگشت به سمت جاوااسکریپت
+
+این HTML تولیدشده، بدنه‌ی پاسخ HTTP همون درخواست fetch می‌شه. در friends.js:
+
+js
+var responseBody = await response.text();  // همین HTML جدول
+document.querySelector("#list").innerHTML = responseBody; // تزریق در صفحه
+جمع‌بندی چرخه
+کلیک کاربر
+   → friends.js → fetch("friends-list")
+      → HomeController.LoadFriendsList() [می‌سازه: PersonGridModel]
+         → ViewComponent("Grid", new { grid = model }) → ViewComponentResult
+            → GridViewComponent.InvokeAsync(grid) [پیدا شده با نام‌گذاری]
+               → View("Sample", grid) → رندر Views/Shared/Components/Grid/Sample.cshtml
+                  → خروجی: تکه‌ی HTML
+      ← پاسخ HTTP برمی‌گرده به fetch
+   ← friends.js با innerHTML آن را در <div id="list"> می‌گذارد
+
+نقش جاوااسکریپت اینجا پل ارتباطی بدون رفرش صفحه است: به‌جای اینکه کاربر با کلیک به یک URL جدید هدایت بشه (که کل صفحه دوباره لود بشه)، JS به‌صورت async فقط همون تکه HTML تولیدشده توسط ViewComponent رو می‌گیره و در DOM جاگذاری می‌کنه — دقیقاً همون سناریویی که ViewComponentResult برای آن طراحی شده: تولید یک "chunk" مستقل از HTML که می‌تونه مستقیماً از یک اندپوینت هم برگرده، نه فقط از داخل یک View والد.

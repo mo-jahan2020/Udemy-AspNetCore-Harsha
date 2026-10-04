@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<!--
+  ============================================================================
+  Layout مشترک برنامه — فارسی و راست‌چین (RTL)
+  Bootstrap به‌صورت «آفلاین» از wwwroot/lib لود می‌شود (بدون نیاز به اینترنت)
+  این رویکرد علاوه بر دسترسی آفلاین، بند V14.2.3 (SRI برای CDN) را هم بی‌نیاز می‌کند
+  ============================================================================
+-->
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="utf-8" />
+    <!-- بند V14.4.1: متا Charset امن UTF-8 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>آزمایشگاه OWASP ASVS — دموی عملی بندهای استاندارد</title>
+
+    <!-- فونت فارسی آفلاین (Vazirmatn) -->
+    <link rel="stylesheet" href="~/lib/vazirmatn/fonts.css" asp-append-version="true" />
+
+    <!-- Bootstrap RTL آفلاین -->
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.rtl.min.css" asp-append-version="true" />
+
+    <!-- استایل اختصاصی برنامه -->
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+    <!-- منوی بالای صفحه -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold" asp-controller="Home" asp-action="Index">
+                🛡️ آزمایشگاه OWASP ASVS
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="mainNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="Index">داشبورد</a></li>
+                    <li class="nav-item"><a class="nav-link" asp-controller="Authentication" asp-action="PasswordHash">V2 احراز هویت</a></li>
+                    <li class="nav-item"><a class="nav-link" asp-controller="SessionManagement" asp-action="CookieFlags">V3 نشست</a></li>
+                    <li class="nav-item"><a class="nav-link" asp-controller="AccessControl" asp-action="DenyByDefault">V4 کنترل دسترسی</a></li>
+                    <li class="nav-item"><a class="nav-link" asp-controller="InputValidation" asp-action="SqlInjection">V5 ورودی‌ها</a></li>
+                    <li class="nav-item"><a class="nav-link" asp-controller="Cryptography" asp-action="AesGcm">V6 رمزنگاری</a></li>
+                    <li class="nav-item"><a class="nav-link" asp-controller="ErrorLogging" asp-action="SafeError">V7 لاگ/خطا</a></li>
+                    <li class="nav-item"><a class="nav-link" asp-controller="DataProtection" asp-action="DataProtectionApi">V8 محافظت داده</a></li>
+                    <li class="nav-item"><a class="nav-link" asp-controller="Configuration" asp-action="SecurityHeaders">V14 پیکربندی</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- محتوای هر صفحه -->
+    <main class="container py-4">
+        @RenderBody()
+    </main>
+
+    <footer class="bg-light border-top py-3 text-center text-muted small">
+        <div class="container">
+            آزمایشگاه آموزشی OWASP ASVS 4.0.3 با ASP.NET Core 8 — همه دموها فقط برای یادگیری؛
+            <span class="text-danger fw-bold">کدهای «آسیب‌پذیر» موجود در دموها هرگز در پروژه واقعی استفاده نشوند!</span>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS آفلاین (برای منوی واکنش‌گرا) -->
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

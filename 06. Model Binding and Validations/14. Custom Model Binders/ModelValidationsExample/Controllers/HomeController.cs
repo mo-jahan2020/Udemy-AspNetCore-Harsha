@@ -36,6 +36,7 @@ namespace ModelValidationsExample.Controllers
             }
 
             return Content($"{person}");
+            
         }
     }
 }

@@ -8,7 +8,7 @@ namespace DIExample.Controllers
   {
     private readonly ICitiesService _citiesService;
 
-    //constructor
+    //به این مدل تزریق  constructor injection گفته میشود
     public HomeController(ICitiesService citiesService)
     {
       //create object of CitiesService class

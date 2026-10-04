@@ -1,0 +1,11 @@
+﻿@{ ViewData["Title"] = "نتیجه بررسی CSRF"; }
+<div class="text-center mt-5" dir="rtl">
+    <h2>نتیجه بررسی محافظت در برابر CSRF</h2>
+    <p class="text-muted">بند OWASP ASVS: V8.1.1</p>
+    @if (ViewBag.Success == true) {
+        <div class="alert alert-success mx-auto" style="max-width: 600px;"><strong>موفقیت!</strong> درخواست با توکن Anti-CSRF پردازش شد.</div>
+    } else {
+        <div class="alert alert-danger mx-auto" style="max-width: 600px;"><strong>خطا:</strong> توکن CSRF معتبر نیست.</div>
+    }
+    <a asp-action="Index" class="btn btn-secondary">بازگشت</a>
+</div>

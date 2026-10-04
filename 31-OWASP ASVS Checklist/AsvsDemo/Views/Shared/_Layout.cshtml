@@ -1,0 +1,31 @@
+﻿<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <!-- Bootstrap 5 RTL - نسخه آفلاین -->
+    <link href="~/lib/bootstrap/css/bootstrap.rtl.min.css" rel="stylesheet" />
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-light bg-light border-bottom box-shadow mb-3">
+            <div class="container-fluid">
+                <a class="navbar-brand fw-bold" asp-controller="Home" asp-action="Index">OWASP ASVS Integrated Hub</a>
+            </div>
+        </nav>
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+    <footer class="border-top footer text-muted text-center py-3 mt-5">
+        <div class="container">
+            پروژه یکپارچه OWASP ASVS - 2026
+        </div>
+    </footer>
+    <!-- Bootstrap 5 JS Bundle - نسخه آفلاین -->
+    <script src="~/lib/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

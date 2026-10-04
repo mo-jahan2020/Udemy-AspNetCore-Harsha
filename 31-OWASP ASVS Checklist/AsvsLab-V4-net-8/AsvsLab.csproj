@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <!-- ============================================================
+       پروژه آموزشی: دموی عملی بندهای استاندارد OWASP ASVS 4.0.3
+       فریم‌ورک هدف: .NET 8 (LTS)
+       بسته‌های خارجی:
+         - Microsoft.Data.Sqlite : برای دموی واقعی SQL Injection (دیتابیس درون‌حافظه‌ای)
+         - StackExchange.Redis   : برای دموی قفل‌سازی حساب توزیع‌شده
+       ============================================================ -->
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>AsvsLab</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- دموی SQL Injection: دیتابیس SQLite کاملاً درون‌حافظه‌ای (بدون نیاز به نصب هیچ سرویسی) -->
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="8.0.8" />
+    <!-- دموی قفل‌سازی حساب با Redis
+         ⚠️ نکته: برای اجرای درست دموی Redis، سرویس Redis باید روی رایانه شما
+         نصب و اجرا شده باشد (آدرس پیش‌فرض: localhost:6379) -->
+    <PackageReference Include="StackExchange.Redis" Version="2.7.33" />
+  </ItemGroup>
+
+</Project>

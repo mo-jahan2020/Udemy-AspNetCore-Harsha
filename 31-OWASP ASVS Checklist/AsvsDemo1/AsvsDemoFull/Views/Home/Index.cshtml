@@ -1,0 +1,78 @@
+﻿@{ ViewData["Title"] = "مرکز دموهای OWASP ASVS"; }
+<div class="text-center" dir="rtl">
+    <h1 class="display-5 mb-4">مرکز نمایش عملی بندهای استاندارد OWASP ASVS</h1>
+    <p class="lead text-muted">این پروژه به صورت ماژولار طراحی شده تا بتوانید بندهای جدید را به راحتی اضافه کنید.</p>
+    
+    <div class="row mt-4">
+        <!-- V2 -->
+        <div class="col-md-4 mb-3">
+            <div class="card h-100 border-primary">
+                <div class="card-body">
+                    <h5 class="card-title text-primary">V2.1.1: اعتبارسنجی رمز عبور</h5>
+                    <form asp-action="CheckPassword" method="post">
+                        <input type="password" name="password" class="form-control mb-2" placeholder="رمز عبور" required />
+                        <button type="submit" class="btn btn-primary w-100">بررسی</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- V5 -->
+        <div class="col-md-4 mb-3">
+            <div class="card h-100 border-warning">
+                <div class="card-body">
+                    <h5 class="card-title text-warning">V5.1.2: جلوگیری از XSS</h5>
+                    <form asp-action="XssDemo" method="post">
+                        <input type="text" name="userInput" class="form-control mb-2" value="<script>alert(1)</script>" required />
+                        <button type="submit" class="btn btn-warning w-100">بررسی کدگذاری</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- V8 -->
+        <div class="col-md-4 mb-3">
+            <div class="card h-100 border-success">
+                <div class="card-body">
+                    <h5 class="card-title text-success">V8.1.1: محافظت CSRF</h5>
+                    <form asp-action="CsrfAction" method="post">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-success w-100">ارسال درخواست امن</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- V3 -->
+        <div class="col-md-4 mb-3">
+            <div class="card h-100 border-info">
+                <div class="card-body">
+                    <h5 class="card-title text-info">V3.2.1: کوکی امن نشست</h5>
+                    <form asp-action="SessionDemo" method="post">
+                        <button type="submit" class="btn btn-info w-100 text-white">ایجاد کوکی امن</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- V12 -->
+        <div class="col-md-4 mb-3">
+            <div class="card h-100 border-secondary">
+                <div class="card-body">
+                    <h5 class="card-title text-secondary">V12.3.3: آپلود امن فایل</h5>
+                    <form asp-action="FileUploadDemo" method="post" enctype="multipart/form-data">
+                        <input type="file" name="file" class="form-control mb-2" required />
+                        <button type="submit" class="btn btn-secondary w-100">آپلود و اعتبارسنجی</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- V7 -->
+        <div class="col-md-4 mb-3">
+            <div class="card h-100 border-danger">
+                <div class="card-body">
+                    <h5 class="card-title text-danger">V7.1.3: مدیریت خطای امن</h5>
+                    <form asp-action="ErrorHandlingDemo" method="post">
+                        <button type="submit" class="btn btn-danger w-100">شبیه‌سازی خطا</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

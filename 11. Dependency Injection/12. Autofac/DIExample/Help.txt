@@ -1,0 +1,112 @@
+﻿
+ویژگی	MS DI	Autofac
+توکار بودن (بدون NuGet)	✅	❌
+Transient / Scoped / Singleton	✅	✅
+Factory Registration	✅	✅
+Generic Registration	✅	✅
+Property Injection	❌	✅
+Assembly Scanning	❌ (دستی)	✅
+Module System	❌	✅
+Interceptor (AOP)	❌	✅
+Decorator	❌ (دستی)	✅
+Composite Services	❌ (دستی)	✅
+Conditional Registration	محدود	✅ (پیشرفته)
+Child Lifetime Scope	محدود	✅
+Instance Per Matching Scope	❌	✅
+عملکرد (Startup)	سریع‌تر	کمی کندتر
+منابع آموزشی رسمی	✅ تیم .NET	✅ مستندات کامل خودش
+
+
+
+
+Share
+در asp.net core تفاوت دو مدل DI ذیل را در قالب یک فایل md به  من نشان بده :
+Microsoft.Extetions.DependencyInjection
+Autofac 
+
+Thought Process
+مقایسه Microsoft.Extensions.DependencyInjection و Autofac
+در ادامه محتوای فایل DI-Comparison.md را می‌بینید که می‌توانید مستقیماً کپی و ذخیره کنید:
+
+مقایسه DI Container ها در ASP.NET Core
+Microsoft.Extensions.DependencyInjection در برابر Autofac
+📌 مقدمه
+در ASP.NET Core دو رویکرد اصلی برای Dependency Injection وجود دارد:
+
+توضیح
+Microsoft.Extensions.DependencyInjection	DI Container توکار .NET (پیش‌فرض)
+Autofac	کتابخانه Third-Party قدرتمند و محبوب
+Autofac می‌تواند جایگزین کامل DI توکار شود، یا در کنار آن استفاده گردد.
+
+۱️⃣ Microsoft.Extensions.DependencyInjection (توکار)
+ویژگی‌ها
+✅ توکار و بدون نیاز به نصب پکیج اضافه
+✅ سبک، سریع و کم‌حجم
+✅ پشتیبانی رسمی تیم .NET
+✅ سازگاری کامل با تمام اکوسیستم ASP.NET Core
+❌ فاقد قابلیت‌های پیشرفته (AOP، Module، Decorator و...)
+مثال ثبت سرویس
+var builder = WebApplication.CreateBuilder(args);// ثبت با سه Lifetime اصلیbuilder.Services.AddTransient<IEmailService, EmailService>();builder.Services.AddScoped<IOrderService, OrderService>();builder.Services.AddSingleton<ICacheService, RedisCacheService>();// ثبت با Factorybuilder.Services.AddScoped<IPaymentGateway>(sp =>    new StripeGateway(builder.Configuration["Stripe:Key"]));// ثبت Instance آمادهbuilder.Services.AddSingleton(new AppSettings { Timeout = 30 });var app = builder.Build();
+محدودیت‌ها
+// ❌ Property Injection پشتیبانی نمی‌شود// ❌ Assembly Scanning داخلی ندارد// ❌ Interceptor (AOP) ندارد// ❌ ساختار Module برای سازماندهی ثبت‌ها ندارد// ❌ Decorator رسمی ندارد
+۲️⃣ Autofac
+ویژگی‌ها
+✅ قابلیت‌های پیشرفته و Enterprise-Level
+✅ Assembly Scanning و ثبت Convention-Based
+✅ Module System برای تفکیک ثبت‌ها
+✅ Property Injection
+✅ Interceptor (AOP) با Castle DynamicProxy
+✅ Decorator و Composite
+✅ Child Lifetime Scope با کنترل دقیق
+❌ نیاز به نصب پکیج NuGet
+نصب
+dotnet add package Autofac.Extensions.DependencyInjection
+راه‌اندازی
+var builder = WebApplication.CreateBuilder(args);// تعویض Container پیش‌فرض با Autofacbuilder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder =>{    // ثبت ساده    containerBuilder.RegisterType<EmailService>().As<IEmailService>()        .InstancePerDependency();    containerBuilder.RegisterType<OrderService>().As<IOrderService>()        .InstancePerLifetimeScope();    containerBuilder.RegisterType<RedisCacheService>().As<ICacheService>()        .SingleInstance();});var app = builder.Build();
+🔄 معادل‌های Lifetime
+Microsoft.Extensions.DependencyInjection	Autofac
+AddTransient<T>()	InstancePerDependency()
+AddScoped<T>()	InstancePerLifetimeScope()
+AddSingleton<T>()	SingleInstance()
+⚔️ جدول مقایسه کامل
+ویژگی	MS DI	Autofac
+توکار بودن (بدون NuGet)	✅	❌
+Transient / Scoped / Singleton	✅	✅
+Factory Registration	✅	✅
+Generic Registration	✅	✅
+Property Injection	❌	✅
+Assembly Scanning	❌ (دستی)	✅
+Module System	❌	✅
+Interceptor (AOP)	❌	✅
+Decorator	❌ (دستی)	✅
+Composite Services	❌ (دستی)	✅
+Conditional Registration	محدود	✅ (پیشرفته)
+Child Lifetime Scope	محدود	✅
+Instance Per Matching Scope	❌	✅
+عملکرد (Startup)	سریع‌تر	کمی کندتر
+منابع آموزشی رسمی	✅ تیم .NET	✅ مستندات کامل خودش
+🚀 قابلیت‌های انحصاری Autofac
+1. Assembly Scanning (ثبت گروهی)
+containerBuilder.RegisterAssemblyTypes(typeof(Program).Assembly)    .Where(t => t.Name.EndsWith("Service"))    .AsImplementedInterfaces()    .InstancePerLifetimeScope();
+2. Module System (سازماندهی ثبت‌ها)
+public class DataAccessModule : Autofac.Module{    protected override void Load(ContainerBuilder builder)    {        builder.RegisterType<SqlRepository>().As<IRepository>()            .InstancePerLifetimeScope();        builder.RegisterModule(new CachingModule());    }}// استفاده:containerBuilder.RegisterModule<DataAccessModule>();
+3. Property Injection
+public class OrderService{    public ILogger<OrderService> Logger { get; set; }  // تزریق خودکار    public IEmailService EmailService { get; set; }}containerBuilder.RegisterType<OrderService>()    .As<IOrderService>()    .PropertiesAutowired();  // ✅
+4. Interceptor (AOP - برنامه‌نویسی جنبه‌گرا)
+public class LoggingInterceptor : IInterceptor{    public void Intercept(IInvocation invocation)    {        Console.WriteLine($"شروع: {invocation.Method.Name}");        invocation.Proceed();        Console.WriteLine($"پایان: {invocation.Method.Name}");    }}containerBuilder.RegisterType<LoggingInterceptor>();containerBuilder.RegisterType<OrderService>()    .As<IOrderService>()    .EnableInterfaceInterceptors()    .InterceptedBy(typeof(LoggingInterceptor));
+5. Decorator
+// Repository اصلی + لایه Caching دور آنcontainerBuilder.RegisterType<SqlRepository>().As<IRepository>();containerBuilder.RegisterDecorator<CachedRepository, IRepository>();
+6. Child Scope (کنترل دقیق طول عمر)
+using (var scope = container.BeginLifetimeScope(    "payment-scope",    b => b.RegisterType<PaymentProcessor>().InstancePerLifetimeScope())){    var processor = scope.Resolve<PaymentProcessor>();}
+📊 کدام را انتخاب کنیم؟
+✅ MS DI کافی است وقتی:
+پروژه کوچک تا متوسط است
+فقط نیاز به Constructor Injection دارید
+نمی‌خواهید وابستگی به Third-Party داشته باشید
+تیم تازه‌کار است و سادگی مهم است
+✅ Autofac بهتر است وقتی:
+پروژه بزرگ و Enterprise است
+به AOP (لاگینگ، Transaction، Cache خودکار) نیاز دارید
+صدها سرویس دارید و Assembly Scanning حیاتی است
+نیاز به Module بندی و معماری Plug-in دارید
+Decorator Pattern را زیاد استفاده می‌کنید

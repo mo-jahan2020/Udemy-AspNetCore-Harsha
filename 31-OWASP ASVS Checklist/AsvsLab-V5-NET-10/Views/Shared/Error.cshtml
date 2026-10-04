@@ -1,0 +1,12 @@
+@model string
+@{
+    ViewData["Title"] = "خطا";
+}
+<div class="text-center py-5">
+    <h2>⚠️</h2>
+    <h4 class="mb-3">@Model</h4>
+    <p class="text-muted small">
+        بند V16.5.1 — در خطای غیرمنتظره فقط پیام عمومی نمایش داده می‌شود؛ جزئیات فنی (Stack Trace، کوئری، مسیر سرور) هرگز به کاربر نشان داده نمی‌شود.
+    </p>
+    <a asp-controller="Home" asp-action="Index" class="btn btn-success">🏠 بازگشت به داشبورد</a>
+</div>

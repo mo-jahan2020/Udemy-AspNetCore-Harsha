@@ -8,8 +8,8 @@ builder.Services.AddControllersWithViews();
 //  typeof(CitiesService),
 //  ServiceLifetime.Transient
 //));
-//builder.Services.AddTransient<ICitiesService, CitiesService>();
-builder.Services.AddScoped<ICitiesService, CitiesService>();
+builder.Services.AddTransient<ICitiesService, CitiesService>();
+//builder.Services.AddScoped<ICitiesService, CitiesService>();
 //builder.Services.AddSingleton<ICitiesService, CitiesService>();
 
 var app = builder.Build();

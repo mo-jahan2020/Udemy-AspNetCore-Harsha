@@ -1,0 +1,62 @@
+﻿@{ ViewData[""Title""] = ""مرکز دموهای پیشرفته OWASP ASVS""; }
+<div class=""text-center"" dir=""rtl"">
+    <h1 class=""display-5 mb-4"">دموهای پیشرفته OWASP ASVS (با شبیه‌سازی سیستم‌های خارجی)</h1>
+    <p class=""lead text-muted"">این پروژه نشان می‌دهد چگونه الزامات پیچیده ASVS که نیاز به زیرساخت خارجی دارند، در کد مدل‌سازی می‌شوند.</p>
+    
+    <div class=""row mt-4"">
+        <div class=""col-md-6 mb-3"">
+            <div class=""card h-100 border-info"">
+                <div class=""card-body"">
+                    <h5 class=""card-title text-info"">V6.1.1: رمزنگاری داده‌های حساس (شبیه‌سازی KMS)</h5>
+                    <p class=""small text-muted"">استفاده از IDataProtection به جای ذخیره متن ساده.</p>
+                    <form asp-action=""EncryptData"" method=""post"">
+                        <input type=""text"" name=""sensitiveData"" class=""form-control mb-2"" value=""شماره ملی: 1234567890"" required />
+                        <button type=""submit"" class=""btn btn-info w-100 text-white"">رمزنگاری و رمزگشایی</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class=""col-md-6 mb-3"">
+            <div class=""card h-100 border-primary"">
+                <div class=""card-body"">
+                    <h5 class=""card-title text-primary"">V4.1.1: کنترل دسترسی (شبیه‌سازی دیتابیس)</h5>
+                    <p class=""small text-muted"">بررسی نقش کاربر در دیتابیس In-Memory.</p>
+                    <form asp-action=""CheckAccess"" method=""post"">
+                        <select name=""username"" class=""form-control mb-2"">
+                            <option value=""admin"">admin (دسترسی دارد)</option>
+                            <option value=""user"">user (دسترسی ندارد)</option>
+                        </select>
+                        <button type=""submit"" class=""btn btn-primary w-100"">بررسی مجوز</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class=""col-md-6 mb-3"">
+            <div class=""card h-100 border-warning"">
+                <div class=""card-body"">
+                    <h5 class=""card-title text-warning"">V7.1.2: لاگ‌گذاری امن (شبیه‌سازی ELK/Splunk)</h5>
+                    <p class=""small text-muted"">تست فیلتر ماسک‌کردن خودکار اطلاعات حساس.</p>
+                    <form asp-action=""TestLogging"" method=""post"">
+                        <input type=""text"" name=""creditCard"" class=""form-control mb-2"" value=""6037-9911-1234-5678"" required />
+                        <input type=""password"" name=""password"" class=""form-control mb-2"" value=""SuperSecret123!"" required />
+                        <button type=""submit"" class=""btn btn-warning w-100"">ثبت لاگ (با داده حساس)</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class=""col-md-6 mb-3"">
+            <div class=""card h-100 border-danger"">
+                <div class=""card-body"">
+                    <h5 class=""card-title text-danger"">V11.1.1: محدودیت نرخ درخواست (شبیه‌سازی WAF/Redis)</h5>
+                    <p class=""small text-muted"">دکمه زیر را بیش از ۵ بار پشت سر هم بزنید.</p>
+                    <form asp-action=""Index"" method=""get"">
+                        <button type=""submit"" class=""btn btn-danger w-100"">ارسال درخواست تکراری</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

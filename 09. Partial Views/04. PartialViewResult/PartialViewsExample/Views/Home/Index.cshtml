@@ -1,15 +1,27 @@
 ﻿<h1>Home</h1>
-
+<!--یک دکمه که هیچ نوع submit فرمی نداره type="button" یعنی رفتار پیش‌فرض submit رو نداره این دکمه قراره باعث بارگذاری محتوا بشه-->
 <button class="button button-blue-back" type="button" id="button-load">Load Programming Languages</button>
 
+<!--یک container خالی که در ابتدا هیچ محتوایی نداره. این همون جایی هست که محتوای دریافتی از سرور بعداً داخلش قرار می‌گیره.-->
 <div class="box programming-languages-content">
 
 </div>
 
 <script>
+    //در اینجا کاربر روی دکمه "Load Programming Languages" کلیک کرده است
+    //و جاوااسکریپت یک درخواست AJAX به مسیر /programming-languages می‌فرسته
+    //سرور که یک Action در Controller است یک partial view HTML رو رندر و برمی‌گردونه
     document.querySelector("#button-load").addEventListener("click", async function() {
        var response = await fetch("programming-languages");
        var languages = await response.text();
        document.querySelector(".programming-languages-content").innerHTML = languages;
     });
 </script>
+<!--
+    خلاصه‌ی جریان کار (Flow)
+کاربر روی دکمه "Load Programming Languages" کلیک می‌کنه.
+جاوااسکریپت یک درخواست AJAX به مسیر /programming-languages می‌فرسته.
+سرور (که احتمالاً یک Action در Controller است) یک partial view HTML رو رندر و برمی‌گردونه.
+جاوااسکریپت اون HTML رو می‌گیره و داخل div.programming-languages-content قرار می‌ده.
+کاربر بدون رفرش صفحه، لیست زبان‌های برنامه‌نویسی رو می‌بینه.
+-->

@@ -1,0 +1,26 @@
+# Project-level gitignore
+
+# .NET
+bin/
+obj/
+*.user
+*.suo
+.vs/
+.idea/
+*.log
+logs/
+*.env
+appsettings.*.Local.json
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+
+# OS
+.DS_Store
+Thumbs.db

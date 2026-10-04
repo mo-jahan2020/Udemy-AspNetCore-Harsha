@@ -1,0 +1,87 @@
+@model DemoResult
+@{
+    ViewData["Title"] = Model.Title;
+    var refs = Model.AsvsRef.Split(',', StringSplitOptions.TrimEntries);
+}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">داشبورد</a></li>
+        <li class="breadcrumb-item"><a asp-controller="@Model.BackController" asp-action="Index">فصل @Model.BackController</a></li>
+        <li class="breadcrumb-item active">@Model.Title</li>
+    </ol>
+</nav>
+
+<h2 class="mb-2">🔬 @Model.Title</h2>
+<div class="mb-3">
+    @foreach (var r in refs)
+    {
+        <span class="badge text-bg-success">@r</span>
+    }
+</div>
+
+@if (!string.IsNullOrEmpty(Model.ServiceNote))
+{
+    <div class="alert alert-warning small">⚙️ <b>نیازمندی سرویس:</b> @Model.ServiceNote</div>
+}
+
+@* ─── کارت متن رسمی بند + توضیح فارسی ─── *@
+<div class="asvs-card p-3 mb-4">
+    <div class="fw-bold mb-1">📜 متن رسمی بند (ASVS 5.0):</div>
+    <div class="req-en">@Model.AsvsSummaryEn</div>
+    <hr class="my-2" />
+    <div><b>🇮🇷 توضیح فارسی:</b> @Model.AsvsFa</div>
+</div>
+
+@* ─── مقایسه کد ناامن/امن (اگر موجود باشد) ─── *@
+@if (!string.IsNullOrEmpty(Model.VulnerableCode) || !string.IsNullOrEmpty(Model.SecureCode))
+{
+    <div class="row g-3 mb-4">
+        @if (!string.IsNullOrEmpty(Model.VulnerableCode))
+        {
+            <div class="col-lg-6">
+                <div class="d-flex align-items-center gap-2 mb-2">
+                    <span class="badge text-bg-danger">❌ کد ناامن</span>
+                    <span class="small text-muted">چرا این الگو خطرناک است؟</span>
+                </div>
+                <pre class="code-block code-vuln">@Model.VulnerableCode</pre>
+            </div>
+        }
+        @if (!string.IsNullOrEmpty(Model.SecureCode))
+        {
+            <div class="col-lg-6">
+                <div class="d-flex align-items-center gap-2 mb-2">
+                    <span class="badge text-bg-success">✅ کد امن</span>
+                    <span class="small text-muted">الگوی مورد تأیید ASVS</span>
+                </div>
+                <pre class="code-block code-secure">@Model.SecureCode</pre>
+            </div>
+        }
+    </div>
+}
+
+@* ─── خروجی واقعی اجرا ─── *@
+@if (Model.OutputLines.Count > 0)
+{
+    <h5 class="mb-2">🖥️ خروجی واقعی این اجرا:</h5>
+    <div class="output-panel mb-4">
+        @foreach (var line in Model.OutputLines)
+        {
+            <div class="fa-line">@line</div>
+        }
+    </div>
+}
+
+@* ─── توضیح متنی (برای دموهای بدون اجرای واقعی) ─── *@
+@if (!string.IsNullOrEmpty(Model.Notes))
+{
+    <div class="alert alert-secondary" style="white-space: pre-line; line-height: 2">
+        <b>📖 توضیح کامل:</b>
+        @Model.Notes
+    </div>
+}
+
+<div class="d-flex gap-2">
+    <a asp-controller="@Model.BackController" asp-action="Index" class="btn btn-outline-success">↩ بازگشت به فصل</a>
+    <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary">🏠 داشبورد</a>
+</div>

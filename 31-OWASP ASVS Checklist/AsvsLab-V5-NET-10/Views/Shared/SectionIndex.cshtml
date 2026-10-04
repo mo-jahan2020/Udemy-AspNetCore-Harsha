@@ -1,0 +1,65 @@
+@model SectionIndexViewModel
+@{
+    ViewData["Title"] = $"فصل V{Model.Chapter} — {Model.FaTitle}";
+}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">داشبورد</a></li>
+        <li class="breadcrumb-item active">فصل V@Model.Chapter</li>
+    </ol>
+</nav>
+
+<div class="d-flex flex-wrap align-items-center justify-content-between mb-2">
+    <h2>
+        <span class="chapter-badge">V@Model.Chapter</span>
+        @Model.FaTitle
+    </h2>
+    <a asp-controller="Quiz" asp-action="Chapter" asp-route-ch="@Model.Chapter" class="btn btn-sm btn-outline-success">
+        🧪 کوییز این فصل
+        @if (Model.QuizScore >= 0)
+        {
+            <span class="badge text-bg-secondary">بهترین نمره: @Model.QuizScore٪</span>
+        }
+    </a>
+</div>
+<p class="text-muted small">@Model.EnTitle</p>
+<div class="alert alert-light border">@Model.ChapterSummary</div>
+
+@functions {
+    public static string KindClass(DemoKind k) => k switch
+    {
+        DemoKind.Live => "text-bg-success",
+        DemoKind.Form => "text-bg-primary",
+        _ => "text-bg-secondary"
+    };
+    public static string KindLabel(DemoKind k) => k switch
+    {
+        DemoKind.Live => "اجرای واقعی",
+        DemoKind.Form => "با فرم ورودی",
+        _ => "توضیح متنی"
+    };
+}
+
+<div class="row g-3">
+    @foreach (var demo in Model.Items)
+    {
+        <div class="col-md-6">
+            <div class="chapter-card p-3 h-100">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <b>@demo.Title</b>
+                    <span class="badge @KindClass(demo.Kind)">@KindLabel(demo.Kind)</span>
+                </div>
+                <div class="mb-2">
+                    @foreach (var refItem in demo.AsvsRefs.Split(','))
+                    {
+                        <span class="badge text-bg-light border">@refItem.Trim()</span>
+                    }
+                </div>
+                <a asp-controller="@demo.Controller" asp-action="@demo.Action" class="btn btn-success btn-sm w-100">
+                    ▶ اجرای دمو و توضیح بندها
+                </a>
+            </div>
+        </div>
+    }
+</div>

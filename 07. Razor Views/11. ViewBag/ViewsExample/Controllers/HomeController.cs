@@ -17,8 +17,19 @@ namespace ViewsExample.Controllers
           new Person() { Name = "Linda", DateOfBirth = DateTime.Parse("2005-01-09"), PersonGender = Gender.Female},
           new Person() { Name = "Susan", DateOfBirth = null, PersonGender = Gender.Other}
       };
-      //ViewData["people"] = people;
-      ViewBag.people = people;
+            //هر دوی این‌ها ابزارهایی هستند برای انتقال داده از Controller به View، اما تفاوت‌های مهمی در نحوه‌ی کار و محدودیت‌هایشان دارند.
+            //چون ViewBag فقط یک Wrapper پویا روی ViewData است، این دو یک منبع داده مشترک دارند. یعنی اگر با ViewData مقداری تنظیم کنی، می‌توانی همان را با ViewBag بخوانی و برعکس:
+            //ViewData["Message"] = "سلام";
+            // معادل است با نوشتن:
+            // ViewBag.Message = "سلام";
+            //Console.WriteLine(ViewBag.Message); // "سلام" - چون هردو به یک دیکشنری اشاره می‌کنند
+            // نوع ViewBag Dynamic است 
+            // نوع ViewData از نوع Dictionary<string, object> است
+
+
+            //ViewData["people"] = people;
+            // مقدار دهی People
+            ViewBag.people = people;
 
       return View(); //Views/Home/Index.cshtml
     }

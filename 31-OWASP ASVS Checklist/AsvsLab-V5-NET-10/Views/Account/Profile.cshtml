@@ -1,0 +1,47 @@
+@model DemoUser
+@{
+    ViewData["Title"] = "پروفایل";
+    var invoices = (List<Invoice>)ViewBag.Invoices!;
+}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="chapter-card p-4 mb-3">
+            <h3>👤 پروفایل @Model.FullName</h3>
+            <div class="small text-muted mb-3">این صفحه با [Authorize] محافظت شده — بند V8.2.1 (کنترل دسترسی سطح تابع)</div>
+            <ul class="list-unstyled">
+                <li>👤 نام کاربری: <code dir="ltr">@Model.Username</code></li>
+                <li>🎭 نقش: <span class="badge text-bg-secondary">@Model.Role</span></li>
+                <li>🔐 هش گذرواژه (PBKDF2 — بند V11.4.2): <code class="small" dir="ltr">@(Model.PasswordHash[..38])…</code></li>
+            </ul>
+        </div>
+
+        <div class="chapter-card p-4">
+            <h5>🧾 فاکتورهای شما (بند V8.2.2 — دسترسی فقط به داده خودتان)</h5>
+            @if (invoices.Count == 0)
+            {
+                <p class="text-muted small">فاکتوری برای شما ثبت نشده است. برای دیدن دموی IDOR با کاربر <code>ali</code> وارد شوید.</p>
+            }
+            else
+            {
+                <table class="table table-sm align-middle">
+                    <thead>
+                        <tr><th>شناسه</th><th>شرح</th><th>مبلغ (تومان)</th></tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var inv in invoices)
+                        {
+                            <tr>
+                                <td>@inv.Id</td>
+                                <td>@inv.Description</td>
+                                <td>@inv.Amount.ToString("N0")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            <a asp-controller="V8" asp-action="Idor" class="btn btn-sm btn-outline-success">
+                🎯 برو به دموی IDOR — سعی کن فاکتور دیگری را ببینی!
+            </a>
+        </div>
+    </div>
+</div>

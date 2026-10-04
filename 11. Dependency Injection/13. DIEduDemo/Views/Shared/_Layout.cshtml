@@ -1,0 +1,104 @@
+@{
+    // ============================================================================
+    //  _Layout.cshtml — قالب کلی صفحه (نسخه کاملاً آفلاین)
+    // ----------------------------------------------------------------------------
+    //  تمام فونت‌ها و فایل‌های استاتیک به‌صورت محلی در wwwroot قرار دارند.
+    //  این پروژه هیچ وابستگی به منابع اینترنتی (CDN) ندارد.
+    // ============================================================================
+}
+
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] — آموزش تزریق وابستگی</title>
+
+    <!-- فونت‌های محلی (Vazirmatn برای فارسی، JetBrains Mono برای کد) -->
+    <link rel="stylesheet" href="~/css/fonts.css" asp-append-version="true" />
+
+    <!-- استایل سفارشی پروژه -->
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+    @await RenderSectionAsync("HeadScripts", required: false)
+</head>
+<body>
+    <header class="hero">
+        <div class="hero-bg-pattern"></div>
+        <div class="hero-content">
+            <div class="hero-badge">ASP.NET Core 10 · MVC</div>
+            <h1 class="hero-title">آموزش تزریق وابستگی</h1>
+            <p class="hero-subtitle">Dependency Injection به‌صورت عملی با مثال‌های واقعی و کامنت‌های فارسی</p>
+            <div class="hero-stats">
+                <div class="hero-stat">
+                    <span class="hero-stat-num">3</span>
+                    <span class="hero-stat-label">Lifetime</span>
+                </div>
+                <div class="hero-stat">
+                    <span class="hero-stat-num">3</span>
+                    <span class="hero-stat-label">نوع تزریق</span>
+                </div>
+                <div class="hero-stat">
+                    <span class="hero-stat-num">3</span>
+                    <span class="hero-stat-label">Keyed</span>
+                </div>
+                <div class="hero-stat">
+                    <span class="hero-stat-num">EF</span>
+                    <span class="hero-stat-label">DbContext</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <nav class="top-nav" id="topNav">
+        <div class="container">
+            <a href="#section-lifetime" class="nav-link">۱. Lifetime</a>
+            <a href="#section-constructor" class="nav-link">۲. Constructor</a>
+            <a href="#section-method" class="nav-link">۳. Method</a>
+            <a href="#section-property" class="nav-link">۴. Property</a>
+            <a href="#section-business" class="nav-link">۵. سرویس بیزینسی</a>
+            <a href="#section-keyed" class="nav-link">۶. Keyed Services</a>
+            <a href="#section-dbcontext" class="nav-link">۷. DbContext</a>
+            <a href="#section-env" class="nav-link">۸. محیط</a>
+        </div>
+    </nav>
+
+    <main class="container main-content">
+        @RenderBody()
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div>
+                    <h4>DIEduDemo</h4>
+                    <p>پروژه آموزشی تزریق وابستگی در ASP.NET Core 10 با رویکرد عملی و کامنت‌های فارسی.</p>
+                </div>
+                <div>
+                    <h4>مفاهیم کلیدی</h4>
+                    <ul>
+                        <li>Lifetime: Transient / Scoped / Singleton</li>
+                        <li>تزریق: Constructor / Method / Property</li>
+                        <li>سرویس‌های داخلی: ILogger, IWebHostEnvironment</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4>نسخه‌ها</h4>
+                    <ul>
+                        <li>.NET SDK: @Environment.Version</li>
+                        <li>ASP.NET Core: 10.0</li>
+                        <li>MVC: Standard</li>
+                        <li>وضعیت: کاملاً آفلاین</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© @DateTime.Now.Year — پروژه آموزشی DIEduDemo | فونت‌ها: Vazirmatn و JetBrains Mono (OFL)</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

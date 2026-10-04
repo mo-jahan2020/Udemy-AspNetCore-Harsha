@@ -8,8 +8,9 @@
         new Person() { Name = "Susan", DateOfBirth = DateTime.Parse("2008-07-12"), PersonGender = Gender.Other}
     };
 }
-
-@functions{
+<!-- تعریف یک فانکشن که فقط در این صفحه اعتبار دارد -->
+@functions
+{
     //method
     double? GetAge(DateTime? dateOfBirth)
     {
@@ -46,6 +47,7 @@
             @if (person.DateOfBirth != null)
             {
                 <span>@person.DateOfBirth.Value.ToString("MM/dd/yyyy")</span>
+                <!-- اجرای فانکشن در صفحه -->
                 <span>@GetAge(person.DateOfBirth) years old</span>
             }
         </div>

@@ -1,0 +1,59 @@
+@model AsvsLab.Models.DemoResult
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<!-- عنوان دمو -->
+<div class="d-flex flex-wrap justify-content-between align-items-start mb-3 gap-2">
+    <h2 class="page-title mb-0">@Model.Title</h2>
+    <a class="btn btn-outline-secondary" asp-controller="Home" asp-action="Index">🏠 داشبورد</a>
+</div>
+
+<!-- بج شماره بندهای OWASP ASVS -->
+<div class="alert alert-dark asvs-badge">
+    📌 بند(های) مرجع استاندارد OWASP ASVS 4.0.3: <strong class="text-warning">@Model.AsvsRef</strong>
+    <hr class="my-2" />
+    <span class="small">@Model.AsvsSummary</span>
+</div>
+
+<!-- هشدار پیش‌نیاز سرویس جانبی (مانند Redis) -->
+@if (!string.IsNullOrEmpty(Model.ServiceRequirement))
+{
+    <div class="alert alert-warning">
+        ⚠️ <strong>پیش‌نیاز اجرای این دمو:</strong> @Model.ServiceRequirement
+    </div>
+}
+
+<!-- توضیح آموزشی -->
+<div class="card mb-3">
+    <div class="card-header bg-primary text-white fw-bold">📖 توضیح</div>
+    <div class="card-body">@Model.Explanation</div>
+</div>
+
+<!-- قطعه کد مرجع -->
+<div class="card mb-3">
+    <div class="card-header bg-secondary text-white fw-bold">💻 کد اصلی این دمو</div>
+    <div class="card-body p-2">
+        <pre class="code-block mb-0">@Model.CodeSnippet</pre>
+    </div>
+</div>
+
+<!-- خروجی واقعی اجرای دمو -->
+<div class="card mb-3 @(Model.Success ? "border-success" : "border-danger")">
+    <div class="card-header fw-bold @(Model.Success ? "bg-success text-white" : "bg-danger text-white")">
+        @if (Model.Success)
+        {
+            <text>✅ خروجی واقعی اجرای دمو</text>
+        }
+        else
+        {
+            <text>⛔ دمو اجرا نشد</text>
+        }
+    </div>
+    <div class="card-body">
+        <div class="output-box">@string.Join("\n", Model.OutputLines)</div>
+    </div>
+</div>
+
+<!-- دکمه بازگشت -->
+<a class="btn btn-primary" asp-controller="@(Model.BackController)" asp-action="Index">↩️ بازگشت به بخش قبلی</a>

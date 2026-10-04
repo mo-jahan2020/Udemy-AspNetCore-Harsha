@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] — آزمایشگاه ASVS 5.0</title>
+    @* ─── Bootstrap آفلاین (بدون CDN) — بند V15.1.2: حذف وابستگی به منابع ثالث در زنجیره تأمین ─── *@
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.rtl.min.css" />
+    <link rel="stylesheet" href="~/lib/vazirmatn/fonts.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+@inject AsvsLab.Services.ProgressService Progress
+@{
+    var visitedCount = Progress.Visited().Count(v => AsvsLab.Services.DemoCatalog.Find(v) is not null);
+    var percent = AsvsLab.Services.DemoCatalog.Total == 0 ? 0 : (int)(100.0 * visitedCount / AsvsLab.Services.DemoCatalog.Total);
+}
+<nav class="navbar navbar-expand-lg sticky-top shadow-sm">
+    <div class="container">
+        <a class="navbar-brand fw-bold" asp-controller="Home" asp-action="Index">
+            🛡️ آزمایشگاه <span class="text-success">ASVS 5.0</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="mainNav">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0 gap-lg-1">
+                <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="Index">🏠 داشبورد</a></li>
+                <li class="nav-item"><a class="nav-link" asp-controller="Quiz" asp-action="Index">🧪 کوییز</a></li>
+                <li class="nav-item"><a class="nav-link" asp-controller="V6" asp-action="Index">🔑 احراز هویت</a></li>
+                <li class="nav-item"><a class="nav-link" asp-controller="V8" asp-action="Index">🔐 کنترل دسترسی</a></li>
+            </ul>
+            <div class="d-flex align-items-center gap-2 flex-wrap">
+                @* نوار پیشرفت مطالعه (ذخیره در سشن کاربر) *@
+                <div class="progress-chip d-none d-md-block">
+                    <span class="small">پیشرفت: @visitedCount از @AsvsLab.Services.DemoCatalog.Total</span>
+                    <div class="progress progress-thin mt-1">
+                        <div class="progress-bar bg-success" role="progressbar" style="width:@(percent)%"></div>
+                    </div>
+                </div>
+                @if (User.Identity!.IsAuthenticated)
+                {
+                    <span class="badge bg-secondary">@User.FindFirst("FullName")?.Value (@User.FindFirst(ClaimTypes.Role)?.Value)</span>
+                    <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
+                        <button type="submit" class="btn btn-sm btn-outline-light">خروج</button>
+                    </form>
+                }
+                else
+                {
+                    <a class="btn btn-sm btn-success" asp-controller="Account" asp-action="Login">ورود</a>
+                    <a class="btn btn-sm btn-outline-light" asp-controller="Account" asp-action="Register">ثبت‌نام</a>
+                }
+            </div>
+        </div>
+    </div>
+</nav>
+<main class="container py-4">
+    @RenderBody()
+</main>
+<footer class="border-top text-muted text-center py-3 mt-4">
+    <div class="container">
+        <small>آزمایشگاه آموزشی OWASP ASVS نسخه ۵.۰ — ASP.NET Core 10 · رابط فارسی RTL · Bootstrap آفلاین</small>
+    </div>
+</footer>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+@await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

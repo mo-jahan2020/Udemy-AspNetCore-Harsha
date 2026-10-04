@@ -1,0 +1,142 @@
+# ================================================================
+# Text-to-SQL Service - Docker Compose
+# ----------------------------------------------------------------
+# اجرای کل مجموعه (SQL Server + Ollama + Vanna + .NET API)
+# ----------------------------------------------------------------
+#   docker-compose up -d
+#   docker-compose logs -f
+#   docker-compose down
+# ================================================================
+
+version: "3.9"
+
+services:
+  # ----------------------------------------------------------------
+  # SQL Server Express (دیتابیس هدف و دیتابیس سشن)
+  # ----------------------------------------------------------------
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: texttosql-sqlserver
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_PID=Express
+      - MSSQL_SA_PASSWORD=Your_Strong_Password123!
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver_data:/var/opt/mssql
+      - ./sql:/docker-entrypoint-initdb.d:ro
+    networks:
+      - texttosql-net
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P $$MSSQL_SA_PASSWORD -C -Q 'SELECT 1' || exit 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 60s
+
+  # ----------------------------------------------------------------
+  # Ollama (مدل محلی)
+  # ----------------------------------------------------------------
+  ollama:
+    image: ollama/ollama:latest
+    container_name: texttosql-ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    networks:
+      - texttosql-net
+    healthcheck:
+      test: ["CMD-SHELL", "ollama list || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  # ----------------------------------------------------------------
+  # Initialize Ollama Model (دانلود مدل در اولین اجرا)
+  # ----------------------------------------------------------------
+  ollama-init:
+    image: ollama/ollama:latest
+    container_name: texttosql-ollama-init
+    depends_on:
+      ollama:
+        condition: service_healthy
+    environment:
+      - OLLAMA_HOST=http://ollama:11434
+    entrypoint: ["/bin/sh", "-c"]
+    command: ["echo 'Pulling model qwen2.5-coder...' && ollama pull qwen2.5-coder && echo 'Model pulled.'"]
+    networks:
+      - texttosql-net
+    restart: "no"
+
+  # ----------------------------------------------------------------
+  # Vanna Microservice (Python + FastAPI)
+  # ----------------------------------------------------------------
+  vanna-service:
+    build:
+      context: ./python-vanna-service
+      dockerfile: Dockerfile
+    container_name: texttosql-vanna
+    depends_on:
+      ollama:
+        condition: service_healthy
+    environment:
+      - OLLAMA_BASE_URL=http://ollama:11434
+      - OLLAMA_MODEL=qwen2.5-coder
+      - VANNA_SERVICE_PORT=8001
+      - LOG_LEVEL=INFO
+      - TARGET_DATABASE_URL=mssql+pyodbc:///?odbc_connect=Driver%3D%7BODBC+Driver+18+for+SQL+Server%7D%3BServer%3Dsqlserver%3BDatabase%3DSampleDb%3BUser+Id%3Dsa%3BPassword%3DYour_Strong_Password123!%3BTrustServerCertificate%3Dyes
+    ports:
+      - "8001:8001"
+    networks:
+      - texttosql-net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  # ----------------------------------------------------------------
+  # .NET Web API (سرویس اصلی)
+  # ----------------------------------------------------------------
+  texttosql-api:
+    build:
+      context: ./src/TextToSqlApi
+      dockerfile: src/TextToSqlApi/Dockerfile
+    container_name: texttosql-api
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+      vanna-service:
+        condition: service_started
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ConnectionStrings__TargetDatabase=Server=sqlserver;Database=SampleDb;User Id=sa;Password=Your_Strong_Password123!;TrustServerCertificate=True;
+      - ConnectionStrings__SessionDatabase=Server=sqlserver;Database=TextToSqlSessions;User Id=sa;Password=Your_Strong_Password123!;TrustServerCertificate=True;
+      - Ollama__BaseUrl=http://ollama:11434
+      - Ollama__Model=qwen2.5-coder
+      - Vanna__BaseUrl=http://vanna-service:8001
+      - Vanna__EnableFallbackToOllama=true
+      - App__Port=5000
+      - App__ApplyMigrationsOnStartup=true
+    ports:
+      - "5000:5000"
+    networks:
+      - texttosql-net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/api/health/simple"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+networks:
+  texttosql-net:
+    driver: bridge
+
+volumes:
+  sqlserver_data:
+  ollama_data:

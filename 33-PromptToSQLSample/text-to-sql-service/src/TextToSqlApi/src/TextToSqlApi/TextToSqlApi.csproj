@@ -1,0 +1,49 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>TextToSqlApi</RootNamespace>
+    <AssemblyName>TextToSqlApi</AssemblyName>
+    <Version>1.0.0</Version>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Swashbuckle (شامل Microsoft.OpenApi به‌صورت transitive) -->
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="10.2.3" />
+
+    <!-- EF Core + SQL Server -->
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.0">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+
+    <!-- SQL Client (استفاده مستقیم در SqlService.cs) -->
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="7.1.0" />
+
+    <!-- Health Checks -->
+    <PackageReference Include="AspNetCore.HealthChecks.SqlServer" Version="9.0.0" />
+    <PackageReference Include="AspNetCore.HealthChecks.UI.Client" Version="9.0.0" />
+    <!-- پکیج زیر متد AddDbContextCheck را برای EF Core DbContext Health Check فراهم می‌کند -->
+    <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore" Version="10.0.0" />
+
+    <!-- Serilog -->
+    <PackageReference Include="Serilog.AspNetCore" Version="10.0.0" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="6.1.1" />
+    <PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
+  </ItemGroup>
+
+  <!--
+    InternalsVisibleTo برای دسترسی پروژه تست به متدهای internal.
+    تست‌ها به این متدهای internal دسترسی دارند:
+    - SqlService.ValidateReadOnly
+    - OllamaService.ExtractSql
+    - TextToSqlService.GetCurrentSchemaForTest
+  -->
+  <ItemGroup>
+    <InternalsVisibleTo Include="TextToSqlApi.Tests" />
+  </ItemGroup>
+
+</Project>

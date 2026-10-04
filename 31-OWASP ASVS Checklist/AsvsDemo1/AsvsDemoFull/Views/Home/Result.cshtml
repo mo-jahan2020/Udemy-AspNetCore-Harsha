@@ -1,0 +1,18 @@
+﻿@{ ViewData["Title"] = "نتیجه عملیات"; }
+<div class="text-center mt-5" dir="rtl">
+    <h2>نتیجه عملیات</h2>
+    <div class="alert @(ViewBag.IsSuccess == false ? "alert-danger" : "alert-success") mx-auto" style="max-width: 700px; white-space: pre-wrap;">
+        @ViewBag.Message
+    </div>
+    @if (ViewBag.RawInput != null) {
+        <div class="alert alert-warning mx-auto" style="max-width: 700px;">
+            <strong>ورودی خام:</strong> @ViewBag.RawInput
+        </div>
+    }
+    @if (ViewBag.SafeInput != null) {
+        <div class="alert alert-success mx-auto" style="max-width: 700px;">
+            <strong>خروجی کدگذاری شده:</strong> @Html.Raw(ViewBag.SafeInput)
+        </div>
+    }
+    <a asp-action="Index" class="btn btn-secondary mt-3">بازگشت به صفحه اصلی</a>
+</div>

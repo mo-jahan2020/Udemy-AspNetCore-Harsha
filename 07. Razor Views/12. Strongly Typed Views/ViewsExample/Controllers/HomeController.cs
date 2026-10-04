@@ -5,6 +5,7 @@ namespace ViewsExample.Controllers
 {
   public class HomeController : Controller
   {
+        // نمایش تمام اعضای داخل پرسون
     [Route("home")]
     [Route("/")]
     public IActionResult Index()
@@ -17,7 +18,7 @@ namespace ViewsExample.Controllers
           new Person() { Name = "Linda", DateOfBirth = DateTime.Parse("2005-01-09"), PersonGender = Gender.Female},
           new Person() { Name = "Susan", DateOfBirth = null, PersonGender = Gender.Other}
       };
-
+            // با این کار مقادیر پاس داده شده درون model ریخته میشود و در ویو تحویل گرفته میشود
       return View("Index", people); //Views/Home/Index.cshtml
     }
 

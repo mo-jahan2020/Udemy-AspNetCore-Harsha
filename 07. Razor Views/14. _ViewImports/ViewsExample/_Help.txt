@@ -1,0 +1,146 @@
+﻿Views/
+├── _ViewImports.cshtml       ← سراسری (Global) برای کل پروژه
+├── _ViewStart.cshtml         ← سراسری (Global) برای کل پروژه
+├── Shared/
+│   ├── _Layout.cshtml        ← قالب مشترک (معمولاً هدر، فوتر، منو)
+│   ├── _ValidationScriptsPartial.cshtml
+│   └── Error.cshtml
+├── Home/
+│   ├── Index.cshtml          ← View مخصوص Action به نام Index در HomeController
+│   ├── About.cshtml
+│   └── _StatCard.cshtml      ← یک Partial View محلی (فقط داخل پوشه‌ی Home)
+└── Account/
+    ├── Login.cshtml
+    └── Register.cshtml
+۱. _ViewImports.cshtml
+
+نقش این فایل، اشتراک‌گذاری تنظیمات مشترک Razor (مثل using, @model, Tag Helpers) بین همه‌ی Viewهاست، بدون این‌که مجبور باشی این تنظیمات را در هر View جداگانه تکرار کنی.
+
+cshtml
+@using MyProject.Models
+@using MyProject.ViewModels
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@namespace MyProject.Views
+
+کاربردهای اصلی:
+
+@using: مثل using در فایل‌های C# معمولی، برای import کردن namespaceها بدون نیاز به نوشتن Fully Qualified Name در هر View
+@addTagHelper: فعال‌سازی Tag Helperها (مثل asp-for, asp-action که در فرم‌ها استفاده می‌شوند) برای کل پروژه
+@namespace: تعیین Namespace پیش‌فرض برای کلاس‌های تولیدشده از Viewها (بیشتر برای IntelliSense و سازگاری با ابزارها مفید است)
+
+نکته‌ی مهم درباره‌ی Nested _ViewImports.cshtml:
+می‌توانی در هر زیرپوشه (مثلاً Views/Admin/) یک _ViewImports.cshtml جداگانه هم بگذاری. Razor به‌صورت سلسله‌مراتبی (Hierarchical) این فایل‌ها را از ریشه به سمت پوشه‌ی فعلی ترکیب می‌کند — یعنی تنظیمات پوشه‌ی داخلی‌تر، تنظیمات پوشه‌ی بیرونی را اضافه می‌کند (نه جایگزین)، مگر این‌که همان مقدار را Override کنی.
+
+Views/_ViewImports.cshtml           ← @using MyProject.Models
+Views/Admin/_ViewImports.cshtml     ← @using MyProject.Admin.Models
+
+برای Viewهای داخل Views/Admin/، هردو namespace در دسترس خواهند بود.
+
+۲. _ViewStart.cshtml
+
+نقش این فایل، تعریف کدی که قبل از اجرای هر View، به‌طور خودکار اجرا می‌شود — معمولاً برای تعیین Layout پیش‌فرض استفاده می‌شود.
+
+cshtml
+@{
+    Layout = "_Layout";
+}
+
+چطور کار می‌کند؟
+
+محتوای _ViewStart.cshtml قبل از هر View اجرا می‌شود — انگار که کدش در ابتدای هر View "کپی-پیست" شده باشد.
+مثل _ViewImports، این فایل هم می‌تواند به‌صورت سلسله‌مراتبی در زیرپوشه‌ها override شود. مثلاً اگر می‌خواهی همه‌ی Viewهای داخل Views/Admin/ از یک Layout متفاوت (مثلاً _AdminLayout) استفاده کنند:
+cshtml
+<!-- Views/Admin/_ViewStart.cshtml -->
+@{
+    Layout = "_AdminLayout";
+}
+
+این فایل، تنظیم Layout را که در Views/_ViewStart.cshtml (ریشه) تعریف شده بود، override می‌کند (فقط برای Viewهای داخل پوشه‌ی Admin).
+
+نکته: می‌توانی هر منطق دیگری هم داخل _ViewStart.cshtml بگذاری (نه فقط تعیین Layout)، چون در نهایت فقط یک بلاک کد Razor است که قبل از اجرای View اجرا می‌شود. اما رایج‌ترین و اصلی‌ترین کاربردش همان تعیین Layout پیش‌فرض است.
+
+۳. _Layout.cshtml (معمولاً در Views/Shared/)
+
+این فایل، قالب مشترک HTML (شامل <html>, <head>, هدر، منو، فوتر و...) را تعریف می‌کند که همه‌ی Viewهای دیگر داخل آن "تزریق" می‌شوند.
+
+cshtml
+<!DOCTYPE html>
+<html>
+<head>
+    <title>@ViewData["Title"] - سایت من</title>
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<body>
+    <header>
+        <nav>منوی سایت</nav>
+    </header>
+
+    <main>
+        @RenderBody()
+    </main>
+
+    <footer>
+        &copy; 2026 - همه‌ی حقوق محفوظ است
+    </footer>
+
+    @RenderSection("Scripts", required: false)
+</body>
+</html>
+
+مفاهیم کلیدی:
+
+@RenderBody(): دقیقاً همان محلی است که محتوای View فراخوانی‌شده (مثل Index.cshtml) در آن جایگزین می‌شود. هر Layout باید دقیقاً یک بار @RenderBody() داشته باشد.
+@RenderSection("Scripts", required: false): امکان تعریف بخش‌های اختیاری (Section) را می‌دهد که هر View می‌تواند محتوای اختصاصی خودش را برای آن بخش تعریف کند (مثلاً اسکریپت‌های مخصوص یک صفحه که فقط باید در انتهای <body> بارگذاری شوند، نه در همه‌ی صفحات):
+cshtml
+<!-- در یک View خاص -->
+@section Scripts {
+    <script src="~/js/special-page.js"></script>
+}
+
+اگر required: false باشد، Viewهایی که این Section را تعریف نکرده باشند خطا نمی‌دهند. اگر required: true بود و View آن را تعریف نکرده باشد، خطا می‌گیری.
+
+۴. خود Viewها (مثل Index.cshtml)
+
+این فایل‌ها همان View نهایی هستند که مستقیماً با یک Action در Controller مرتبط می‌شوند و محتوای اختصاصی همان صفحه را می‌نویسند (بدون تکرار هدر/فوتر، چون آن‌ها را از Layout به ارث می‌برند).
+
+cshtml
+@model PersonViewModel
+@{
+    ViewData["Title"] = "ثبت‌نام کاربر";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<form asp-action="Register" method="post">
+    <input asp-for="PersonName" />
+    <span asp-validation-for="PersonName"></span>
+    <button type="submit">ثبت‌نام</button>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+
+نکات مهم:
+
+@model: در بالای هر View مشخص می‌کند این View به چه Type (ViewModel) وابسته است — دقیقاً همان مفهوم Strongly-Typed View که در پاسخ قبلی توضیح دادم.
+Layout به‌طور خودکار (از _ViewStart.cshtml) اعمال می‌شود؛ نیازی نیست دستی چیزی درباره‌ی Layout در این فایل بنویسی، مگر بخواهی آن را Override کنی:
+cshtml
+@{
+    Layout = "_AnotherLayout"; // فقط اگر می‌خواهی از پیش‌فرض متفاوت باشد
+}
+
+یا حتی می‌توانی Layout را برای این View خاص کاملاً غیرفعال کنی:
+
+cshtml
+@{
+    Layout = null;
+}
+ترتیب اجرا و رابطه‌ی این چهار مورد (خلاصه‌ی نهایی)
+
+وقتی یک Action مثلاً return View() را برمی‌گرداند، فرآیند به این ترتیب اتفاق می‌افتد:
+
+_ViewImports.cshtml بررسی می‌شود تا usingها و Tag Helperها در دسترس View قرار بگیرند.
+_ViewStart.cshtml اجرا می‌شود تا Layout پیش‌فرض تعیین شود.
+خود View (مثل Index.cshtml) اجرا و محتوای HTML آن تولید می‌شود.
+اگر Layout تعیین شده باشد، خروجی مرحله‌ی ۳ در محل @RenderBody() داخل _Layout.cshtml جایگذاری می‌شود و صفحه‌ی نهایی کامل ساخته می‌شود.

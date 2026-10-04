@@ -1,0 +1,81 @@
+@model QuizChapterViewModel
+@{
+    ViewData["Title"] = $"کوییز V{Model.Chapter}";
+}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-action="Index">کوییز</a></li>
+        <li class="breadcrumb-item active">فصل V@Model.Chapter</li>
+    </ol>
+</nav>
+
+<h2 class="mb-1">🧪 کوییس فصل V@Model.Chapter — @Model.FaTitle</h2>
+
+@if (Model.AlreadyGraded)
+{
+    var passed = Model.Percent >= 60;
+    <div class="alert @(passed ? "alert-success" : "alert-danger") d-flex justify-content-between align-items-center">
+        <span>
+            نتیجه: <b>@Model.Percent٪</b> — @(passed ? "آفرین! قبول شدید ✅" : "کمی دوباره مرور کنید و دوباره امتحان بدهید 🔁")
+        </span>
+        <a asp-action="Chapter" asp-route-ch="@Model.Chapter" class="btn btn-sm btn-outline-dark">امتحان مجدد</a>
+    </div>
+
+    @foreach (var res in Model.Results)
+    {
+        <div class="chapter-card p-3 mb-3">
+            <div class="fw-bold mb-2">
+                @(res.Correct ? "✅" : "❌") سوال @(res.Index + 1): @res.Q.Q
+            </div>
+            <ul class="list-unstyled mb-2">
+                @for (var i = 0; i < res.Q.Options.Length; i++)
+                {
+                    <li class="@(i == res.Q.Correct ? "text-success fw-bold" : (i == res.Chosen ? "text-danger" : "text-muted"))">
+                        @if (i == res.Q.Correct)
+                        {
+                            <span>✔</span>
+                        }
+                        else if (i == res.Chosen)
+                        {
+                            <span>✘</span>
+                        }
+                        else
+                        {
+                            <span>•</span>
+                        }
+                        @res.Q.Options[i]
+                    </li>
+                }
+            </ul>
+            <div class="small">
+                📖 @res.Q.Expl
+                <span class="badge text-bg-success ms-1">@res.Q.Ref</span>
+            </div>
+        </div>
+    }
+
+    <a asp-action="Index" class="btn btn-success">بازگشت به فهرست کوییز</a>
+}
+else
+{
+    <div class="chapter-card p-4">
+        <form asp-action="Chapter" asp-route-ch="@Model.Chapter" method="post">
+            @Html.AntiForgeryToken()
+            @for (var i = 0; i < Model.Questions.Count; i++)
+            {
+                var q = Model.Questions[i];
+                <div class="mb-4">
+                    <div class="fw-bold mb-2">سوال @(i + 1): @q.Q</div>
+                    @foreach (var (opt, oi) in q.Options.Select((o, i2) => (o, i2)))
+                    {
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="q@i" id="q@(i)o@(oi)" value="@oi" required />
+                            <label class="form-check-label" for="q@(i)o@(oi)">@opt</label>
+                        </div>
+                    }
+                </div>
+            }
+            <button type="submit" class="btn btn-success">بررسی پاسخ‌ها</button>
+        </form>
+    </div>
+}

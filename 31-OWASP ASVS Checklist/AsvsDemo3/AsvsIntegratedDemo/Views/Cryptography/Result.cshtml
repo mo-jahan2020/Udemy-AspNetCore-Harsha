@@ -1,0 +1,10 @@
+﻿@{ ViewData["Title"] = "نتیجه رمزنگاری"; }
+<div class="text-center mt-5" dir="rtl">
+    <div class="card mx-auto" style="max-width: 700px;">
+        <div class="card-body text-start" dir="ltr">
+            <p><strong>متن رمزنگاری شده:</strong><br/><code class="text-danger">@ViewBag.Encrypted</code></p>
+            <p><strong>متن رمزگشایی شده:</strong><br/><code class="text-success">@ViewBag.Decrypted</code></p>
+        </div>
+    </div>
+    <a asp-controller="Cryptography" asp-action="Index" class="btn btn-secondary mt-3">بازگشت</a>
+</div>

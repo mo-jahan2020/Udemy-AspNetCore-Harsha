@@ -1,0 +1,682 @@
+@*
+    ============================================================================
+    Index.cshtml — فرم خروجی اصلی (نسخه بهبودیافته و آموزشی)
+    ----------------------------------------------------------------------------
+    در این View:
+     ۱) جدول مقایسه هر سه Lifetime با نشانه‌های بصری و رنگ‌بندی
+     ۲) کارت‌های جداگانه برای هر نوع تزریق با کد نمونه و خروجی زنده
+     ۳) دکمه‌ی تعاملی برای Method Injection (با AJAX — واقعاً کار می‌کند!)
+     ۴) دکمه‌ی تعاملی برای نمایش Transient (با AJAX)
+     ۵) نمایش سرویس بیزینسی با اینترفیس
+     ۶) اطلاعات محیط
+    ============================================================================
+*@
+
+@model DIEduDemo.Models.LifetimeComparisonModel
+
+@{
+    ViewData["Title"] = "آموزش تزریق وابستگی";
+
+    // نمایش پیام اکشن MethodInjectionExample (در صورت وجود)
+    var exampleMsg = ViewData["MethodInjectionExampleMessage"] as string;
+}
+
+@if (!string.IsNullOrEmpty(exampleMsg))
+{
+    <div class="alert alert-success" id="exampleAlert">
+        <span class="alert-icon">✓</span>
+        <span>@exampleMsg</span>
+        <button type="button" class="alert-close" onclick="this.parentElement.remove()">×</button>
+    </div>
+}
+
+<!-- ===================================================================== -->
+<!-- بخش ۱: مقایسه Lifetimeها                                                -->
+<!-- ===================================================================== -->
+<section class="section" id="section-lifetime">
+    <div class="section-header">
+        <span class="section-number">01</span>
+        <div>
+            <h2 class="section-title">مقایسه Lifetimeهای سرویس‌ها</h2>
+            <p class="section-desc">
+                در هر HTTP Request، دو بار از هر سرویس نمونه گرفته‌ایم. ستون «یکسان در Request؟» نشان می‌دهد
+                آیا Container همان نمونه قبلی را برگردانده یا نمونه جدید ساخته است.
+            </p>
+        </div>
+    </div>
+
+    <div class="lifetime-grid">
+        @foreach (var row in Model.Rows)
+        {
+            var sameInReq = row.SameInRequest;
+            var colorClass = row.Lifetime switch
+            {
+                "Transient" => "lt-transient",
+                "Scoped" => "lt-scoped",
+                "Singleton" => "lt-singleton",
+                _ => ""
+            };
+
+            <div class="lifetime-card @colorClass">
+                <div class="lifetime-card-header">
+                    <div class="lifetime-name">@row.Lifetime</div>
+                    <div class="lifetime-status @(sameInReq ? "status-same" : "status-diff")">
+                        @(sameInReq ? "یکسان در Request" : "متفاوت در Request")
+                    </div>
+                </div>
+                <div class="lifetime-card-body">
+                    <div class="guid-row">
+                        <span class="guid-label">درخواست ۱:</span>
+                        <code class="guid-value">@row.FirstCallGuid</code>
+                    </div>
+                    <div class="guid-row">
+                        <span class="guid-label">درخواست ۲:</span>
+                        <code class="guid-value">@row.SecondCallGuid</code>
+                    </div>
+                    <div class="lifetime-desc">@row.Description</div>
+                </div>
+                <div class="lifetime-card-footer">
+                    @switch (row.Lifetime)
+                    {
+                        case "Transient":
+                            <span>⏱ هر بار: نمونه جدید</span>
+                            break;
+                        case "Scoped":
+                            <span>🔒 ثابت در Request</span>
+                            break;
+                        case "Singleton":
+                            <span>♾ ثابت در کل عمر برنامه</span>
+                            break;
+                    }
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="hint-box hint-info">
+        <div class="hint-icon">💡</div>
+        <div>
+            <strong>راهنمای عملی:</strong>
+            صفحه را رفرش کنید و به GUIDها دقت کنید:
+            <ul>
+                <li><strong>Transient:</strong> هر دو Guid در همان رفرش هم متفاوت‌اند.</li>
+                <li><strong>Scoped:</strong> در یک رفرش یکسان، اما در رفرش بعدی عوض می‌شود.</li>
+                <li><strong>Singleton:</strong> حتی بعد از چند رفرش هم عوض نمی‌شود (تا زمانی که برنامه در حال اجراست).</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- دکمه تعاملی: تست Transient با AJAX -->
+    <div class="interactive-demo">
+        <div class="demo-header">
+            <h3>🧪 تست تعاملی Transient</h3>
+            <p>هر بار که این دکمه را بزنید، یک Guid جدید دریافت می‌کنید — چون Transient هر بار یک نمونه جدید می‌سازد.</p>
+        </div>
+        <div class="demo-controls">
+            <button type="button" id="btnTransient" class="btn btn-primary">
+                ▶ فراخوانی سرویس Transient
+            </button>
+            <button type="button" id="btnClearTransient" class="btn btn-ghost">پاک کردن</button>
+        </div>
+        <div id="transientResult" class="demo-result" aria-live="polite">
+            <div class="demo-empty">هنوز دکمه‌ای فشرده نشده است.</div>
+        </div>
+    </div>
+</section>
+
+<!-- ===================================================================== -->
+<!-- بخش ۲: Constructor Injection                                           -->
+<!-- ===================================================================== -->
+<section class="section" id="section-constructor">
+    <div class="section-header">
+        <span class="section-number">02</span>
+        <div>
+            <h2 class="section-title">Constructor Injection (تزریق در Constructor)</h2>
+            <p class="section-desc">
+                رایج‌ترین و توصیه‌شده‌ترین نوع تزریق در ASP.NET Core. تمام وابستگی‌ها به‌صورت پارامتر Constructor
+                به کلاس داده می‌شوند. این روش وابستگی‌ها را به‌صراحت در امضای Constructor مشخص می‌کند.
+            </p>
+        </div>
+    </div>
+
+    <div class="two-col">
+        <div class="col col-code">
+            <div class="col-label">کد نمونه:</div>
+            <pre class="code-block"><code><span class="c-keyword">public class</span> <span class="c-type">HomeController</span>
+{
+    <span class="c-keyword">private readonly</span> <span class="c-type">ConstructorInjectionDemo</span> _ctorDemo;
+    <span class="c-keyword">private readonly</span> <span class="c-type">IOrderProcessor</span> _orderProcessor;
+    <span class="c-keyword">private readonly</span> <span class="c-type">ILogger</span>&lt;<span class="c-type">HomeController</span>&gt; _logger;
+
+    <span class="c-comment">// Constructor Injection: تمام وابستگی‌ها اینجا تزریق می‌شوند</span>
+    <span class="c-keyword">public</span> <span class="c-type">HomeController</span>(
+        <span class="c-type">ConstructorInjectionDemo</span> ctorDemo,
+        <span class="c-type">IOrderProcessor</span> orderProcessor,
+        <span class="c-type">ILogger</span>&lt;<span class="c-type">HomeController</span>&gt; logger)
+    {
+        _ctorDemo = ctorDemo;
+        _orderProcessor = orderProcessor;
+        _logger = logger;
+    }
+}</code></pre>
+        </div>
+        <div class="col col-result">
+            <div class="col-label">خروجی زنده:</div>
+            <div class="result-box">
+                <div class="result-title">Guid سرویس‌های تزریق‌شده در Constructor این Controller:</div>
+                <pre class="code-block code-result">@Model.ConstructorInjectionResult</pre>
+            </div>
+            <div class="pros-cons">
+                <div class="pros">
+                    <strong>✓ مزایا:</strong>
+                    <ul>
+                        <li>وابستگی‌ها به‌صراحت در امضا مشخص می‌شوند</li>
+                        <li>فیلدها می‌توانند <code>readonly</code> باشند</li>
+                        <li>تست‌پذیری بالا</li>
+                    </ul>
+                </div>
+                <div class="cons">
+                    <strong>✗ معایب:</strong>
+                    <ul>
+                        <li>اگر تعداد وابستگی‌ها زیاد شود، نشانه‌ی نقض SRP است</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===================================================================== -->
+<!-- بخش ۳: Method Injection                                                -->
+<!-- ===================================================================== -->
+<section class="section" id="section-method">
+    <div class="section-header">
+        <span class="section-number">03</span>
+        <div>
+            <h2 class="section-title">Method Injection (تزریق در متد)</h2>
+            <p class="section-desc">
+                وابستگی به‌صورت پارامتر یک متد به کلاس داده می‌شود. در MVC می‌توان از ویژگی
+                <code>[FromServices]</code> روی پارامتر اکشن متد استفاده کرد.
+            </p>
+        </div>
+    </div>
+
+    <div class="two-col">
+        <div class="col col-code">
+            <div class="col-label">کد نمونه ۱: تزریق در متد سرویس</div>
+            <pre class="code-block"><code><span class="c-keyword">public class</span> <span class="c-type">MethodInjectionDemo</span>
+{
+    <span class="c-comment">// وابستگی به‌صورت پارامتر متد دریافت می‌شود</span>
+    <span class="c-keyword">public</span> <span class="c-type">string</span> ProcessIt(<span class="c-type">IOperationScoped</span> operation)
+    {
+        <span class="c-keyword">return</span> <span class="c-string">$"Guid Scoped = </span>{operation.OperationId}<span class="c-string">"</span>;
+    }
+}</code></pre>
+
+            <div class="col-label" style="margin-top:14px">کد نمونه ۲: [FromServices] در اکشن متد</div>
+            <pre class="code-block"><code><span class="c-keyword">public IActionResult</span> MethodInjectionAjax(
+    [<span class="c-attr">FromServices</span>] <span class="c-type">IOperationSingleton</span> singletonOp)
+{
+    <span class="c-comment">// singletonOp به‌صورت خودکار تزریق می‌شود</span>
+    <span class="c-keyword">return</span> Ok(<span class="c-keyword">new</span> {
+        singletonGuid = singletonOp.OperationId
+    });
+}</code></pre>
+        </div>
+        <div class="col col-result">
+            <div class="col-label">خروجی زنده (تزریق در متد سرویس):</div>
+            <div class="result-box">
+                <pre class="code-block code-result">@Model.MethodInjectionResult</pre>
+            </div>
+
+            <div class="interactive-demo demo-inline">
+                <div class="demo-header">
+                    <h3>🧪 تست تعاملی: [FromServices] در اکشن متد</h3>
+                    <p>با کلیک روی دکمه، اکشن <code>MethodInjectionAjax</code> از طریق AJAX فراخوانی می‌شود.</p>
+                </div>
+                <div class="demo-controls">
+                    <button type="button" id="btnMethodInjection" class="btn btn-primary">
+                        ▶ فراخوانی AJAX اکشن MethodInjectionAjax
+                    </button>
+                </div>
+                <div id="methodInjectionResult" class="demo-result" aria-live="polite">
+                    <div class="demo-empty">برای دیدن نتیجه، دکمه را بزنید.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="hint-box hint-tip">
+        <div class="hint-icon">⚙️</div>
+        <div>
+            <strong>چه زمان از [FromServices] استفاده کنیم؟</strong>
+            زمانی که فقط در یک اکشن خاص به سرویس نیاز داریم و نمی‌خواهیم آن را در Constructor کل Controller بگیریم.
+            این کار باعث می‌شود وابستگی‌های هر اکشن روشن‌تر و سبک‌تر باشد.
+        </div>
+    </div>
+</section>
+
+<!-- ===================================================================== -->
+<!-- بخش ۴: Property Injection                                              -->
+<!-- ===================================================================== -->
+<section class="section" id="section-property">
+    <div class="section-header">
+        <span class="section-number">04</span>
+        <div>
+            <h2 class="section-title">Property Injection (تزریق در Property)</h2>
+            <p class="section-desc">
+                در Container پیش‌فرض ASP.NET Core پشتیبانی نمی‌شود، اما با استفاده از <strong>Factory</strong>
+                در زمان ثبت سرویس می‌توان آن را شبیه‌سازی کرد.
+            </p>
+        </div>
+    </div>
+
+    <div class="two-col">
+        <div class="col col-code">
+            <div class="col-label">کد نمونه: ثبت با Factory در Program.cs</div>
+            <pre class="code-block"><code><span class="c-comment">// Property Injection با Factory</span>
+builder.Services.AddTransient&lt;<span class="c-type">PropertyInjectionDemo</span>&gt;(sp =>
+{
+    <span class="c-comment">// ابتدا نمونه می‌سازیم</span>
+    <span class="c-keyword">var</span> instance = <span class="c-keyword">new</span> <span class="c-type">PropertyInjectionDemo</span>();
+
+    <span class="c-comment">// سپس Propertyها را از Container تزریق می‌کنیم</span>
+    instance.SingletonOp = sp.GetRequiredService&lt;<span class="c-type">IOperationSingleton</span>&gt;();
+    instance.Logger = sp.GetRequiredService&lt;<span class="c-type">ILogger</span>&lt;<span class="c-type">PropertyInjectionDemo</span>&gt;&gt;();
+
+    <span class="c-keyword">return</span> instance;
+});
+
+<span class="c-keyword">public class</span> <span class="c-type">PropertyInjectionDemo</span>
+{
+    <span class="c-keyword">public</span> <span class="c-type">IOperationSingleton</span>? SingletonOp { <span class="c-keyword">get; set;</span> }
+    <span class="c-keyword">public</span> <span class="c-type">ILogger</span>? Logger { <span class="c-keyword">get; set;</span> }
+}</code></pre>
+        </div>
+        <div class="col col-result">
+            <div class="col-label">خروجی زنده:</div>
+            <div class="result-box">
+                <pre class="code-block code-result">@Model.PropertyInjectionResult</pre>
+            </div>
+            <div class="pros-cons">
+                <div class="pros">
+                    <strong>✓ مزایا:</strong>
+                    <ul>
+                        <li>وابستگی‌های اختیاری</li>
+                        <li>مناسب برای سناریوهای خاص</li>
+                    </ul>
+                </div>
+                <div class="cons">
+                    <strong>✗ معایب:</strong>
+                    <ul>
+                        <li>توسط Container پیش‌فرض پشتیبانی نمی‌شود</li>
+                        <li>ممکن است <code>null</code> باشد</li>
+                        <li>تست‌پذیری کاهش می‌یابد</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===================================================================== -->
+<!-- بخش ۵: سرویس بیزینسی با اینترفیس                                       -->
+<!-- ===================================================================== -->
+<section class="section" id="section-business">
+    <div class="section-header">
+        <span class="section-number">05</span>
+        <div>
+            <h2 class="section-title">سرویس بیزینسی با اینترفیس</h2>
+            <p class="section-desc">
+                نمونه‌ای واقعی از یک سرویس بیزینسی که با اینترفیس <code>IOrderProcessor</code> تعریف شده
+                و به‌صورت <code>Scoped</code> ثبت شده است. این سرویس خودش به <code>IOperationScoped</code>
+                و <code>ILogger&lt;T&gt;</code> وابسته است.
+            </p>
+        </div>
+    </div>
+
+    <div class="two-col">
+        <div class="col col-code">
+            <div class="col-label">اینترفیس و پیاده‌سازی:</div>
+            <pre class="code-block"><code><span class="c-keyword">public interface</span> <span class="c-type">IOrderProcessor</span>
+{
+    <span class="c-type">string</span> ProcessOrder(<span class="c-type">int</span> orderId);
+}
+
+<span class="c-keyword">public class</span> <span class="c-type">OrderProcessor</span> : <span class="c-type">IOrderProcessor</span>
+{
+    <span class="c-keyword">private readonly</span> <span class="c-type">IOperationScoped</span> _scopedOp;
+    <span class="c-keyword">private readonly</span> <span class="c-type">ILogger</span>&lt;<span class="c-type">OrderProcessor</span>&gt; _logger;
+
+    <span class="c-keyword">public</span> <span class="c-type">OrderProcessor</span>(
+        <span class="c-type">IOperationScoped</span> scopedOp,
+        <span class="c-type">ILogger</span>&lt;<span class="c-type">OrderProcessor</span>&gt; logger)
+    {
+        _scopedOp = scopedOp;
+        _logger = logger;
+    }
+
+    <span class="c-keyword">public</span> <span class="c-type">string</span> ProcessOrder(<span class="c-type">int</span> orderId)
+        =&gt; <span class="c-string">$"سفارش #</span>{orderId}<span class="c-string"> پردازش شد."</span>;
+}
+
+<span class="c-comment">// ثبت در Program.cs:</span>
+builder.Services.AddScoped&lt;<span class="c-type">IOrderProcessor</span>, <span class="c-type">OrderProcessor</span>&gt;();</code></pre>
+        </div>
+        <div class="col col-result">
+            <div class="col-label">خروجی زنده:</div>
+            <div class="result-box result-success">
+                <div class="result-icon">✓</div>
+                <pre class="code-block code-result code-result-success">@Model.OrderProcessorResult</pre>
+            </div>
+            <div class="hint-box hint-tip">
+                <div class="hint-icon">🔑</div>
+                <div>
+                    <strong>چرا از اینترفیس استفاده می‌کنیم؟</strong>
+                    <ul>
+                        <li><strong>Loose Coupling:</strong> مصرف‌کننده به اینترفیس وابسته است، نه پیاده‌سازی.</li>
+                        <li><strong>Testability:</strong> در زمان تست می‌توان Mock پیاده‌سازی کرد.</li>
+                        <li><strong>انعطاف‌پذیری:</strong> می‌توان پیاده‌سازی را بدون تغییر مصرف‌کننده عوض کرد.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===================================================================== -->
+<!-- بخش ۶: Keyed Services                                                  -->
+<!-- ===================================================================== -->
+<section class="section" id="section-keyed">
+    <div class="section-header">
+        <span class="section-number">06</span>
+        <div>
+            <h2 class="section-title">Keyed Services (سرویس‌های کلیددار)</h2>
+            <p class="section-desc">
+                در دات‌نت ۸ به بعد، می‌توان چند پیاده‌سازی از یک اینترفیس را با کلیدهای مختلف ثبت کرد.
+                سپس با ویژگی <code>[FromKeyedServices("key")]</code> یا متد
+                <code>sp.GetRequiredKeyedService&lt;T&gt;("key")</code> به پیاده‌سازی مورد نظر دسترسی داشت.
+                این کار الگوی <strong>Strategy</strong> را ساده می‌کند.
+            </p>
+        </div>
+    </div>
+
+    <!-- نمایش سه سرویس Keyed ثبت‌شده -->
+    <div class="keyed-grid">
+        @foreach (var ks in Model.KeyedServices)
+        {
+            var colorClass = ks.Key switch
+            {
+                "email" => "lt-transient",
+                "sms" => "lt-scoped",
+                "push" => "lt-singleton",
+                _ => ""
+            };
+            <div class="keyed-card @colorClass">
+                <div class="keyed-card-header">
+                    <span class="keyed-key">کلید: <code>"@ks.Key"</code></span>
+                    <span class="keyed-channel">@ks.ChannelName</span>
+                </div>
+                <div class="keyed-card-body">
+                    <div class="keyed-impl">
+                        <span class="keyed-impl-label">پیاده‌سازی‌کننده:</span>
+                        <code>@ks.ImplementationName</code>
+                    </div>
+                    <div class="keyed-result">
+                        <span class="keyed-result-label">نتیجه Send:</span>
+                        <div class="keyed-result-text">@ks.SendResult</div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="two-col">
+        <div class="col col-code">
+            <div class="col-label">ثبت در Program.cs:</div>
+            <pre class="code-block"><code><span class="c-comment">// سه پیاده‌سازی از یک اینترفیس، با کلیدهای مختلف</span>
+builder.Services.AddKeyedScoped&lt;<span class="c-type">INotificationService</span>, <span class="c-type">EmailNotificationService</span>&gt;(<span class="c-string">"email"</span>);
+builder.Services.AddKeyedScoped&lt;<span class="c-type">INotificationService</span>, <span class="c-type">SmsNotificationService</span>&gt;(<span class="c-string">"sms"</span>);
+builder.Services.AddKeyedScoped&lt;<span class="c-type">INotificationService</span>, <span class="c-type">PushNotificationService</span>&gt;(<span class="c-string">"push"</span>);</code></pre>
+
+            <div class="col-label" style="margin-top:14px">حالت ایستا (Static Key):</div>
+            <pre class="code-block"><code><span class="c-comment">// کلید به‌صورت Literal در پارامتر اکشن متد</span>
+<span class="c-keyword">public IActionResult</span> Sample(
+    [<span class="c-attr">FromKeyedServices</span>(<span class="c-string">"email"</span>)] <span class="c-type">INotificationService</span> svc)
+{
+    <span class="c-keyword">return</span> Ok(svc.Send(<span class="c-string">"x@y.com"</span>, <span class="c-string">"سلام"</span>));
+}</code></pre>
+
+            <div class="col-label" style="margin-top:14px">حالت داینامیک:</div>
+            <pre class="code-block"><code><span class="c-comment">// کلید از query string می‌آید</span>
+<span class="c-keyword">var</span> svc = sp.GetRequiredKeyedService&lt;<span class="c-type">INotificationService</span>&gt;(channel);
+<span class="c-keyword">return</span> svc.Send(recipient, message);</code></pre>
+        </div>
+        <div class="col col-result">
+            <div class="col-label">تست تعاملی: فراخوانی سرویس Keyed با AJAX</div>
+            <div class="interactive-demo">
+                <div class="demo-header">
+                    <p>کلید را انتخاب کنید، گیرنده و پیام را وارد کنید و دکمه را بزنید.</p>
+                </div>
+                <div class="form-row">
+                    <label>
+                        کانال:
+                        <select id="keyedChannel" class="form-control">
+                            <option value="email">📧 email</option>
+                            <option value="sms">📱 sms</option>
+                            <option value="push">🔔 push</option>
+                        </select>
+                    </label>
+                </div>
+                <div class="form-row">
+                    <label>
+                        گیرنده:
+                        <input type="text" id="keyedRecipient" class="form-control" value="user@example.com" />
+                    </label>
+                </div>
+                <div class="form-row">
+                    <label>
+                        پیام:
+                        <input type="text" id="keyedMessage" class="form-control" value="سلام از Keyed Service!" />
+                    </label>
+                </div>
+                <div class="demo-controls">
+                    <button type="button" id="btnKeyedSend" class="btn btn-primary">
+                        ▶ ارسال با Keyed Service
+                    </button>
+                    <button type="button" id="btnStaticKeyed" class="btn btn-ghost">
+                        تست حالت ایستا [FromKeyedServices("email")]
+                    </button>
+                </div>
+                <div id="keyedResult" class="demo-result" aria-live="polite">
+                    <div class="demo-empty">برای دیدن نتیجه، دکمه را بزنید.</div>
+                </div>
+            </div>
+
+            <div class="hint-box hint-tip">
+                <div class="hint-icon">🔑</div>
+                <div>
+                    <strong>چه زمانی از Keyed Services استفاده کنیم؟</strong>
+                    <ul>
+                        <li>وقتی چند پیاده‌سازی از یک اینترفیس داریم (Strategy Pattern)</li>
+                        <li>وقتی می‌خواهیم در زمان اجرا (Runtime) پیاده‌سازی را انتخاب کنیم</li>
+                        <li>جایگزین تمیزتر برای Factory Pattern دستی</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===================================================================== -->
+<!-- بخش ۷: DbContext با EF Core In-Memory                                 -->
+<!-- ===================================================================== -->
+<section class="section" id="section-dbcontext">
+    <div class="section-header">
+        <span class="section-number">07</span>
+        <div>
+            <h2 class="section-title">DbContext با EF Core In-Memory</h2>
+            <p class="section-desc">
+                DbContext در ASP.NET Core به‌صورت <strong>Scoped</strong> ثبت می‌شود (پیش‌فرض).
+                این یعنی در یک HTTP Request، یک نمونه DbContext به همه‌ی سرویس‌ها داده می‌شود.
+                در این بخش، محصولات دیتابیس را می‌بینید و می‌توانید محصول جدید اضافه کنید.
+            </p>
+        </div>
+    </div>
+
+    <div class="two-col">
+        <div class="col col-code">
+            <div class="col-label">ثبت DbContext در Program.cs:</div>
+            <pre class="code-block"><code>builder.Services.AddDbContext&lt;<span class="c-type">AppDbContext</span>&gt;(options =&gt;
+{
+    options.UseInMemoryDatabase(<span class="c-string">"DIEduDemoDb"</span>);
+    <span class="c-keyword">if</span> (builder.Environment.IsDevelopment())
+    {
+        options.EnableSensitiveDataLogging()
+               .EnableDetailedErrors();
+    }
+});
+
+<span class="c-comment">// ثبت Repository که از DbContext استفاده می‌کند</span>
+builder.Services.AddScoped&lt;<span class="c-type">IProductRepository</span>, <span class="c-type">ProductRepository</span>&gt;();</code></pre>
+
+            <div class="col-label" style="margin-top:14px">Repository با Constructor Injection:</div>
+            <pre class="code-block"><code><span class="c-keyword">public class</span> <span class="c-type">ProductRepository</span> : <span class="c-type">IProductRepository</span>
+{
+    <span class="c-keyword">private readonly</span> <span class="c-type">AppDbContext</span> _db;
+
+    <span class="c-comment">// DbContext به‌صورت Scoped تزریق می‌شود</span>
+    <span class="c-keyword">public</span> <span class="c-type">ProductRepository</span>(<span class="c-type">AppDbContext</span> db)
+    {
+        _db = db;
+    }
+
+    <span class="c-keyword">public async</span> <span class="c-type">Task</span>&lt;<span class="c-type">Product</span>&gt; AddAsync(<span class="c-type">string</span> name, <span class="c-type">decimal</span> price)
+    {
+        <span class="c-keyword">var</span> p = <span class="c-keyword">new</span> <span class="c-type">Product</span> { Name = name, Price = price };
+        _db.Products.Add(p);
+        <span class="c-keyword">await</span> _db.SaveChangesAsync();
+        <span class="c-keyword">return</span> p;
+    }
+}</code></pre>
+        </div>
+        <div class="col col-result">
+            <div class="col-label">اطلاعات دیتابیس:</div>
+            <div class="env-grid env-grid-small">
+                <div class="env-card">
+                    <div class="env-label">Provider</div>
+                    <div class="env-value env-value-sm">@Model.DatabaseProvider</div>
+                </div>
+                <div class="env-card">
+                    <div class="env-label">نام DB</div>
+                    <div class="env-value env-value-sm env-value-mono">@Model.DatabaseName</div>
+                </div>
+                <div class="env-card">
+                    <div class="env-label">تعداد محصولات</div>
+                    <div class="env-value env-value-sm" id="productCount">@Model.ProductCount</div>
+                </div>
+            </div>
+
+            <div class="col-label" style="margin-top:16px">لیست محصولات:</div>
+            <div class="table-wrap">
+                <table class="product-table" id="productTable">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>نام محصول</th>
+                            <th>قیمت (تومان)</th>
+                            <th>تاریخ ایجاد</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var p in Model.Products)
+                        {
+                            <tr>
+                                <td><code>@p.Id</code></td>
+                                <td>@p.Name</td>
+                                <td>@p.Price.ToString("N0")</td>
+                                <td><code>@p.CreatedAt.ToString("yyyy-MM-dd HH:mm")</code></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="interactive-demo" style="margin-top:16px">
+                <div class="demo-header">
+                    <h3>➕ افزودن محصول جدید</h3>
+                    <p>فرم را پر کنید و دکمه را بزنید. محصول به دیتابیس In-Memory اضافه می‌شود.</p>
+                </div>
+                <form id="addProductForm" class="product-form">
+                    <div class="form-row">
+                        <label>
+                            نام محصول:
+                            <input type="text" id="productName" class="form-control" required placeholder="مثلاً: کیبورد مکانیکی" />
+                        </label>
+                    </div>
+                    <div class="form-row">
+                        <label>
+                            قیمت (تومان):
+                            <input type="number" id="productPrice" class="form-control" required min="1" step="1000" placeholder="مثلاً: 500000" />
+                        </label>
+                    </div>
+                    <div class="demo-controls">
+                        <button type="submit" id="btnAddProduct" class="btn btn-primary">
+                            ➕ افزودن به دیتابیس
+                        </button>
+                        <button type="button" id="btnRefreshProducts" class="btn btn-ghost">
+                            🔄_refresh جدول
+                        </button>
+                    </div>
+                </form>
+                <div id="addProductResult" class="demo-result" aria-live="polite">
+                    <div class="demo-empty">برای افزودن محصول، فرم را پر کنید.</div>
+                </div>
+            </div>
+
+            <div class="hint-box hint-info">
+                <div class="hint-icon">💾</div>
+                <div>
+                    <strong>نکته مهم درباره In-Memory Database:</strong>
+                    داده‌ها در حافظه نگه‌داری می‌شوند. با restart شدن برنامه، دیتابیس از نو ساخته می‌شود
+                    و فقط داده‌های Seed (سه محصول اولیه) باقی می‌مانند.
+                    برای محیط Production از SQL Server، PostgreSQL یا SQLite استفاده کنید.
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===================================================================== -->
+<!-- بخش ۸: اطلاعات محیط                                                    -->
+<!-- ===================================================================== -->
+<section class="section" id="section-env">
+    <div class="section-header">
+        <span class="section-number">08</span>
+        <div>
+            <h2 class="section-title">اطلاعات محیط اجرا</h2>
+            <p class="section-desc">
+                سرویس <code>IWebHostEnvironment</code> (سرویس داخلی ASP.NET Core) اطلاعات محیط را فراهم می‌کند.
+            </p>
+        </div>
+    </div>
+
+    <div class="env-grid">
+        <div class="env-card">
+            <div class="env-label">محیط اجرا (Environment)</div>
+            <div class="env-value">@Model.EnvironmentName</div>
+        </div>
+        <div class="env-card">
+            <div class="env-label">زمان درخواست</div>
+            <div class="env-value env-value-mono">@Model.RequestTime.ToString("yyyy-MM-dd HH:mm:ss.fff")</div>
+        </div>
+        <div class="env-card">
+            <div class="env-label">نسخه دات‌نت</div>
+            <div class="env-value env-value-mono">@Environment.Version</div>
+        </div>
+        <div class="env-card">
+            <div class="env-label">نوع پروژه</div>
+            <div class="env-value">Standard MVC</div>
+        </div>
+    </div>
+</section>

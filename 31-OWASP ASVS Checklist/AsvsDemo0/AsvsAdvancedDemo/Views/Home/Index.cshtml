@@ -1,0 +1,42 @@
+﻿@{ ViewData["Title"] = "صفحه اصلی - نمایش استانداردهای OWASP ASVS"; }
+<div class="text-center" dir="rtl">
+    <h1 class="display-4 mb-4">نمایش عملی بندهای استاندارد OWASP ASVS</h1>
+    <div class="row mt-5">
+        <div class="col-md-4 mb-3">
+            <div class="card h-100 border-primary">
+                <div class="card-body">
+                    <h5 class="card-title text-primary">اعتبارسنجی رمز عبور</h5>
+                    <p class="card-text small">بند OWASP ASVS: <strong>V2.1.1</strong></p>
+                    <form asp-action="CheckPassword" method="post">
+                        <input type="password" name="password" class="form-control mb-2" placeholder="رمز عبور" required />
+                        <button type="submit" class="btn btn-primary w-100">بررسی رمز عبور</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card h-100 border-warning">
+                <div class="card-body">
+                    <h5 class="card-title text-warning">جلوگیری از XSS</h5>
+                    <p class="card-text small">بند OWASP ASVS: <strong>V5.1.2</strong></p>
+                    <form asp-action="XssDemo" method="post">
+                        <input type="text" name="userInput" class="form-control mb-2" value="<script>alert('XSS')</script>" required />
+                        <button type="submit" class="btn btn-warning w-100">بررسی کدگذاری خروجی</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card h-100 border-success">
+                <div class="card-body">
+                    <h5 class="card-title text-success">محافظت در برابر CSRF</h5>
+                    <p class="card-text small">بند OWASP ASVS: <strong>V8.1.1</strong></p>
+                    <form asp-action="CsrfAction" method="post">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-success w-100">ارسال درخواست امن</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

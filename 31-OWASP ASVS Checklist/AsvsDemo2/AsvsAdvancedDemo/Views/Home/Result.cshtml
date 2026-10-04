@@ -1,0 +1,16 @@
+﻿@{ ViewData[""Title""] = ""نتیجه عملیات""; }
+<div class=""text-center mt-5"" dir=""rtl"">
+    <h2>نتیجه عملیات</h2>
+    <div class=""alert @(ViewBag.IsSuccess == false ? ""alert-danger"" : ""alert-success"") mx-auto"" style=""max-width: 700px; white-space: pre-wrap;"">
+        @ViewBag.Message
+    </div>
+    @if (ViewBag.Encrypted != null) {
+        <div class=""card mx-auto"" style=""max-width: 700px;"">
+            <div class=""card-body text-start"" dir=""ltr"">
+                <p><strong>متن رمزنگاری شده (Cipher):</strong><br/><code class=""text-danger"">@ViewBag.Encrypted</code></p>
+                <p><strong>متن رمزگشایی شده (Plain):</strong><br/><code class=""text-success"">@ViewBag.Decrypted</code></p>
+            </div>
+        </div>
+    }
+    <a asp-action=""Index"" class=""btn btn-secondary mt-4"">بازگشت به صفحه اصلی</a>
+</div>

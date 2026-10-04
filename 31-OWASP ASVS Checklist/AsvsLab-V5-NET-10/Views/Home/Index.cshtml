@@ -1,0 +1,124 @@
+@model DashboardViewModel
+@{
+    ViewData["Title"] = "داشبورد";
+}
+
+@functions {
+    // کلاس و برچسب نشان نوع دمو (اجرا/فرم/متنی)
+    public static string KindClass(DemoKind k) => k switch
+    {
+        DemoKind.Live => "text-bg-success",
+        DemoKind.Form => "text-bg-primary",
+        _ => "text-bg-secondary"
+    };
+    public static string KindLabel(DemoKind k) => k switch
+    {
+        DemoKind.Live => "اجرا",
+        DemoKind.Form => "فرم",
+        _ => "متنی"
+    };
+}
+
+<div class="text-center mb-4">
+    <h1 class="fw-bold">🛡️ آزمایشگاه آموزشی OWASP ASVS 5.0</h1>
+    <p class="text-muted mb-1">
+        با زدن هر دکمه، یک یا چند بند از استاندارد <b>ASVS 5.0</b> با مثال واقعی اجرا و توضیح داده می‌شود.
+    </p>
+    <p class="small text-muted">
+        ۳۴۵ بند رسمی در ۱۷ فصل — کد ناامن ❌ در برابر کد امن ✅ — ASP.NET Core 10
+    </p>
+</div>
+
+@* ─── نوار پیشرفت کلی + جستجو ─── *@
+<div class="sticky-search">
+    <div class="row g-2 align-items-center">
+        <div class="col-md-8">
+            <form method="get" class="input-group">
+                <input type="text" name="q" value="@Model.Query" class="form-control"
+                       placeholder="جستجو در عنوان دموها یا شماره بند — مثلاً: کوکی، JWT، V11.4.2، IDOR…" />
+                <button type="submit" class="btn btn-success">جستجو</button>
+                @if (!string.IsNullOrEmpty(Model.Query))
+                {
+                    <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary">حذف فیلتر</a>
+                }
+            </form>
+        </div>
+        <div class="col-md-4">
+            <div class="d-flex align-items-center gap-2">
+                <div class="flex-grow-1">
+                    <div class="progress" style="height:14px">
+                        <div class="progress-bar bg-success" style="width:@(Model.TotalCount == 0 ? 0 : (int)(100.0 * Model.VisitedCount / Model.TotalCount))%">
+                        </div>
+                    </div>
+                </div>
+                <span class="small text-nowrap">
+                    📚 @Model.VisitedCount/@Model.TotalCount دمو
+                    @if (Model.QuizPassedCount > 0)
+                    {
+                        <span>· 🧪 @Model.QuizPassedCount فصل</span>
+                    }
+                </span>
+                <a asp-controller="Home" asp-action="ResetProgress" class="small text-muted" title="بازنشانی پیشرفت">↺</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (string.IsNullOrEmpty(Model.Query))
+{
+    <div class="alert alert-light border small mb-4">
+        💡 شروع کنید: با کاربر دمو <code>admin / Admin123!</code> یا <code>ali / Ali12345!</code> از صفحه
+        <a asp-controller="Account" asp-action="Login" class="fw-bold">ورود</a> وارد شوید تا دموهای وابسته به نقش و IDOR هم کامل اجرا شوند.
+        دموی Redis نیاز به سرویس Redis دارد (در نبودش پیام راهنما می‌بینید).
+    </div>
+}
+else
+{
+    <div class="alert alert-info small mb-4">
+        نتیجه جستجو برای «<b>@Model.Query</b>» — @Model.Chapters.Sum(c => c.Items.Count) دمو یافت شد
+    </div>
+}
+
+@* ─── کارت‌های ۱۷ فصل ─── *@
+<div class="row g-3">
+    @foreach (var ch in Model.Chapters)
+    {
+        <div class="col-md-6 col-xl-4">
+            <div class="chapter-card h-100">
+                <div class="card-body pb-1">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <h5 class="mb-1">
+                            <span class="chapter-badge">V@ch.Chapter</span>
+                            @ch.FaTitle
+                        </h5>
+                    </div>
+                    <div class="small text-muted mb-2">@ch.EnTitle · @ch.OfficialReqCount بند رسمی</div>
+                </div>
+                <ul class="list-group list-group-flush rounded-bottom">
+                    @foreach (var demo in ch.Items)
+                    {
+                        var done = Model.Visited.Contains(demo.Id);
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <a asp-controller="@demo.Controller" asp-action="@demo.Action"
+                               class="@(done ? "demo-done" : "")">
+                                @demo.Title
+                            </a>
+                            <span class="d-flex align-items-center gap-1">
+                                @if (done)
+                                {
+                                    <span title="دیده‌اید">✅</span>
+                                }
+                                <span class="badge @KindClass(demo.Kind) demo-kind">@KindLabel(demo.Kind)</span>
+                            </span>
+                        </li>
+                    }
+                    <li class="list-group-item text-center">
+                        <a asp-controller="Quiz" asp-action="Chapter" asp-route-ch="@ch.Chapter" class="small">
+                            🧪 کوییز فصل V@ch.Chapter
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    }
+</div>

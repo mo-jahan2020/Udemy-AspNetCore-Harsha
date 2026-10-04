@@ -1,0 +1,43 @@
+@model AsvsLab.Models.DemoFormViewModel
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<!-- عنوان دمو -->
+<div class="d-flex flex-wrap justify-content-between align-items-start mb-3 gap-2">
+    <h2 class="page-title mb-0">@Model.Title</h2>
+    <a class="btn btn-outline-secondary" asp-controller="Home" asp-action="Index">🏠 داشبورد</a>
+</div>
+
+<!-- بج شماره بندهای OWASP ASVS -->
+<div class="alert alert-dark asvs-badge">
+    📌 بند(های) مرجع استاندارد OWASP ASVS 4.0.3: <strong class="text-warning">@Model.AsvsRef</strong>
+    <hr class="my-2" />
+    <span class="small">@Model.AsvsSummary</span>
+</div>
+
+<!-- توضیح + فرم ورودی -->
+<div class="card mb-3">
+    <div class="card-header bg-primary text-white fw-bold">📖 توضیح و فرم تست</div>
+    <div class="card-body">
+        <p class="mb-3">@Model.Description</p>
+        <form method="get" action="@Model.FormAction" class="row g-2">
+            <div class="col-12 col-md-8">
+                <label class="form-label fw-bold" for="demoInput">@Model.InputLabel:</label>
+                @if (Model.IsPassword)
+                {
+                    <input type="password" class="form-control" id="demoInput" name="input"
+                           value="@Model.PresetValue" autocomplete="off" />
+                }
+                else
+                {
+                    <input type="text" class="form-control" id="demoInput" name="input"
+                           value="@Model.PresetValue" autocomplete="off" />
+                }
+            </div>
+            <div class="col-12 col-md-4 d-flex align-items-end">
+                <button type="submit" class="btn btn-success w-100">▶️ اجرای دمو</button>
+            </div>
+        </form>
+    </div>
+</div>

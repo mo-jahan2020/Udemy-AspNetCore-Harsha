@@ -23,8 +23,8 @@ namespace ConfigurationExample.Controllers
       WeatherApiOptions options = new WeatherApiOptions();
       _configuration.GetSection("weatherapi").Bind(options);
 
-      ViewBag.ClientID = options.ClientID;
-      ViewBag.ClientSecret = options.ClientSecret;
+      ViewBag._ClientID = options.ClientID;
+      ViewBag._ClientSecret = options.ClientSecret;
 
       return View();
     }

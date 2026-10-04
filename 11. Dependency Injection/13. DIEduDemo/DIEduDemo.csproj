@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <!--
+    ============================================================
+    پروژه آموزشی تزریق وابستگی (Dependency Injection) در ASP.NET Core
+    نسخه دات‌نت: 10.0
+    نوع پروژه: Standard MVC
+    نویسنده: آموزش فارسی
+    ============================================================
+  -->
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>DIEduDemo</RootNamespace>
+    <AssemblyName>DIEduDemo</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="10.0.*" />
+  </ItemGroup>
+
+</Project>
