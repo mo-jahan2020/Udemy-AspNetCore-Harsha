@@ -8,7 +8,7 @@ using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
-//Serilog
+//Serilog 
 builder.Host.UseSerilog((HostBuilderContext context, IServiceProvider services, LoggerConfiguration loggerConfiguration) => {
 
  loggerConfiguration
@@ -16,9 +16,10 @@ builder.Host.UseSerilog((HostBuilderContext context, IServiceProvider services, 
  .ReadFrom.Services(services); //read out current app's services and make them available to serilog
 } );
 
-
+// Add services to the container.
 builder.Services.AddControllersWithViews();
 
+        
 //add services into IoC container
 builder.Services.AddScoped<ICountriesRepository, CountriesRepository>();
 builder.Services.AddScoped<IPersonsRepository, PersonsRepository>();

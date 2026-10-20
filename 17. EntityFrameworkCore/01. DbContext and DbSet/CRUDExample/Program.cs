@@ -1,3 +1,5 @@
+//install EF as Global Tool
+//dotnet tool install --global dotnet-ef
 using ServiceContracts;
 using Services;
 using Microsoft.EntityFrameworkCore;

@@ -4,48 +4,50 @@ using ServiceContracts.DTO;
 
 namespace CRUDExample.Filters.ActionFilters
 {
- public class PersonsListActionFilter : IActionFilter
- {
-  private readonly ILogger<PersonsListActionFilter> _logger;
-
-  public PersonsListActionFilter(ILogger<PersonsListActionFilter> logger)
-  {
-   _logger = logger;
-  }
-
-  public void OnActionExecuted(ActionExecutedContext context)
-  {
-   //To do: add after logic here
-   _logger.LogInformation("PersonsListActionFilter.OnActionExecuted method");
-
-   PersonsController personsController = (PersonsController)context.Controller;
-
-   IDictionary<string, object?>? parameters = (IDictionary<string, object?>?) context.HttpContext.Items["arguments"];
-
-   if (parameters != null)
-   {
-    if (parameters.ContainsKey("searchBy"))
+    public class PersonsListActionFilter : IActionFilter
     {
-     personsController.ViewData["CurrentSearchBy"] = Convert.ToString(parameters["searchBy"]);
-    }
+        private readonly ILogger<PersonsListActionFilter> _logger;
 
-    if (parameters.ContainsKey("searchString"))
-    {
-     personsController.ViewData["CurrentSearchString"] = Convert.ToString(parameters["searchString"]);
-    }
+        public PersonsListActionFilter(ILogger<PersonsListActionFilter> logger)
+        {
+            _logger = logger;
+        }
 
-    if (parameters.ContainsKey("sortBy"))
-    {
-     personsController.ViewData["CurrentSortBy"] = Convert.ToString(parameters["sortBy"]);
-    }
+        public void OnActionExecuted(ActionExecutedContext context)
+        {
+            //To do: add after logic here
+            _logger.LogInformation("PersonsListActionFilter.OnActionExecuted method");
 
-    if (parameters.ContainsKey("sortOrder"))
-    {
-     personsController.ViewData["CurrentSortOrder"] = Convert.ToString(parameters["sortOrder"]);
-    }
-   }
+            PersonsController personsController = (PersonsController)context.Controller;
+            // و اینجا از آن استفاده میکنید
+            // این موضوع خطا نخواهد داد زیرا متد OnActionExecuting قبل از این متد اجرا میشود
+            // لذا این مقدار هیچ وقت تهی نمیشود
+            IDictionary<string, object?>? parameters = (IDictionary<string, object?>?)context.HttpContext.Items["arguments"];
+            // حال میتوانید با استفاده از پارامتر های ورودی مقادیر ViewData را دستکاری و حتی بازنویسی کنید
+            if (parameters != null)
+            {
+                if (parameters.ContainsKey("searchBy"))
+                {
+                    personsController.ViewData["CurrentSearchBy"] = Convert.ToString(parameters["searchBy"]);
+                }
 
-   personsController.ViewBag.SearchFields = new Dictionary<string, string>()
+                if (parameters.ContainsKey("searchString"))
+                {
+                    personsController.ViewData["CurrentSearchString"] = Convert.ToString(parameters["searchString"]);
+                }
+
+                if (parameters.ContainsKey("sortBy"))
+                {
+                    personsController.ViewData["CurrentSortBy"] = Convert.ToString(parameters["sortBy"]);
+                }
+
+                if (parameters.ContainsKey("sortOrder"))
+                {
+                    personsController.ViewData["CurrentSortOrder"] = Convert.ToString(parameters["sortOrder"]);
+                }
+            }
+
+            personsController.ViewBag.SearchFields = new Dictionary<string, string>()
       {
         { nameof(PersonResponse.PersonName), "Person Name" },
         { nameof(PersonResponse.Email), "Email" },
@@ -55,24 +57,26 @@ namespace CRUDExample.Filters.ActionFilters
         { nameof(PersonResponse.Address), "Address" }
       };
 
-  }
+        }
 
 
-  public void OnActionExecuting(ActionExecutingContext context)
-  {
-   context.HttpContext.Items["arguments"] = context.ActionArguments;
+        public void OnActionExecuting(ActionExecutingContext context)
+        {
+            // شما در متد OnActionExecuted به context.ActionArguments دسترسی ندارید
+            // لذا با این خط آن را ذخیره کرده و در بالا تحویل میگیرید
+            context.HttpContext.Items["arguments"] = context.ActionArguments;
 
-   //To do: add before logic here
-   _logger.LogInformation("PersonsListActionFilter.OnActionExecuting method");
+            //To do: add before logic here
+            _logger.LogInformation("PersonsListActionFilter.OnActionExecuting method");
 
-   if (context.ActionArguments.ContainsKey("searchBy"))
-   {
-    string? searchBy = Convert.ToString(context.ActionArguments["searchBy"]);
+            if (context.ActionArguments.ContainsKey("searchBy"))
+            {
+                string? searchBy = Convert.ToString(context.ActionArguments["searchBy"]);
 
-    //validate the searchBy parameter value
-    if (!string.IsNullOrEmpty(searchBy))
-    {
-     var searchByOptions = new List<string>() { 
+                //validate the searchBy parameter value
+                if (!string.IsNullOrEmpty(searchBy))
+                {
+                    var searchByOptions = new List<string>() {
       nameof(PersonResponse.PersonName),
       nameof(PersonResponse.Email),
       nameof(PersonResponse.DateOfBirth),
@@ -81,16 +85,16 @@ namespace CRUDExample.Filters.ActionFilters
       nameof(PersonResponse.Address)
      };
 
-     //reset the searchBy paramer value
-     if (searchByOptions.Any(temp => temp == searchBy) == false)
-     {
-      _logger.LogInformation("searchBy actual value {searchBy}", searchBy);
-      context.ActionArguments["searchBy"] = nameof(PersonResponse.PersonName);
-      _logger.LogInformation("searchBy updated value {searchBy}", context.ActionArguments["searchBy"]);
-     }
-    }
-   }
+                    //reset the searchBy paramer value
+                    if (searchByOptions.Any(temp => temp == searchBy) == false)
+                    {
+                        _logger.LogInformation("searchBy actual value {searchBy}", searchBy);
+                        context.ActionArguments["searchBy"] = nameof(PersonResponse.PersonName);
+                        _logger.LogInformation("searchBy updated value {searchBy}", context.ActionArguments["searchBy"]);
+                    }
+                }
+            }
 
-  }
- }
+        }
+    }
 }

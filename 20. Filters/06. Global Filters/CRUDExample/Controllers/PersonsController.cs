@@ -10,6 +10,7 @@ using System.IO;
 namespace CRUDExample.Controllers
 {
  [Route("[controller]")]
+ // تعریف فیلتر در سطح کنترلر که بعد از Global در اولویت دوم قرار میگیرد و بعد از آن بارگذاری میشود
  [TypeFilter(typeof(ResponseHeaderActionFilter), Arguments = new object[] { "My-Key-From-Controller", "My-Value-From-Controller" })]
  public class PersonsController : Controller
  {
@@ -30,6 +31,7 @@ namespace CRUDExample.Controllers
   [Route("[action]")]
   [Route("/")]
   [TypeFilter(typeof(PersonsListActionFilter))]
+  // فیلتر در سطح متد در آخرین اولویت قرار میگیرد و بعد از دو اولویت Global , Controller بارگذاری میشود
   [TypeFilter(typeof(ResponseHeaderActionFilter), Arguments = new object[] { "MyKey-FromAction", "MyValue-From-Action" })]
   public async Task<IActionResult> Index(string searchBy, string? searchString, string sortBy = nameof(PersonResponse.PersonName), SortOrderOptions sortOrder = SortOrderOptions.ASC)
   {

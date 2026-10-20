@@ -8,7 +8,9 @@ using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
-//Serilog
+//Serilog برای اینکه لاگ ها در یک فایل ذخیره شود نیاز به نصب پکیج دیگری نسیت 
+// فقط باید تنظیمات مربوط به ذخیره در فایل را در appsettings.json بنویسید
+//و نیز باید پوشه لاگ را هم در پروژه بسازید
 builder.Host.UseSerilog((HostBuilderContext context, IServiceProvider services, LoggerConfiguration loggerConfiguration) => {
 
  loggerConfiguration

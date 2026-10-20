@@ -6,27 +6,27 @@ using ServiceContracts.Enums;
 
 namespace CRUDExample.Controllers
 {
-  [Route("[controller]")]
-  public class PersonsController : Controller
-  {
-    //private fields
-    private readonly IPersonsService _personsService;
-    private readonly ICountriesService _countriesService;
-
-    //constructor
-    public PersonsController(IPersonsService personsService, ICountriesService countriesService)
+    [Route("[controller]")]
+    public class PersonsController : Controller
     {
-      _personsService = personsService;
-      _countriesService = countriesService;
-    }
+        //private fields
+        private readonly IPersonsService _personsService;
+        private readonly ICountriesService _countriesService;
 
-    //Url: persons/index
-    [Route("[action]")]
-    [Route("/")]
-    public IActionResult Index(string searchBy, string? searchString, string sortBy = nameof(PersonResponse.PersonName), SortOrderOptions sortOrder = SortOrderOptions.ASC)
-    {
-      //Search
-      ViewBag.SearchFields = new Dictionary<string, string>()
+        //constructor
+        public PersonsController(IPersonsService personsService, ICountriesService countriesService)
+        {
+            _personsService = personsService;
+            _countriesService = countriesService;
+        }
+
+        //Url: persons/index
+        [Route("[action]")]
+        [Route("/")]
+        public IActionResult Index(string searchBy, string? searchString, string sortBy = nameof(PersonResponse.PersonName), SortOrderOptions sortOrder = SortOrderOptions.ASC)
+        {
+            //Search
+            ViewBag.SearchFields = new Dictionary<string, string>()
       {
         { nameof(PersonResponse.PersonName), "Person Name" },
         { nameof(PersonResponse.Email), "Email" },
@@ -35,55 +35,59 @@ namespace CRUDExample.Controllers
         { nameof(PersonResponse.CountryID), "Country" },
         { nameof(PersonResponse.Address), "Address" }
       };
-      List<PersonResponse> persons = _personsService.GetFilteredPersons(searchBy, searchString);
-      ViewBag.CurrentSearchBy = searchBy;
-      ViewBag.CurrentSearchString = searchString;
+            List<PersonResponse> persons = _personsService.GetFilteredPersons(searchBy, searchString);
+            ViewBag.CurrentSearchBy = searchBy;
+            ViewBag.CurrentSearchString = searchString;
 
-      //Sort
-      List<PersonResponse> sortedPersons =  _personsService.GetSortedPersons(persons, sortBy, sortOrder);
-      ViewBag.CurrentSortBy = sortBy;
-      ViewBag.CurrentSortOrder = sortOrder.ToString();
+            //Sort
+            List<PersonResponse> sortedPersons = _personsService.GetSortedPersons(persons, sortBy, sortOrder);
+            ViewBag.CurrentSortBy = sortBy;
+            ViewBag.CurrentSortOrder = sortOrder.ToString();
 
-      return View(sortedPersons); //Views/Persons/Index.cshtml
+            return View(sortedPersons); //Views/Persons/Index.cshtml
+        }
+
+
+        //Executes when the user clicks on "Create Person" hyperlink (while opening the create view)
+        //Url: persons/create
+        [Route("[action]")]
+        [HttpGet]
+        public IActionResult Create()
+        {
+            List<CountryResponse> countries = _countriesService.GetAllCountries();
+
+            //ViewBag.Countries = countries;
+            // شکل بالا برای متد های HTML و Taghelper عادی  مناسب است
+            // برای برای TagHelper های مانند Select مناسب نیست و باید به شکل زیر باشد
+            ViewBag.Countries = countries.Select(temp =>
+              new SelectListItem() { Text = temp.CountryName, Value = temp.CountryID.ToString() }
+            );
+
+            //new SelectListItem() { Text="Harsha", Value="1" }
+            //<option value="1">Harsha</option>
+            return View();
+        }
+
+        [HttpPost]
+        //Url: persons/create
+        [Route("[action]")]
+        public IActionResult Create(PersonAddRequest personAddRequest)
+        {
+            if (!ModelState.IsValid)
+            {
+                List<CountryResponse> countries = _countriesService.GetAllCountries();
+                ViewBag.Countries = countries.Select(temp =>
+                new SelectListItem() { Text = temp.CountryName, Value = temp.CountryID.ToString() });
+
+                ViewBag.Errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
+                return View();
+            }
+
+            //call the service method
+            PersonResponse personResponse = _personsService.AddPerson(personAddRequest);
+
+            //navigate to Index() action method (it makes another get request to "persons/index"
+            return RedirectToAction("Index", "Persons");
+        }
     }
-
-
-    //Executes when the user clicks on "Create Person" hyperlink (while opening the create view)
-    //Url: persons/create
-    [Route("[action]")]
-    [HttpGet]
-    public IActionResult Create()
-    {
-      List<CountryResponse> countries = _countriesService.GetAllCountries();
-      ViewBag.Countries = countries.Select(temp => 
-        new SelectListItem() {  Text = temp.CountryName, Value = temp.CountryID.ToString() }
-      );
-
-      //new SelectListItem() { Text="Harsha", Value="1" }
-      //<option value="1">Harsha</option>
-      return View();
-    }
-
-    [HttpPost]
-    //Url: persons/create
-    [Route("[action]")]
-    public IActionResult Create(PersonAddRequest personAddRequest)
-    {
-      if (!ModelState.IsValid)
-      {
-        List<CountryResponse> countries = _countriesService.GetAllCountries();
-        ViewBag.Countries = countries.Select(temp =>
-        new SelectListItem() { Text = temp.CountryName, Value = temp.CountryID.ToString() });
-
-        ViewBag.Errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
-        return View();
-      }
-
-      //call the service method
-      PersonResponse personResponse = _personsService.AddPerson(personAddRequest);
-      
-      //navigate to Index() action method (it makes another get request to "persons/index"
-      return RedirectToAction("Index", "Persons");
-    }
-  }
 }

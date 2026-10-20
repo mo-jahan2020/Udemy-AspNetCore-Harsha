@@ -23,7 +23,8 @@ builder.Services.AddControllersWithViews(options => {
  //options.Filters.Add<ResponseHeaderActionFilter>(5);
 
  var logger = builder.Services.BuildServiceProvider().GetRequiredService<ILogger<ResponseHeaderActionFilter>>();
-
+    // در گلوبال دیگر order=2 نباید بنویسیم
+    // در مدل فیلتر Global فقط با این روش میتوانیم به آن هم ترتیب اجرا بدهیم
  options.Filters.Add(new ResponseHeaderActionFilter(logger, "My-Key-From-Global", "My-Value-From-Global", 2));
 });
 

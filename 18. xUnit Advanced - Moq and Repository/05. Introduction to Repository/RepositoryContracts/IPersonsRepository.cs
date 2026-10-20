@@ -34,12 +34,20 @@ namespace RepositoryContracts
   Task<List<Person>> GetPersonByPersonID(Guid personID);
 
 
-  /// <summary>
-  /// Returns all person objects based on the given expression
-  /// </summary>
-  /// <param name="predicate">LINQ expression to check</param>
-  /// <returns>All matching persons with given condition</returns>
-  Task<List<Person>> GetFilteredPersons(Expression<Func<Person, bool>> predicate);
+        /// <summary>
+        /// این متد به شما اجازه می‌دهد تا شرط فیلتر (Filter Condition) را از بیرون به
+        /// Repository پاس بدهید و Repository آن شرط را روی داده‌ها اعمال کند. به عبارت دیگر،
+        /// Repository نمی‌داند چه شرطی قرار است اعمال شود؛ این شرط توسط لایه‌ی فراخواننده
+        /// (مانند Controller یا Service) تعیین می‌شود.
+        /// این الگو به شما امکان می‌دهد بدون نیاز به نوشتن متدهای متعدد برای هر نوع فیلتر(مثلاً 
+        /// GetPersonsByName، GetPersonsByAge، GetPersonsByCity و ...)،
+        /// یک متد عمومی داشته باشید که هر شرطی را بپذیرد
+        /// Func<Person, bool> یک Delegate است که یک ورودی از نوع Person 
+        /// می‌گیرد و یک خروجی از نوع bool برمی‌گرداند. نام این دلیگیت predicate است
+
+
+
+        Task<List<Person>> GetFilteredPersons(Expression<Func<Person, bool>> predicate);
 
 
   /// <summary>

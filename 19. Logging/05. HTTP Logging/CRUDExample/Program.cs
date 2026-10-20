@@ -36,7 +36,8 @@ if (builder.Environment.IsDevelopment())
 {
  app.UseDeveloperExceptionPage();
 }
-
+// با همین یک خط این مدل از لاگ فعال میشود
+// ولی نوع و سطح لاگ ها در همان appsettings.json and  appsettings.development.json مشخص میشود
 app.UseHttpLogging();
 
 //app.Logger.LogDebug("debug-message");

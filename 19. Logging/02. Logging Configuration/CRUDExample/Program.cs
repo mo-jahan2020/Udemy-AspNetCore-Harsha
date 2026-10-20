@@ -30,7 +30,7 @@ if (builder.Environment.IsDevelopment())
 {
  app.UseDeveloperExceptionPage();
 }
-
+// تنظیمات اینکه کدام لاگ های سیستمی در خرجی ریخته شود در فایل های appsettings.json and appsettings.development.json میباشد
 app.Logger.LogDebug("debug-message");
 app.Logger.LogInformation("information-message");
 app.Logger.LogWarning("warning-message");

@@ -39,9 +39,9 @@ namespace CRUDTests
       PersonAddRequest? personAddRequest = null;
 
       //Act
-      Assert.Throws<ArgumentNullException>(() =>
+       Assert.Throw<ArgumentNullException>(() =>
       {
-        _personService.AddPerson(personAddRequest);
+           _personService.AddPerson(personAddRequest);
       });
     }
 

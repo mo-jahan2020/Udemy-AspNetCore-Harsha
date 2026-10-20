@@ -8,7 +8,17 @@ using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
-//Serilog
+//Serilog پکیج زیر نصب شود در servives: Serilog.Timings
+// این لاگ زمان شروع و پایان یک متد یا یک دستور را استخراج کرده و ثبت میکند
+//هر عملیات (کوئری دیتابیس، صدا زدن API خارجی، خواندن از کش، تولید گزارش و...) دقیقاً یک رویداد لاگ ساخت‌یافته تولید می‌کند که در پایان کار صادر می‌شود و شامل مدت زمان اجرا است.
+/*
+ * رفتارها و قابلیت‌های کلیدی:
+ * Complete(): اگر بلوک بدون Complete تمام شود (مثلاً Exception پرتاب شود)، عملیات شکست‌خورده تلقی و رویدادی با Outcome = "abandoned" در سطح Warning ثبت می‌شود — حتی Elapsed هم ثبت می‌شود، پس می‌فهمید کالاهای شکست‌خورده چقدر کند بوده‌اند!
+ * Operation.At(level):تغییر سطح ثبت: Operation.At(LogEventLevel.Debug).Time("Preparing zip archive") — پارامتر دوم هم سطح abandonment را تعیین می‌کند
+ * Operation.Time(...):نسخه‌ی خودکار: با Dispose شدن، خودبه‌خود «completed» ثبت می‌شود (بدون نیاز به صدا زدن Complete)
+ * op.Cancel():وقتی عملیات اصلاً موضوعیت نداشت (مثلاً کش Hit شد و نیازی به ادامه نبود)، رویداد را کاملاً حذف می‌کند تا لاگ شلوغ نشود 
+ * OperationId:به‌جای متد استاتیک: logger.BeginOperation(...) و logger.TimeOperation(...)
+ */
 builder.Host.UseSerilog((HostBuilderContext context, IServiceProvider services, LoggerConfiguration loggerConfiguration) => {
 
  loggerConfiguration

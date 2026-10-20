@@ -8,7 +8,25 @@ using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
-//Serilog
+//Serilog باید پکیج Serilog.Extemtions.Hosting در لایه Services نصب شود
+// حال در سرویس 
+/*
+ * IDiagnosticContext یک اینترفیس در پکیج Serilog.AspNetCore است که به شما امکان می‌دهد بدون نیاز به
+ * ILogger، پراپرتی‌های دلخواه (context) به رویدادهای لاگ اضافه کنید.
+ * وقتی UseSerilog() را روی host صدا می‌زنید، این اینترفیس به‌صورت خودکار با 
+ * lifetime از نوع Scoped در سیستم DI ثبت می‌شود.
+ * Set(name, value): اضافه/به‌روزرسانی یک پراپرتی روی همه لاگ‌های همان Scope
+ * Get(name): خواندن مقدار یک پراپرتی ثبت‌شده
+ * Remove(name): حذف یک پراپرتی از Context
+ * SetCorrelationId:متد کمکی برای ثبت شناسه همبستگی (در نسخه‌های جدید)
+ */
+/*
+ * نکات مهم
+حتماً باید .Enrich.FromLogContext() در تنظیمات Logger فعال باشد، وگرنه پراپرتی‌ها در خروجی ظاهر نمی‌شوند.
+اگر UseSerilog() را صدا نزنید، IDiagnosticContext در DI ثبت نمی‌شود و باید آن را دستی رجیستر کنید: services.AddScoped<IDiagnosticContext, DiagnosticContext>().
+به دلیل Scoped بودن، آن را در سرویس‌های Singleton مستقیم تزریق نکنید (مگر با ایجاد Scope جدید).
+ * 
+ */
 builder.Host.UseSerilog((HostBuilderContext context, IServiceProvider services, LoggerConfiguration loggerConfiguration) => {
 
  loggerConfiguration

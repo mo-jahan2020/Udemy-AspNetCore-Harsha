@@ -21,6 +21,7 @@ namespace Services
   //private field
   private readonly IPersonsRepository _personsRepository;
   private readonly ILogger<PersonsService> _logger;
+        // اینجا مقدار دهی کرده و همین جا هم استفاده خواهیم کرد
   private readonly IDiagnosticContext _diagnosticContext;
 
   //constructor

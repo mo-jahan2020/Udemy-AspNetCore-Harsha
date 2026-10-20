@@ -14,7 +14,9 @@ builder.Services.AddDbContext<PersonsDbContext>(options => {
   options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
-//Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=PersonsDatabase;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False
+// هر تغییری در لایه دیتا Entities و زدن دستور ذیل همه تغییرات در Migration اعمال میشود
+// ولی نکته اینجاست بیزینس خود برنامه با شماست 
+// ونیز حواستان به تغییرات دیگر باشد مثلاً با تغییر یک فیلد باید بروزرسانی  StoredP را هم با یک Migration دیگر تغییر دهید
 
 var app = builder.Build();
 

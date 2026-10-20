@@ -13,6 +13,10 @@ builder.Services.AddScoped<IPersonsService, PersonsService>();
 builder.Services.AddDbContext<PersonsDbContext>(options => {
   options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")!);
 });
+// goto Tools → NuGet Package Manager → Package Manager Console-> Default Project = Entities Project
+// Install-package Microsoft.EntityFrameworkCore.Tools
+// Add-Migration Initial
+// Update-Database -verbose
 
 //Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=PersonsDatabase;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False
 

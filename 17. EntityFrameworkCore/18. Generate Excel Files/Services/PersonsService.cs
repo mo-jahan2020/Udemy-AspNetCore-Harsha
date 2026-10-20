@@ -274,7 +274,10 @@ namespace Services
 
     public async Task<MemoryStream> GetPersonsExcel()
     {
-      MemoryStream memoryStream = new MemoryStream();
+        //ظاهرا این مبدل اکسل از تمام کاراکتر های فارسی پشتیبانی نمیکند
+        //https://github.com/EPPlusSoftware/EPPlus/
+        // لایسنس میخواهد
+            MemoryStream memoryStream = new MemoryStream();
       using (ExcelPackage excelPackage = new ExcelPackage(memoryStream))
       {
         ExcelWorksheet workSheet = excelPackage.Workbook.Worksheets.Add("PersonsSheet");

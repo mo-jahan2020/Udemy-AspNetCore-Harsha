@@ -14,7 +14,8 @@ builder.Services.AddDbContext<PersonsDbContext>(options => {
   options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
-//Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=PersonsDatabase;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False
+//Tools->NuGet Package Manager ->Package manager Conson (Default Project : Entities): Add-Migration GetPersons_StoredProcedure->
+// Add code for create And Drop SP->Update-Database (if error Occured: drop All Tables in PersonDatabase then Repeat)
 
 var app = builder.Build();
 

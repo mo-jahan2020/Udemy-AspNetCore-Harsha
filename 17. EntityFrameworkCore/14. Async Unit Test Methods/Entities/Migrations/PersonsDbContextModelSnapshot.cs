@@ -17,10 +17,10 @@ namespace Entities.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.5")
+                .HasAnnotation("ProductVersion", "10.0.13")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
+            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
             modelBuilder.Entity("Entities.Country", b =>
                 {
@@ -102,9 +102,12 @@ namespace Entities.Migrations
 
                     b.HasKey("PersonID");
 
-                    b.ToTable("Persons", (string)null);
+                    b.HasIndex("CountryID");
 
-                    b.HasCheckConstraint("CHK_TIN", "len([TaxIdentificationNumber]) = 8");
+                    b.ToTable("Persons", null, t =>
+                        {
+                            t.HasCheckConstraint("CHK_TIN", "len([TaxIdentificationNumber]) = 8");
+                        });
 
                     b.HasData(
                         new
@@ -239,6 +242,20 @@ namespace Entities.Migrations
                             PersonName = "Verene",
                             ReceiveNewsLetters = true
                         });
+                });
+
+            modelBuilder.Entity("Entities.Person", b =>
+                {
+                    b.HasOne("Entities.Country", "Country")
+                        .WithMany("Persons")
+                        .HasForeignKey("CountryID");
+
+                    b.Navigation("Country");
+                });
+
+            modelBuilder.Entity("Entities.Country", b =>
+                {
+                    b.Navigation("Persons");
                 });
 #pragma warning restore 612, 618
         }

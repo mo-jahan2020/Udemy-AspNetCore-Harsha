@@ -7,12 +7,21 @@ using Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
-//Logging
+// پیش فرض بدون تنظیم Provider لاگهای این صفحه در دو جا ریخته میشوند 
+// 1- Consol اجرا شده توسط خود برنامه
+// 2- خروجی Debug خود ویژوال استودیو
+// با این خط تمام تنظیمات مزبوط به خروجی لاگ ها حذف میشود
 builder.Logging.ClearProviders();
+// حال فقط خروجی لاگ روی کنسول ریخته خواهد شد
 builder.Logging.AddConsole();
-builder.Logging.AddDebug();
-builder.Logging.AddEventLog();
-
+//builder.Logging.AddDebug();// ریختن لاگ در دیباگ خود ویژوال استودیو
+//builder.Logging.AddEventLog(); // ریختن لاگ در event های ویندوز
+//OR نسخه قدیمی
+//builder.Host.ConfigureLogging(loggingProvider =>
+//{
+//    loggingProvider.ClearProviders();
+//    loggingProvider.AddConsole();
+//});
 
 
 builder.Services.AddControllersWithViews();

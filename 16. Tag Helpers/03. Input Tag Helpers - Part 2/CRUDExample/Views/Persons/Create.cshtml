@@ -1,4 +1,5 @@
-﻿@model PersonAddRequest
+﻿<!--برای استفاده از taghelper روی input , select, label باید این خط را حتماً بزنید-->
+@model PersonAddRequest
 
 @{
  ViewBag.Title = "Create Person";
@@ -13,9 +14,11 @@
   @*PersonName*@
   <div class="form-field flex">
    <div class="w-25">
+        <!--حتماً باید یک فیلد معتبر به آن نسبت دهید وگرنه خطا میدهد-->
     <label asp-for="PersonName" class="form-label pt">Person Name</label>
    </div>
    <div class="flex-1">
+       <!--حتماً باید یک فیلد معتبر به آن نسبت دهید وگرنه خطا میدهد-->
     <input asp-for="PersonName" class="form-input" />
    </div>
   </div>
@@ -63,6 +66,7 @@
    <div class="w-25">
     <label class="form-label" asp-for="CountryID">Country</label>
    </div>
+            <!--حتماً باید یک فیلد معتبر به آن نسبت دهید وگرنه خطا میدهد-->
    <div class="flex-1">
     <select asp-for="CountryID" class="form-input" asp-items="@ViewBag.Countries">
      <option value="">Please Select</option>

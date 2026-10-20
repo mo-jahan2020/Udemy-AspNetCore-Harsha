@@ -15,7 +15,7 @@ namespace CRUDExample.Filters.ActionFilters
 
   public void OnActionExecuted(ActionExecutedContext context)
   {
-   //To do: add after logic here
+   // سریلاگ و مقدار دهی پارامتری مقادیر خروجی
    _logger.LogInformation("{FilterName}.{MethodName} method", nameof(PersonsListActionFilter), nameof(OnActionExecuted));
 
    PersonsController personsController = (PersonsController)context.Controller;

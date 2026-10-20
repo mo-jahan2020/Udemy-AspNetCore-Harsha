@@ -17,10 +17,10 @@ namespace Entities.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.5")
+                .HasAnnotation("ProductVersion", "10.0.13")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
+            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
             modelBuilder.Entity("Entities.Country", b =>
                 {
@@ -93,9 +93,6 @@ namespace Entities.Migrations
 
                     b.Property<bool>("ReceiveNewsLetters")
                         .HasColumnType("bit");
-
-                    b.Property<string>("TIN")
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("PersonID");
 

@@ -30,7 +30,8 @@ if (builder.Environment.IsDevelopment())
 {
  app.UseDeveloperExceptionPage();
 }
-
+// این ابتدایی ترین نوع لاگ است که در کنسول ریخته میشود
+// نیاز به هیچ پکیجی ندارد
 app.Logger.LogDebug("debug-message");
 app.Logger.LogInformation("information-message");
 app.Logger.LogWarning("warning-message");

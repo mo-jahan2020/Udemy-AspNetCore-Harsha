@@ -28,7 +28,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
  options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
-
+// با سوئیچ آپشن لاگ های ریخته شده را مشخص میکنیم
+// گزینه All هم پیش فرض آن است و اینجا هم همه دارد
 builder.Services.AddHttpLogging(options =>
 {
  options.LoggingFields = Microsoft.AspNetCore.HttpLogging.HttpLoggingFields.RequestProperties | Microsoft.AspNetCore.HttpLogging.HttpLoggingFields.ResponsePropertiesAndHeaders;

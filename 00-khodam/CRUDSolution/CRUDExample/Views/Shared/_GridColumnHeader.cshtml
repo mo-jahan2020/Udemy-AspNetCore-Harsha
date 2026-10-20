@@ -1,0 +1,42 @@
+﻿<!--با استفاده از TagHelper-->
+<!-- اگر روی همان ستون دوباره کیک کرد فقط جهت منظم سازی را عوض کن-->
+@if (ViewBag.CurrentSortBy == ViewBag.ColumnName && ViewBag.CurrentSortOrder == SortOrderOptions.ASC.ToString())
+{
+    <th>
+        <!-- ?searchBy=@ViewBag.CurrentSearchBy-->
+        <a asp-controller="Persons" asp-action="Index"
+           asp-route-searchBy="@ViewBag.CurrentSearchBy"
+           asp-route-searchString="@ViewBag.CurrentSearchString"
+           asp-route-sortBy="@ViewBag.ColumnName"
+           asp-route-sortOrder="@nameof(SortOrderOptions.DESC)">
+            @ViewBag.DisplayName
+        </a>
+        <i class="fa-solid fa-sort-up"></i>
+    </th>
+}
+else if (ViewBag.CurrentSortBy == ViewBag.ColumnName && ViewBag.CurrentSortOrder == SortOrderOptions.DESC.ToString())
+{
+    <!--در غیر این صورت فقط بصورت افزایشی ستون جدید را سورت کن-->
+    <th>
+        <a asp-controller="Persons" asp-action="Index"
+           asp-route-searchBy="@ViewBag.CurrentSearchBy"
+           asp-route-searchString="@ViewBag.CurrentSearchString"
+           asp-route-sortBy="@ViewBag.ColumnName"
+           asp-route-sortOrder="@nameof(SortOrderOptions.ASC)">
+            @ViewBag.DisplayName
+        </a>
+        <i class="fa-solid fa-sort-down"></i>
+    </th>
+}
+else
+{
+    <th>
+        <a asp-controller="Persons" asp-action="Index"
+           asp-route-searchBy="@ViewBag.CurrentSearchBy"
+           asp-route-searchString="@ViewBag.CurrentSearchString"
+           asp-route-sortBy="@ViewBag.ColumnName"
+           asp-route-sortOrder="@nameof(SortOrderOptions.ASC)">
+            @ViewBag.DisplayName
+        </a>
+    </th>
+}

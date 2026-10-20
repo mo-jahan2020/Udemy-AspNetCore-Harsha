@@ -6,9 +6,11 @@ using RepositoryContracts;
 using Repositories;
 using Serilog;
 
+
 var builder = WebApplication.CreateBuilder(args);
 
-//Serilog
+//Serilog install package Serilog.Sinks.MSSqlServer
+// config connectionstring , ..  in appsettings.json
 builder.Host.UseSerilog((HostBuilderContext context, IServiceProvider services, LoggerConfiguration loggerConfiguration) => {
 
  loggerConfiguration

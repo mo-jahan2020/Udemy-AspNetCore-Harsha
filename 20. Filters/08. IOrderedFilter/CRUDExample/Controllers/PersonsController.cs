@@ -1,6 +1,7 @@
 ﻿using CRUDExample.Filters.ActionFilters;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using OfficeOpenXml.Attributes;
 using Rotativa.AspNetCore;
 using ServiceContracts;
 using ServiceContracts.DTO;
@@ -9,7 +10,9 @@ using ServiceContracts.Enums;
 namespace CRUDExample.Controllers
 {
  [Route("[controller]")]
- [TypeFilter(typeof(ResponseHeaderActionFilter), Arguments = new object[] { "My-Key-From-Controller", "My-Value-From-Controller", 3 }, Order = 3)]
+ // هر دو یکی هستند و میتوانیم هم با IOrder و هم با خود Order =3 مقدار دهی کنیم
+    [TypeFilter(typeof(ResponseHeaderActionFilter), Arguments = new object[] { "My-Key-From-Controller", "My-Value-From-Controller", 3 })]
+    //[TypeFilter(typeof(ResponseHeaderActionFilter), Arguments = new object[] { "My-Key-From-Controller", "My-Value-From-Controller", 3 },Order =  3)]
  public class PersonsController : Controller
  {
   //private fields

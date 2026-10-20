@@ -8,7 +8,12 @@ using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
-//Serilog
+//Serilog تنظیمات در فایل مقابل انجام میشود نیاز به هیچ پکیجی ندارد: appsettings.json
+/*
+ * Enrichment یعنی اضافه شدن پراپرتی‌های اضافی (Metadata) به هر رویداد لاگ، به‌طوری که همه‌ی لاگ‌های خروجی حاوی اطلاعات جانبی مفیدی باشند که به خودِ پیام لاگ ربط مستقیم ندارند — مثل نام سرور، شماره Thread، نام کاربر یا محیط اجرا (Development/Production).
+
+هر لاگ در Serilog فقط Message نیست؛ یک رویداد (LogEvent) است که از Message + Properties + Level + Timestamp + Exception تشکیل شده. Enricher ها به این Properties مقدار اضافه می‌کنند.
+ */
 builder.Host.UseSerilog((HostBuilderContext context, IServiceProvider services, LoggerConfiguration loggerConfiguration) => {
 
  loggerConfiguration

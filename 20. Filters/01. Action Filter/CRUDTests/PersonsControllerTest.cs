@@ -16,10 +16,13 @@ namespace CRUDTests
  public class PersonsControllerTest
  {
   private readonly IPersonsService _personsService;
+        
   private readonly ICountriesService _countriesService;
+  private readonly Microsoft.Extensions.Logging.ILogger<CRUDExample.Controllers.PersonsController> _logger;
 
   private readonly Mock<ICountriesService> _countriesServiceMock;
   private readonly Mock<IPersonsService> _personsServiceMock;
+  private readonly Mock<Microsoft.Extensions.Logging.ILogger<CRUDExample.Controllers.PersonsController>> _loggerMock;
 
   private readonly Fixture _fixture;
 
@@ -29,9 +32,11 @@ namespace CRUDTests
 
    _countriesServiceMock = new Mock<ICountriesService>();
    _personsServiceMock = new Mock<IPersonsService>();
+   _loggerMock = new Mock<Microsoft.Extensions.Logging.ILogger<CRUDExample.Controllers.PersonsController>>();
 
    _countriesService = _countriesServiceMock.Object;
    _personsService = _personsServiceMock.Object;
+   _logger = _loggerMock.Object;
   }
 
   #region Index
@@ -41,8 +46,8 @@ namespace CRUDTests
   {
    //Arrange
    List<PersonResponse> persons_response_list = _fixture.Create<List<PersonResponse>>();
-
-   PersonsController personsController = new PersonsController(_personsService, _countriesService);
+            //
+   PersonsController personsController = new PersonsController(_personsService, _countriesService, _logger);
 
    _personsServiceMock
     .Setup(temp => temp.GetFilteredPersons(It.IsAny<string>(), It.IsAny<string>()))
@@ -84,7 +89,7 @@ namespace CRUDTests
     .Setup(temp => temp.AddPerson(It.IsAny<PersonAddRequest>()))
     .ReturnsAsync(person_response);
 
-   PersonsController personsController = new PersonsController(_personsService, _countriesService);
+   PersonsController personsController = new PersonsController(_personsService, _countriesService, _logger);
 
 
    //Act
@@ -119,7 +124,7 @@ namespace CRUDTests
     .Setup(temp => temp.AddPerson(It.IsAny<PersonAddRequest>()))
     .ReturnsAsync(person_response);
 
-   PersonsController personsController = new PersonsController(_personsService, _countriesService);
+   PersonsController personsController = new PersonsController(_personsService, _countriesService, _logger);
 
 
    //Act

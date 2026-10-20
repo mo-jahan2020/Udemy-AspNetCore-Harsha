@@ -7,8 +7,12 @@ using Repositories;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
-
-//Serilog
+// seq یک ابزار تحت وب برای دیدن لاگ ها بصورت آنلاین روی صفحه وب میباشد
+// install package:serilog.sinks.Seq
+// download and install https://wingetgui.com/apps/Datalust-Seq
+// run prog and open this URL:http://127.0.0.1:5341/#/events
+// then config appsettings.json
+// run app
 builder.Host.UseSerilog((HostBuilderContext context, IServiceProvider services, LoggerConfiguration loggerConfiguration) => {
 
  loggerConfiguration

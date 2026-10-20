@@ -1,0 +1,39 @@
+﻿1- new ASP.Net Core Empty Project
+	name Solution: CRUDSolution
+	Name Project: CRUDExample
+	Folder: wwwroot
+	Program.cs
+
+2- New xunit test project
+	name: CRUDTests
+	new class: MyMath.cs
+	UnitTest1.cs
+		//Arrange آماده سازی
+		//Assert اعتبار سنجی اعتبار سنجی
+		//Act اجرا
+	Show in Test Explorer (Run All Test)
+
+3- new class library 
+	name: Entities
+	Country.cs (Guid.CountryID, String.CountryName)   
+	Person.cs (Guid.PersonID, String.PersonName, String.Email, DateTime.DateOfBirth, String.Gender, Guid.CountryID, String.Address , bool.ReceiveNewsLetters)
+
+4- new class library 
+	name: ServiceContracts
+	Folder:DTO
+		CountryAddRequest.cs(public String?.CountryName, mothod: Country ToContry)
+		CountryResponse.cs(Guid.CountryID, String?.CountryName ,public static class CountryExtensions ->public static CountryResponse ToCountryResponse(this Country country))   
+	Folder:Enums
+	ICountriesService.cs(method : CountryResponse AddCountry(CountryAddRequest? countryAddRequest);List<CountryResponse> GetAllCountries();CountryResponse? GetCountryByCountryID(Guid? countryID);)   
+			
+5-new class library 
+	name:Services
+	CountriesService.cs(private readonly List<Country> _countries; contractor , methods: public CountryResponse AddCountry(CountryAddRequest? countryAddRequest) , public List<CountryResponse> GetAllCountries() , public CountryResponse? GetCountryByCountryID(Guid? countryID))    	
+
+6- new class in TestUnit:
+	name:CountriesServiceTest.cs(private readonly ICountriesService _countriesService;contractor)
+	#region AddCountry(method:public void AddCountry_NullCountry()public void AddCountry_CountryNameIsNull()public void AddCountry_DuplicateCountryName()public void AddCountry_ProperCountryDetails())
+	#region GetAllCountries(public void GetAllCountries_EmptyList()public void GetAllCountries_AddFewCountries())
+        #region AddCountry(public void AddCountry_NullCountry()public void AddCountry_CountryNameIsNull()public void AddCountry_DuplicateCountryName()public void AddCountry_ProperCountryDetails())
+	#region GetAllCountries(public void GetAllCountries_EmptyList()public void GetAllCountries_AddFewCountries())
+	#region GetCountryByCountryID(public void GetCountryByCountryID_NullCountryID(),public void GetCountryByCountryID_ValidCountryID(),)

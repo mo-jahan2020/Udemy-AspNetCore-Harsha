@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path="Build-Guide.md" />
+  </Folder>
+  <Project Path="CRUDExample/CRUDExample.csproj" />
+  <Project Path="CRUDTests/CRUDTests.csproj" />
+  <Project Path="Entities/Entities.csproj" />
+  <Project Path="ServiceContracts/ServiceContracts.csproj" />
+  <Project Path="Services/Services.csproj" />
+</Solution>

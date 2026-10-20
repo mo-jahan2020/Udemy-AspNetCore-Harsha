@@ -8,7 +8,8 @@ using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
-//Serilog
+//Serilog تنظیمات از داخل appsettings.json انجام میشود
+// دو پکیج باید نصب شود : Serilog AND Serilog.AspNetCore
 builder.Host.UseSerilog((HostBuilderContext context, IServiceProvider services, LoggerConfiguration loggerConfiguration) => {
 
  loggerConfiguration
