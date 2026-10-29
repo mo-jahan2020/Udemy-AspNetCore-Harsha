@@ -139,6 +139,9 @@ namespace SabtAhval.Migrations
                         .HasMaxLength(250)
                         .HasColumnType("nvarchar(250)");
 
+                    b.Property<short>("StatusCode")
+                        .HasColumnType("smallint");
+
                     b.Property<string>("Username")
                         .IsRequired()
                         .HasMaxLength(20)

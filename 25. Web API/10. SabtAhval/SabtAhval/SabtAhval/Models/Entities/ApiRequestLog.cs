@@ -20,7 +20,7 @@ namespace SabtAhval.Models.Entities
         [StringLength(50)]
         public string? QueryString { get; set; }
         public string? RequestBody { get; set; }
-        Int16 StatusCode { get; set; }
+        public Int16 StatusCode { get; set; }
         [Required(ErrorMessage = "Response Body coulde not Be Null")]
         [StringLength(250)]
         public string? ResponseBody {  get; set; }

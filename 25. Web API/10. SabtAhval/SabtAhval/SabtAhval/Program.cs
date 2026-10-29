@@ -21,11 +21,11 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
-builder.Services.AddScoped<IIpWhitelistService>();
-builder.Services.AddScoped<IApiKeyService>();
-builder.Services.AddScoped<IAuditService>();
-builder.Services.AddScoped<IJsonPlaceholderService>();
-builder.Services.AddScoped<ITargetApiServerService>();
+builder.Services.AddScoped<IIpWhitelistService,IpWhitelistService>();
+builder.Services.AddScoped<IApiKeyService,ApiKeyService>();
+builder.Services.AddScoped<IAuditService,AuditService>();
+builder.Services.AddScoped<IJsonPlaceholderService,JsonPlaceholderService>();
+builder.Services.AddScoped<ITargetApiServerService,TargetApiServerService>();
 builder.Services.AddHttpClient<ITargetApiServerService>(client =>
 {
     client.BaseAddress = new Uri("https://jsonplaceholder.typicode.com/");

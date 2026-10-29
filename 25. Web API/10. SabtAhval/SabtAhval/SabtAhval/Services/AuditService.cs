@@ -1,25 +1,26 @@
-﻿using SabtAhval.Controllers;
+﻿using SabtAhval.Services.Interfaces;
 
 namespace SabtAhval.Services
 {
-    public static class AuditService
+    public class AuditService : IAuditService
     {
-        public static async Task LogSuccessAsync(ILoggerFactory loggerFactory, string message)
-        {
-            var logger = loggerFactory.CreateLogger("AuditService");
+        private readonly ILogger<AuditService> _logger;
 
-            // عملیات async واقعی: نوشتن در فایل به صورت async
-            // لاگ همگام در ILogger
-            logger.LogInformation("Success: {Message}", message);
-        }
-        public static async Task LogRejectedAsync(ILoggerFactory loggerFactory, string reason)
+        public AuditService(ILogger<AuditService> logger)
         {
-            var logger = loggerFactory.CreateLogger("AuditService");
-
-            // عملیات async واقعی: نوشتن در فایل به صورت async
-            // لاگ همگام در ILogger
-            logger.LogInformation("Faild: {Message}", reason);
+            _logger = logger;
         }
 
+        public Task LogSuccessAsync(string message)
+        {
+            _logger.LogInformation("Success: {Message}", message);
+            return Task.CompletedTask;
+        }
+
+        public Task LogRejectedAsync(string reason)
+        {
+            _logger.LogInformation("Failed: {Message}", reason);
+            return Task.CompletedTask;
+        }
     }
 }

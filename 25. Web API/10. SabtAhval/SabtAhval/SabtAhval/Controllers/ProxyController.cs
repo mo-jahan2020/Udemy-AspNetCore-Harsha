@@ -12,18 +12,18 @@ namespace SabtAhval.Controllers
     public class ProxyController : ControllerBase
     {
         private readonly ApiKeyService _apiClientService;
-        private readonly ILoggerFactory _loggerFactory;
         private readonly IIpWhitelistService _ipAuthService;
         private readonly ITargetApiServerService _serverService;
         private readonly IJsonPlaceholderService _jsonPlaceholderService;
+        private readonly IAuditService _auditService;
 
-        public ProxyController(ApiKeyService apiClientService, IIpWhitelistService ipAuthService, ITargetApiServerService serverService, IJsonPlaceholderService jsonPlaceholderService, ILoggerFactory loggerFactory)
+        public ProxyController(ApiKeyService apiClientService, IIpWhitelistService ipAuthService, ITargetApiServerService serverService, IJsonPlaceholderService jsonPlaceholderService, IAuditService auditService)
         {
             _apiClientService = apiClientService;
-            _loggerFactory = loggerFactory;
             _ipAuthService = ipAuthService;
             _serverService = serverService;
             _jsonPlaceholderService = jsonPlaceholderService;
+            _auditService = auditService;
         }
 
         [HttpGet("data")]
@@ -48,11 +48,11 @@ namespace SabtAhval.Controllers
 
             if (client is null)
             {
-                await AuditService.LogRejectedAsync(_loggerFactory, "Faild");
+                await _auditService.LogRejectedAsync("Failed");
                 return Unauthorized(new { message = "Invalid or inactive API key." });
             }
             // ادامه منطق: ارسال درخواست به TargetApiServer با استفاده از client.TargetApiServer.BaseUrl
-            await AuditService.LogSuccessAsync(_loggerFactory, "OK");
+            await _auditService.LogSuccessAsync("OK");
 
             return Ok(new { client = client.Username, target = server.BaseUrl });
 
@@ -75,7 +75,7 @@ namespace SabtAhval.Controllers
             }
             catch (HttpRequestException ex)
             {
-                await AuditService.LogSuccessAsync(_loggerFactory, "Error while fetching post {Id}.");
+                await _auditService.LogSuccessAsync($"Error while fetching post {id}.");
                 return StatusCode(StatusCodes.Status502BadGateway,
                     new { message = "Failed to reach target API.", detail = ex.Message });
             }
@@ -110,7 +110,7 @@ namespace SabtAhval.Controllers
             }
             catch (HttpRequestException ex)
             {
-                await AuditService.LogSuccessAsync(_loggerFactory,"Error while creating post.");
+                await _auditService.LogSuccessAsync("Error while creating post.");
                 return StatusCode(StatusCodes.Status502BadGateway,
                     new { message = "Failed to reach target API.", detail = ex.Message });
             }

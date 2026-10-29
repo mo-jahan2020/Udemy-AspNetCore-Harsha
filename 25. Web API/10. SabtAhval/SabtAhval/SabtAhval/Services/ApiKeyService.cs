@@ -2,12 +2,13 @@
 using Microsoft.Extensions.Configuration.UserSecrets;
 using SabtAhval.Data;
 using SabtAhval.Models.Entities;
+using SabtAhval.Services.Interfaces;
 using System.Security.Cryptography;
 using System.Text;
 
 namespace SabtAhval.Services
 {
-    public class ApiKeyService
+    public class ApiKeyService:IApiKeyService
     {
         private readonly AppDbContext _context;
         public ApiKeyService(AppDbContext context)
@@ -21,7 +22,7 @@ namespace SabtAhval.Services
                 return null;
             string keyHash = ComputeSha256Hash(key);
             var client = await _context.apiClients
-                        .Include(c => c.ApiKeyHash)   // اگر به اطلاعات سرور مقصد نیاز دارید
+                        .Include(c => c.TargetApiServerId)   // اگر به اطلاعات سرور مقصد نیاز دارید
                         .AsNoTracking()                     // چون فقط می‌خوانیم، بهینه‌تر است
                         .FirstOrDefaultAsync(c => c.ApiKeyHash == keyHash && c.IsActive);
 

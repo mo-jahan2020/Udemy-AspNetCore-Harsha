@@ -1,9 +1,10 @@
 ﻿using System.Net.Http.Json;
 using SabtAhval.Models.Dtos;
+using SabtAhval.Services.Interfaces;
 
 namespace SabtAhval.Services
 {
-    public class JsonPlaceholderService
+    public class JsonPlaceholderService: IJsonPlaceholderService
     {
         private readonly HttpClient _httpClient;
         public JsonPlaceholderService(HttpClient httpClient)

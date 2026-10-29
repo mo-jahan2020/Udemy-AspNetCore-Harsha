@@ -2,10 +2,11 @@
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using SabtAhval.Data;
 using SabtAhval.Models.Entities;
+using SabtAhval.Services.Interfaces;
 
 namespace SabtAhval.Services
 {
-    public class TargetApiServerService
+    public class TargetApiServerService :ITargetApiServerService
     {
         private readonly AppDbContext _context;
         public TargetApiServerService(AppDbContext context)

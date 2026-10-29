@@ -1,9 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SabtAhval.Data;
+using SabtAhval.Services.Interfaces;
 
 namespace SabtAhval.Services
 {
-    public class IpWhitelistService
+    public class IpWhitelistService: IIpWhitelistService
     {
         private readonly AppDbContext _context;
 
