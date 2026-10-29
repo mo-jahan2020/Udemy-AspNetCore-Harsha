@@ -22,7 +22,7 @@ namespace SabtAhval.Services
                 return null;
             string keyHash = ComputeSha256Hash(key);
             var client = await _context.apiClients
-                        .Include(c => c.TargetApiServerId)   // اگر به اطلاعات سرور مقصد نیاز دارید
+                        .Include(c => c.TargetApiServer)   // اگر به اطلاعات سرور مقصد نیاز دارید
                         .AsNoTracking()                     // چون فقط می‌خوانیم، بهینه‌تر است
                         .FirstOrDefaultAsync(c => c.ApiKeyHash == keyHash && c.IsActive);
 

@@ -11,7 +11,7 @@ namespace SabtAhval.Controllers
     [Route("[controller]")]
     public class ProxyController : ControllerBase
     {
-        private readonly ApiKeyService _apiClientService;
+        private readonly IApiKeyService _apiClientService;
         private readonly IIpWhitelistService _ipAuthService;
         private readonly ITargetApiServerService _serverService;
         private readonly IJsonPlaceholderService _jsonPlaceholderService;
@@ -34,7 +34,7 @@ namespace SabtAhval.Controllers
             if (server is null)
                 return NotFound(new { message = "No active target API server found." });
 
-            int? clientId = 1; // در عمل از توکن یا هدر گرفته می‌شود
+            int clientId = 1; // در عمل از توکن یا هدر گرفته می‌شود
 
             // IP کاربر را از Connection استخراج کن
             string? ip = HttpContext.Connection.RemoteIpAddress?.ToString();
@@ -75,7 +75,7 @@ namespace SabtAhval.Controllers
             }
             catch (HttpRequestException ex)
             {
-                await _auditService.LogSuccessAsync($"Error while fetching post {id}.");
+                await _auditService.LogRejectedAsync($"Error while fetching post {id}.");
                 return StatusCode(StatusCodes.Status502BadGateway,
                     new { message = "Failed to reach target API.", detail = ex.Message });
             }
@@ -110,7 +110,7 @@ namespace SabtAhval.Controllers
             }
             catch (HttpRequestException ex)
             {
-                await _auditService.LogSuccessAsync("Error while creating post.");
+                await _auditService.LogRejectedAsync("Error while creating post.");
                 return StatusCode(StatusCodes.Status502BadGateway,
                     new { message = "Failed to reach target API.", detail = ex.Message });
             }

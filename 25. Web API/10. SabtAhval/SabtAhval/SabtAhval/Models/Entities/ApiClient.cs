@@ -25,7 +25,7 @@ namespace SabtAhval.Models.Entities
 
         public int TargetApiServerId { get; set; }
         [ForeignKey("TargetApiServerId")]
-        TargetApiServer? TargetApiServer {  get; set; }
+        public TargetApiServer? TargetApiServer {  get; set; }
 
     }
 }

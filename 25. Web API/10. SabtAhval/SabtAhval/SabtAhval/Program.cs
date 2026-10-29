@@ -24,9 +24,9 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddScoped<IIpWhitelistService,IpWhitelistService>();
 builder.Services.AddScoped<IApiKeyService,ApiKeyService>();
 builder.Services.AddScoped<IAuditService,AuditService>();
-builder.Services.AddScoped<IJsonPlaceholderService,JsonPlaceholderService>();
+//builder.Services.AddScoped<IJsonPlaceholderService,JsonPlaceholderService>();
 builder.Services.AddScoped<ITargetApiServerService,TargetApiServerService>();
-builder.Services.AddHttpClient<ITargetApiServerService>(client =>
+builder.Services.AddHttpClient<IJsonPlaceholderService,JsonPlaceholderService>(client =>
 {
     client.BaseAddress = new Uri("https://jsonplaceholder.typicode.com/");
 });
