@@ -73,6 +73,7 @@ namespace CRUDExample.Controllers
   //Url: persons/create
   [Route("[action]")]
   [TypeFilter(typeof(PersonCreateAndEditPostActionFilter))]
+  // اگر این را بله کنیم این متد کلاً از دسترس خارج میشود
   [TypeFilter(typeof(FeatureDisabledResourceFilter), Arguments = new object[] {  false })]
   public async Task<IActionResult> Create(PersonAddRequest personRequest)
   {

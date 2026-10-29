@@ -14,6 +14,7 @@ namespace CRUDExample.Controllers
 {
  [Route("[controller]")]
  [TypeFilter(typeof(ResponseHeaderActionFilter), Arguments = new object[] { "My-Key-From-Controller", "My-Value-From-Controller", 3 }, Order = 3)]
+ // تمام خطاهای کنترلر را پوشش میدهد
  [TypeFilter(typeof(HandleExceptionFilter))]
  public class PersonsController : Controller
  {

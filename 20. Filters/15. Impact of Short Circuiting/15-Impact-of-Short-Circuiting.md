@@ -7,7 +7,10 @@
 
 ## 🎯 مبحث این پروژه چیست؟
 
-این پروژه یک **آزمایشگاه** است: همه پنج نوع فیلتر هم‌زمان روی Controller/Actionها نصب شده‌اند تا با لاگ‌های Serilog ببینیم وقتی یکی از فیلترها زنجیره را قطع می‌کند، **دقیقاً کدام فیلترها اجرا می‌شوند و کدام‌ها نادیده گرفته می‌شوند**. هیچ API جدیدی معرفی نمی‌شود؛ هدف، تسلط کامل بر Pipeline است.
+این پروژه یک  آزمایشگاه  است: همه پنج نوع فیلتر هم‌زمان روی Controller/Action
+ها نصب شده‌اند تا با لاگ‌های Serilog ببینیم وقتی یکی از فیلترها زنجیره را قطع می‌کند،
+دقیقاً کدام فیلترها اجرا می‌شوند و کدام‌ها نادیده گرفته می‌شوند .
+هیچ API جدیدی معرفی نمی‌شود؛ هدف، تسلط کامل بر Pipeline است.
 
 ترکیب فیلترهای فعال در این پروژه:
 
@@ -46,15 +49,15 @@ public class PersonsController { ... }
 
 | کجا قطع می‌کنیم؟ | چه چیزهایی اجرا نمی‌شوند؟ | چه چیزهایی اجرا می‌شوند؟ |
 |---|---|---|
-| **Authorization Filter** | همه فیلترها + Action + رندر | فقط Middlewareها و خود Authorization |
-| **Resource Filter** | Action/Result Filterها + Action + رندر | Authorization + Resource (قبل) و After آن |
-| **Action Filter** | فیلترهای Action بعدی + خود Action | Authorization، Resource، و **Result Filterها + رندر** (چون Result ست شده اجرا می‌شود) |
-| **Result Filter** (قبل از next) | اجرای نتیجه (رندر View) | همه فیلترهای قبل + Result Filterهای قبل از قطع |
-| **Exception Filter** (با Result) | ادامه Pipeline عادی | پاسخ جایگزین تولید می‌شود |
+|  Authorization Filter  | همه فیلترها + Action + رندر | فقط Middlewareها و خود Authorization |
+|  Resource Filter  | Action/Result Filterها + Action + رندر | Authorization + Resource (قبل) و After آن |
+|  Action Filter  | فیلترهای Action بعدی + خود Action | Authorization، Resource، و  Result Filterها + رندر  (چون Result ست شده اجرا می‌شود) |
+|  Result Filter  (قبل از next) | اجرای نتیجه (رندر View) | همه فیلترهای قبل + Result Filterهای قبل از قطع |
+|  Exception Filter  (با Result) | ادامه Pipeline عادی | پاسخ جایگزین تولید می‌شود |
 
 ## 🧪 آزمایش‌های کلیدی این پروژه
 
-**۱) قطع توسط `PersonCreateAndEditPostActionFilter` (ModelState نامعتبر):**
+ ۱) قطع توسط `PersonCreateAndEditPostActionFilter` (ModelState نامعتبر): 
 
 ```text
 → Action Filter اجرا می‌شود و Result می‌سازد (View فرم)
@@ -63,14 +66,14 @@ public class PersonsController { ... }
 ✗ فیلترهای Action بعدیِ همان Action اجرا نمی‌شوند
 ```
 
-**۲) قطع توسط `TokenAuthorizationFilter` روی Edit:**
+ ۲) قطع توسط `TokenAuthorizationFilter` روی Edit: 
 
 ```text
 → بدون کوکی معتبر: 401
 ✗ هیچ Action Filter / Result Filter / رندری اجرا نمی‌شود
 ```
 
-**۳) قطع توسط `FeatureDisabledResourceFilter` (isDisabled=true):**
+ ۳) قطع توسط `FeatureDisabledResourceFilter` (isDisabled=true): 
 
 ```text
 → Resource Filter با 501 قطع می‌کند
@@ -78,7 +81,7 @@ public class PersonsController { ... }
 ✓ پیام after همان Resource Filter اجرا می‌شود (کد بعد از if/else)
 ```
 
-**۴) بدون قطع — مسیر عادی Index:**
+ ۴) بدون قطع — مسیر عادی Index: 
 
 ```text
 PersonsListActionFilter.OnActionExecuting      (Order=4)
@@ -93,17 +96,17 @@ PersonsListResultFilter - after
 
 ## 📊 قوانین طلایی Pipeline
 
-1. ترتیب انواع: **Authorization → Resource → Action(before) → Action Method → Action(after) → Result → اجرای نتیجه → Resource(after)**
+1. ترتیب انواع:  Authorization → Resource → Action(before) → Action Method → Action(after) → Result → اجرای نتیجه → Resource(after) 
 2. قطع یعنی «ست کردن `context.Result` و ندادن ادامه»؛ هر چه جلوتر قطع کنید، کار کمتری انجام می‌شود و پاسخ سریع‌تر/ارزان‌تر است.
 3. قطع در Action Filter به معنی لغو «مرحله نتیجه» نیست؛ فقط رندرِ نتیجه‌ای که شما ست کردید انجام می‌شود.
 4. Exception Filter همیشه «نگهبان» است؛ فقط وقتی استثنایی رخ دهد وارد صحنه می‌شود.
 
 ## ⚠️ نکات کلیدی و خطاهای رایج
 
-1. **لاگ‌ها را با خودتان چک کنید:** بهترین تمرین، اجرای پروژه و مقایسه ترتیب لاگ‌ها با جدول بالا است؛ این تصویر ذهنی را جایگزین حدس و گمان می‌کند.
-2. **Order را فراموش نکنید:** در میان Action Filterها، همان قواعد Order (پروژه‌های ۰۷/۰۸) حاکم است؛ ترتیب لاگ را با Orderها تفسیر کنید.
-3. **Result Filter روی مسیر قطع‌شده هم اجرا می‌شود:** اگر فیلتری برای «فقط مسیر موفق» طراحی شده (مثلاً ست کردن کوکی در TokenResultFilter)، مراقب باشید مسیرهای خطا هم آن را اجرا نمی‌کنند اگر قطع در سطح Authorization/Resource رخ داده باشد — به همین دلیل این نقطه‌ها برای منطق امنیتی مهم‌اند.
-4. **این پروژه مبنای پروژه‌های بعدی است:** ۱۶ (فیلتری که حتی در مسیر قطع اجرا می‌شود) و ۱۷ (فیلتری که خودش را از اجرا معاف می‌کند) مستقیماً روی همین Pipeline بنا شده‌اند.
+1.  لاگ‌ها را با خودتان چک کنید:  بهترین تمرین، اجرای پروژه و مقایسه ترتیب لاگ‌ها با جدول بالا است؛ این تصویر ذهنی را جایگزین حدس و گمان می‌کند.
+2.  Order را فراموش نکنید:  در میان Action Filterها، همان قواعد Order (پروژه‌های ۰۷/۰۸) حاکم است؛ ترتیب لاگ را با Orderها تفسیر کنید.
+3.  Result Filter روی مسیر قطع‌شده هم اجرا می‌شود:  اگر فیلتری برای «فقط مسیر موفق» طراحی شده (مثلاً ست کردن کوکی در TokenResultFilter)، مراقب باشید مسیرهای خطا هم آن را اجرا نمی‌کنند اگر قطع در سطح Authorization/Resource رخ داده باشد — به همین دلیل این نقطه‌ها برای منطق امنیتی مهم‌اند.
+4.  این پروژه مبنای پروژه‌های بعدی است:  ۱۶ (فیلتری که حتی در مسیر قطع اجرا می‌شود) و ۱۷ (فیلتری که خودش را از اجرا معاف می‌کند) مستقیماً روی همین Pipeline بنا شده‌اند.
 
 ## ✅ خلاصه
 

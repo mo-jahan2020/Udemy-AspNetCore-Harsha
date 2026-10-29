@@ -1,4 +1,5 @@
-﻿using ContactsManager.Core.DTO;
+﻿// بعد از ساختن ویو حال کنترلر مورد نظر را میسازیم
+using ContactsManager.Core.DTO;
 using CRUDExample.Controllers;
 using Microsoft.AspNetCore.Mvc;
 

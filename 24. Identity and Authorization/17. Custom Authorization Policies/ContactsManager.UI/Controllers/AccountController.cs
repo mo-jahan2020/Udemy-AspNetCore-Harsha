@@ -24,7 +24,7 @@ namespace ContactsManager.UI.Controllers
 
 
   [HttpGet]
-  [Authorize("NotAuthorized")]
+  [Authorize("NotAuthorized")]// صفحه ثبت نام برای کاربران ثبت نام نشده باز شود
   public IActionResult Register()
   {
    return View();
@@ -32,7 +32,7 @@ namespace ContactsManager.UI.Controllers
 
 
   [HttpPost]
-  [Authorize("NotAuthorized")]
+  [Authorize("NotAuthorized")] // همچنین متد پست این صفحه
   public async Task<IActionResult> Register(RegisterDTO registerDTO)
   {
    //Check for validation errors
@@ -84,7 +84,7 @@ namespace ContactsManager.UI.Controllers
 
 
   [HttpGet]
-  [Authorize("NotAuthorized")]
+  [Authorize("NotAuthorized")] // ونیز این
   public IActionResult Login()
   {
    return View();
@@ -92,7 +92,7 @@ namespace ContactsManager.UI.Controllers
 
 
   [HttpPost]
-  [Authorize("NotAuthorized")]
+  [Authorize("NotAuthorized")] // و این
   public async Task<IActionResult> Login(LoginDTO loginDTO, string? ReturnUrl)
   {
    if (!ModelState.IsValid)
@@ -127,7 +127,7 @@ namespace ContactsManager.UI.Controllers
   }
 
 
-  [Authorize]
+  [Authorize] // ولی این دیگر نباید داشته باشد زیرا کاربر لاگین کرده میتواند لاگ اوت کند نه کاربر ثبت نام نکرده
   public async Task<IActionResult> Logout()
   {
    await _signInManager.SignOutAsync();

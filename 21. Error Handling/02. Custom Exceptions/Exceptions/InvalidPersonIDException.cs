@@ -1,6 +1,7 @@
 ﻿namespace Exceptions
 {
- public class InvalidPersonIDException : ArgumentException
+ // تعریف یک رسیدگی به استثناء اختصاصی
+    public class InvalidPersonIDException : ArgumentException
  {
   public InvalidPersonIDException() : base()
   {

@@ -51,7 +51,7 @@ app.UseRouting(); //Identifying action method based on route
 app.UseAuthentication(); //Reading Identity cookie
 app.UseAuthorization(); //Validates access permissions of the user
 app.MapControllers(); //Execute the filter pipiline (action + filters)
-
+// این خط جای آن را خواهد گرفت
 app.MapControllerRoute(
  name: "default",
  pattern: "{controller}/{action}/{id?}"

@@ -35,7 +35,8 @@ else
  app.UseExceptionHandler("/Error");
  app.UseExceptionHandlingMiddleware();
 }
-
+// enable Https
+// Propertoes->laungSetting.json-> Change http to Https
 app.UseHsts();
 app.UseHttpsRedirection();
 

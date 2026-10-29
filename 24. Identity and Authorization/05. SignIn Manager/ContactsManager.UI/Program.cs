@@ -45,8 +45,11 @@ if (builder.Environment.IsEnvironment("Test") == false)
  Rotativa.AspNetCore.RotativaConfiguration.Setup("wwwroot", wkhtmltopdfRelativePath: "Rotativa");
 
 app.UseStaticFiles();
-
+// حتماً باید قبل از mapController and UserRouting آورده شود
+// این  خط بررسی میکند اگر کاربر از قبل وارد شده و در نتیجه مقادیر مورد نظر در کوکی مرورگر موجود است 
+// کاربر را وارد شده تلقی کرده و مقادیر مورد نظر را برای دسترسی شما در کنترلر و ویو ها در دسترس قرا میدهد
 app.UseAuthentication(); //Reading Identity cookie
+app.UseRouting();// Identifying action Method base route
 app.MapControllers(); //Execute the filter pipiline (action + filters)
 
 app.Run();

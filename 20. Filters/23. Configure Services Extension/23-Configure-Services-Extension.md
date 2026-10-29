@@ -7,7 +7,8 @@
 
 ## 🎯 مبحث این پروژه چیست؟
 
-پس از ۲۲ پروژه، `Program.cs` شلوغ شده است: Serilog، فیلترها، Repositoryها، Serviceها، DbContext، HttpLogging — همه در یک فایل. این پروژه الگوی استانداردی را آموزش می‌دهد که با **Extension Method**، ثبت سرویس‌ها را به کلاس جدا منتقل می‌کند:
+پس از ۲۲ پروژه، `Program.cs` شلوغ شده است: Serilog، فیلترها، Repositoryها، Serviceها، DbContext، HttpLogging 
+— همه در یک فایل. این پروژه الگوی استانداردی را آموزش می‌دهد که با  Extension Method ، ثبت سرویس‌ها را به کلاس جدا منتقل می‌کند:
 
 ```csharp
 // Program.cs — تمیز و خلاصه شد:
@@ -28,10 +29,10 @@ CRUDExample/
 
 ## 💡 چرا به این مبحث نیاز داریم؟
 
-1. **خوانایی:** Program.cs باید «فهرست کوتاه مراحل راه‌اندازی» باشد، نه دفترچه ۲۰۰ خطی؛
-2. **نگهداری:** افزودن سرویس جدید یعنی ویرایش کلاس Extension، نه گم‌شدن در Program.cs؛
-3. **استفاده مجدد:** همین Extension را می‌توانید در پروژه Test یا پروژه دیگری از Solution صدا بزنید؛
-4. **مسیر دوره:** در فصل Clean Architecture همین الگو به چند فایل Extension (لایه‌به‌لایه) تبدیل می‌شود — این‌جا پایه‌اش ساخته می‌شود.
+1.  خوانایی:  Program.cs باید «فهرست کوتاه مراحل راه‌اندازی» باشد، نه دفترچه ۲۰۰ خطی؛
+2.  نگهداری:  افزودن سرویس جدید یعنی ویرایش کلاس Extension، نه گم‌شدن در Program.cs؛
+3.  استفاده مجدد:  همین Extension را می‌توانید در پروژه Test یا پروژه دیگری از Solution صدا بزنید؛
+4.  مسیر دوره:  در فصل Clean Architecture همین الگو به چند فایل Extension (لایه‌به‌لایه) تبدیل می‌شود — این‌جا پایه‌اش ساخته می‌شود.
 
 ## 🔍 کد نمونه از خود پروژه
 
@@ -142,11 +143,11 @@ public partial class Program { }
 | `IConfiguration configuration` | مقادیر لازم (مثل Connection String) به‌صورت پارامتر می‌آیند، نه از متغیر سراسری |
 | `return services;` | امکان نوشتن `services.ConfigureServices(cfg).AddXxx()` |
 
-نکته دیگر: فیلتر سراسری حالا با **Object Initializer** پیکربندی می‌شود (`Key = ..., Value = ..., Order = ...`) — چون `ResponseHeaderActionFilter` در پروژه ۲۰ به کلاسی با پراپرتی‌های settable تبدیل شده بود.
+نکته دیگر: فیلتر سراسری حالا با  Object Initializer  پیکربندی می‌شود (`Key = ..., Value = ..., Order = ...`) — چون `ResponseHeaderActionFilter` در پروژه ۲۰ به کلاسی با پراپرتی‌های settable تبدیل شده بود.
 
 ## 🧪 رفتار برنامه در اجرا
 
-هیچ رفتار جدیدی اضافه نشده؛ برنامه دقیقاً مثل قبل کار می‌کند (لاگ‌ها، فیلترها، CRUD). سنجش موفقیت این پروژه، **کیفیت کد** است: Program.cs از حدود ۴۰ خط سرویس‌ثبتی به چند خط رسید و مسئولیت‌ها تفکیک شد.
+هیچ رفتار جدیدی اضافه نشده؛ برنامه دقیقاً مثل قبل کار می‌کند (لاگ‌ها، فیلترها، CRUD). سنجش موفقیت این پروژه،  کیفیت کد  است: Program.cs از حدود ۴۰ خط سرویس‌ثبتی به چند خط رسید و مسئولیت‌ها تفکیک شد.
 
 ## 📊 جدول APIهای به‌کاررفته
 
@@ -159,10 +160,10 @@ public partial class Program { }
 
 ## ⚠️ نکات کلیدی و خطاهای رایج
 
-1. **Configuration را پاس بدهید، `builder.Configuration` را داخل کلاس نگیرید:** وابستگی به `WebApplicationBuilder` کلاس Extension را به Program گره می‌زند؛ پارامتر `IConfiguration` تمیزتر و تست‌پذیرتر است.
-2. **`BuildServiceProvider` هنوز همان هشدار قبلی را دارد:** خط لاگرِ سراسری در Extension هم anti-pattern است؛ در نسخه‌های تولیدی، فیلتر سراسری را با `options.Filters.AddService<...>()` و ثبت در DI جایگزین کنید (پروژه ۱۸ راه را نشان داد).
-3. **یکی یا چند Extension؟** با رشد پروژه، معمولاً به‌جای یک متد بزرگ، چند Extension (AddRepositories، AddServices، AddFilters و...) می‌سازند؛ همین الان ساختار را طوری بچینید که شکستن آن راحت باشد.
-4. **namespace را ساده نگه دارید:** کلاس در namespace `CRUDExample` است تا فراخوانی بدون using اضافه انجام شود (`builder.Services.ConfigureServices(...)`).
+1.  Configuration را پاس بدهید، `builder.Configuration` را داخل کلاس نگیرید:  وابستگی به `WebApplicationBuilder` کلاس Extension را به Program گره می‌زند؛ پارامتر `IConfiguration` تمیزتر و تست‌پذیرتر است.
+2.  `BuildServiceProvider` هنوز همان هشدار قبلی را دارد:  خط لاگرِ سراسری در Extension هم anti-pattern است؛ در نسخه‌های تولیدی، فیلتر سراسری را با `options.Filters.AddService<...>()` و ثبت در DI جایگزین کنید (پروژه ۱۸ راه را نشان داد).
+3.  یکی یا چند Extension؟  با رشد پروژه، معمولاً به‌جای یک متد بزرگ، چند Extension (AddRepositories، AddServices، AddFilters و...) می‌سازند؛ همین الان ساختار را طوری بچینید که شکستن آن راحت باشد.
+4.  namespace را ساده نگه دارید:  کلاس در namespace `CRUDExample` است تا فراخوانی بدون using اضافه انجام شود (`builder.Services.ConfigureServices(...)`).
 
 ## ✅ خلاصه
 

@@ -5,6 +5,8 @@ namespace ContactsManager.UI.Areas.Admin.Controllers
  [Area("Admin")]
  public class HomeController : Controller
  {
+        [Route("admin/home/index")]
+        [Route("admin/")]
   public IActionResult Index()
   {
    return View();

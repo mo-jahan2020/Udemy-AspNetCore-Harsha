@@ -6,6 +6,10 @@ using System.Threading.Tasks;
 namespace CRUDExample.Middleware
 {
  // You may need to install the Microsoft.AspNetCore.Http.Abstractions package into your project
+// اینجا تعریف میکنیم
+// پایین صفحه نسخه استاتیک آن را پیداده سازی میکنیم
+// در انتها بعد از تغغیر مود به Production
+// این MiddelWare را use میکنیم
  public class ExceptionHandlingMiddleware
  {
   private readonly RequestDelegate _next;

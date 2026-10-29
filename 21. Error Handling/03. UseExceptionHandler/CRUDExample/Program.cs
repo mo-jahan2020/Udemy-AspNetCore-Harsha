@@ -32,7 +32,9 @@ if (builder.Environment.IsDevelopment())
 }
 else
 {
+    // بدست گرفتن Error Handler
  app.UseExceptionHandler("/Error");
+    // مرحله بعد تعریف یک MidelWare اختصاصی
  app.UseExceptionHandlingMiddleware();
 }
 

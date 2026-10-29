@@ -7,19 +7,21 @@
 
 ## 🎯 مبحث این پروژه چیست؟
 
-تا حالا فیلترها کلاس‌هایی بودند که با `TypeFilter` یا `ServiceFilter` به Action وصل می‌شدند. این پروژه روش ساده‌تر و مستقیم‌تر را نشان می‌دهد: فیلتر را به یک **Attribute** تبدیل کنیم تا بتوان آن را مثل `[HttpGet]` مستقیماً نوشت:
+تا حالا فیلترها کلاس‌هایی بودند که با `TypeFilter` یا `ServiceFilter` به Action وصل می‌شدند.
+این پروژه روش ساده‌تر و مستقیم‌تر را نشان می‌دهد: فیلتر را به یک  Attribute  تبدیل کنیم تا بتوان آن را مثل `[HttpGet]` مستقیماً نوشت:
 
 ```csharp
 [ResponseHeaderActionFilter("MyKey-FromAction", "MyValue-From-Action", 1)]  // بدون TypeFilter!
 ```
 
-کلید این تبدیل، ارث‌بری از **`ActionFilterAttribute`** است — کلاس پایه‌ای که خودش `IActionFilter`، `IAsyncActionFilter`، `IResultFilter`، `IAsyncResultFilter` و `IOrderedFilter` را هم‌زمان پیاده‌سازی کرده است و شما فقط متدهای موردنیاز را override می‌کنید.
+کلید این تبدیل، ارث‌بری از  `ActionFilterAttribute`  است — کلاس پایه‌ای که خودش `IActionFilter`، `IAsyncActionFilter`، `IResultFilter`،
+`IAsyncResultFilter` و `IOrderedFilter` را هم‌زمان پیاده‌سازی کرده است و شما فقط متدهای موردنیاز را override می‌کنید.
 
 ## 💡 چرا به این مبحث نیاز داریم؟
 
-سینتکس `[MyFilter(args)]` کوتاه‌تر، خواناتر و شبیه‌تر به اتریبیوت‌های استاندارد است. اما این راحتی یک **هزینه مهم** دارد که این پروژه به‌طور عمدی نشانش می‌دهد:
+سینتکس `[MyFilter(args)]` کوتاه‌تر، خواناتر و شبیه‌تر به اتریبیوت‌های استاندارد است. اما این راحتی یک  هزینه مهم  دارد که این پروژه به‌طور عمدی نشانش می‌دهد:
 
-> **Attribute در .NET فقط می‌تواند در سازنده/پراپرتی‌های خود، ثابت‌های Compile-Time بگیرد (رشته، عدد، Type و...). DI اینجا کار نمی‌کند!**
+>  Attribute در .NET فقط می‌تواند در سازنده/پراپرتی‌های خود، ثابت‌های Compile-Time بگیرد (رشته، عدد، Type و...). DI اینجا کار نمی‌کند! 
 > به همین دلیل `ILogger` که در نسخه‌های قبلی در سازنده تزریق می‌شد، در نسخه Attribute حذف شده است.
 
 ## 🔍 کد نمونه از خود پروژه
@@ -92,10 +94,10 @@ public async Task<IActionResult> Index(...) { ... }
 
 ## ⚠️ نکات کلیدی و خطاهای رایج
 
-1. **سرویس تزریق نکنید به سازنده Attribute:** کامپایلر اجازه نمی‌دهد یا اگر Type پاس دهید، خودتان باید resolve کنید — ضدالگو. راه‌حل‌های درست: ServiceFilter (پروژه ۱۸) یا IFilterFactory (پروژه ۲۰).
-2. **ActionFilterAttribute ابرکلاس است:** اگر فقط override نکنید، پیاده‌سازی‌های پیش‌فرض خالی‌اش اجرا می‌شوند و مشکلی نیست؛ ولی مراقب باشید هم `OnActionExecuting` و هم `OnActionExecutionAsync` را override نکنید (فقط Async اجرا می‌شود).
-3. **نام‌گذاری:** به‌طور قراردادی نام کلاس‌های Attribute به `Attribute` ختم می‌شود؛ هنگام استفاده می‌توانید پسوند را حذف کنید (`[ResponseHeaderActionFilter(...)]`). (در پروژه ۲۰ نام به `FilterFactoryAttribute` تغییر می‌کند.)
-4. **Attribute ها Stateless هستند:** بین Requestها state نگه ندارید؛ هر Request نمونه تازه می‌سازد اما برای اطمینان، فیلد را mutable رها نکنید.
+1.  سرویس تزریق نکنید به سازنده Attribute:  کامپایلر اجازه نمی‌دهد یا اگر Type پاس دهید، خودتان باید resolve کنید — ضدالگو. راه‌حل‌های درست: ServiceFilter (پروژه ۱۸) یا IFilterFactory (پروژه ۲۰).
+2.  ActionFilterAttribute ابرکلاس است:  اگر فقط override نکنید، پیاده‌سازی‌های پیش‌فرض خالی‌اش اجرا می‌شوند و مشکلی نیست؛ ولی مراقب باشید هم `OnActionExecuting` و هم `OnActionExecutionAsync` را override نکنید (فقط Async اجرا می‌شود).
+3.  نام‌گذاری:  به‌طور قراردادی نام کلاس‌های Attribute به `Attribute` ختم می‌شود؛ هنگام استفاده می‌توانید پسوند را حذف کنید (`[ResponseHeaderActionFilter(...)]`). (در پروژه ۲۰ نام به `FilterFactoryAttribute` تغییر می‌کند.)
+4.  Attribute ها Stateless هستند:  بین Requestها state نگه ندارید؛ هر Request نمونه تازه می‌سازد اما برای اطمینان، فیلد را mutable رها نکنید.
 
 ## ✅ خلاصه
 

@@ -7,7 +7,8 @@
 
 ## 🎯 مبحث این پروژه چیست؟
 
-**Authorization Filter** اولین فیلتر در کل Pipeline فیلترهاست — حتی قبل از Resource Filter. وظیفه‌اش یک چیز است: تصمیم‌گیری که «آیا اصلاً اجازه ادامه دهیم یا نه؟». اینترفیس آن **`IAuthorizationFilter`** است با تنها یک متد:
+ Authorization Filter  اولین فیلتر در کل Pipeline فیلترهاست — حتی قبل از Resource Filter.
+ وظیفه‌اش یک چیز است: تصمیم‌گیری که «آیا اصلاً اجازه ادامه دهیم یا نه؟». اینترفیس آن  `IAuthorizationFilter`  است با تنها یک متد:
 
 ```csharp
 public void OnAuthorization(AuthorizationFilterContext context)
@@ -16,11 +17,13 @@ public void OnAuthorization(AuthorizationFilterContext context)
 }
 ```
 
-در این پروژه فیلتر `TokenAuthorizationFilter` ساخته می‌شود که ورود کاربر را با یک **Cookie** بررسی می‌کند: اگر کوکی `Auth-Key` با مقدار `A100` وجود نداشته باشد، پاسخ **401 Unauthorized** داده می‌شود.
+در این پروژه فیلتر `TokenAuthorizationFilter` ساخته می‌شود که ورود کاربر را با یک  Cookie  بررسی می‌کند:
+اگر کوکی `Auth-Key` با مقدار `A100` وجود نداشته باشد، پاسخ  401 Unauthorized  داده می‌شود.
 
 ## 💡 چرا به این مبحث نیاز داریم؟
 
-اعتبارسنجی/مجوزدهی باید «سریع و اول» انجام شود؛ بی‌معناست که دیتابیس بخوانیم و Model Bind کنیم و آخرش بگوییم «دسترسی نداری». Authorization Filter دقیقاً برای همین در ابتدای Pipeline است:
+اعتبارسنجی/مجوزدهی باید «سریع و اول» انجام شود؛ بی‌معناست که دیتابیس بخوانیم و Model Bind کنیم و آخرش بگوییم «دسترسی نداری
+». Authorization Filter دقیقاً برای همین در ابتدای Pipeline است:
 
 - امن‌ترین و ارزان‌ترین نقطه برای قطع درخواست‌های غیرمجاز؛
 - پایه‌ای که در فصل‌های بعدی (Identity و JWT) با نسخه‌های استاندارد آن (`[Authorize]`) جایگزین می‌شود؛
@@ -98,8 +101,8 @@ Response
 
 | وضعیت کوکی Auth-Key | نتیجه POST به `/persons/edit/...` |
 |---|---|
-| ندارد | **401 Unauthorized** — Action اصلاً اجرا نمی‌شود |
-| مقدار اشتباه (مثلاً `B200`) | **401 Unauthorized** |
+| ندارد |  401 Unauthorized  — Action اصلاً اجرا نمی‌شود |
+| مقدار اشتباه (مثلاً `B200`) |  401 Unauthorized  |
 | `A100` | زنجیره ادامه می‌یابد و Edit اجرا می‌شود |
 
 ## 📊 جدول APIهای به‌کاررفته
@@ -113,10 +116,10 @@ Response
 
 ## ⚠️ نکات کلیدی و خطاهای رایج
 
-1. **فقط سنکرون است:** برخلاف Action/Result/Resource، برای Authorization Filter نسخه Async جدا ندارد (نسخه‌های Async آن در سیاست‌های Authorization داخلی ASP.NET Core پیاده شده‌اند).
-2. **برای قطع، حتماً `context.Result` ست کنید:** اگر Result ست نشود، Pipeline ادامه می‌یابد. `return` بعد از ست‌کردن Result برای جلوگیری از اجرای ادامه کد است.
-3. **مقایسه با Resource Filter:** هر دو می‌توانند قطع کنند؛ تفاوت در «زمان». Authorization قبل از Resource است و قرار است فقط تصمیم مجوز بگیرد، نه کار دیگری.
-4. **مقدار کوکی در کد هاردکد است:** در پروژه‌های واقعی این مقدار باید از Authentication (توکن امضاشده) بیاید. هدف این‌جا نمایش مکانیزم فیلتر است.
+1.  فقط سنکرون است:  برخلاف Action/Result/Resource، برای Authorization Filter نسخه Async جدا ندارد (نسخه‌های Async آن در سیاست‌های Authorization داخلی ASP.NET Core پیاده شده‌اند).
+2.  برای قطع، حتماً `context.Result` ست کنید:  اگر Result ست نشود، Pipeline ادامه می‌یابد. `return` بعد از ست‌کردن Result برای جلوگیری از اجرای ادامه کد است.
+3.  مقایسه با Resource Filter:  هر دو می‌توانند قطع کنند؛ تفاوت در «زمان». Authorization قبل از Resource است و قرار است فقط تصمیم مجوز بگیرد، نه کار دیگری.
+4.  مقدار کوکی در کد هاردکد است:  در پروژه‌های واقعی این مقدار باید از Authentication (توکن امضاشده) بیاید. هدف این‌جا نمایش مکانیزم فیلتر است.
 
 ## ✅ خلاصه
 

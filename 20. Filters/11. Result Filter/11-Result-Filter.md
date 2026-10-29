@@ -7,9 +7,10 @@
 
 ## 🎯 مبحث این پروژه چیست؟
 
-**Result Filter** چهارمین نوع فیلترِ معرفی‌شده است که دورِ «اجرای نتیجه Action» (یعنی اجرای `IActionResult` مثل رندر View) قرار می‌گیرد. یعنی بعد از آن‌که Action روش `return View(...)` را برگرداند و **قبل/حین رندر شدن View** اجرا می‌شود.
+ Result Filter  چهارمین نوع فیلترِ معرفی‌شده است که دورِ اجرای نتیجه Action یعنی اجرای `IActionResult` مثل رندر View قرار می‌گیرد.
+ یعنی بعد از آن‌که Action روش `return View(...)` را برگرداند و  قبل/حین رندر شدن View  اجرا می‌شود.
 
-اینترفیس سنکرون: `IResultFilter` — و نسخه Async: **`IAsyncResultFilter`** با الگوی آشنای `await next()`:
+اینترفیس سنکرون: `IResultFilter` — و نسخه Async:  `IAsyncResultFilter`  با الگوی آشنای `await next()`:
 
 ```csharp
 public async Task OnResultExecutionAsync(ResultExecutingContext context,
@@ -25,9 +26,9 @@ public async Task OnResultExecutionAsync(ResultExecutingContext context,
 
 Action Filter مرحله Before/After «Action» را می‌گیرد، اما بعضی کارها به «خروجی نهایی» ربط دارند نه به منطق Action:
 
-- افزودن Header به Response **بعد از** رندر (مثل `Last-Modified`)؛
+- افزودن Header به Response  بعد از  رندر (مثل `Last-Modified`)؛
 - اصلاح یا بررسی محتوایی که View تولید می‌کند؛
-- تصمیم درباره «آیا اصلاً رندر انجام شود یا نه» (قطع زنجیره در سطح نتیجه).
+- تصمیم درباره آیا اصلاً رندر انجام شود یا نه قطع زنجیره در سطح نتیجه.
 
 اگر این کارها را در OnActionExecuted انجام دهید، دقیق نیست؛ چون آن‌جا View هنوز رندر نشده است. جای درست، Result Filter است.
 
@@ -128,10 +129,10 @@ Last-Modified: 2022-07-10 14:52
 
 ## ⚠️ نکات کلیدی و خطاهای رایج
 
-1. **تفاوت با Action Filter:** After در Action Filter یعنی «Action برگشت» ولی View هنوز رندر نشده؛ After در Result Filter یعنی «نتیجه اجرا شد». اگر کد شما به محتوای رندرشده یا Header نهایی وابسته است، Result Filter انتخاب درست است.
-2. **Result Filter روی Redirect هم اجرا می‌شود؟** بله اگر نتیجه `RedirectToActionResult` باشد، Result Filter دور «اجرای redirect» قرار می‌گیرد؛ اگر بخواهید فقط برای View خاصی منطق داشته باشید، نوع `context.Result` را چک کنید (مثلاً `is ViewResult`).
-3. **Short-Circuit در این سطح:** اگر `context.Result` را قبل از `next()` عوض کنید یا اصلاً `next()` را نزنید، **رندر View انجام نمی‌شود** و پاسخ همان چیزی است که شما تعیین کردید — این ابزار پروژه ۱۵ است.
-4. **اینترفیس سنکرون هم هست:** `IResultFilter` با دو متد `OnResultExecuting/OnResultExecuted`؛ همان قاعده قبلی: هر دو را پیاده کنید فقط Async اجرا می‌شود.
+1.  تفاوت با Action Filter:  After در Action Filter یعنی «Action برگشت» ولی View هنوز رندر نشده؛ After در Result Filter یعنی «نتیجه اجرا شد». اگر کد شما به محتوای رندرشده یا Header نهایی وابسته است، Result Filter انتخاب درست است.
+2.  Result Filter روی Redirect هم اجرا می‌شود؟  بله اگر نتیجه `RedirectToActionResult` باشد، Result Filter دور «اجرای redirect» قرار می‌گیرد؛ اگر بخواهید فقط برای View خاصی منطق داشته باشید، نوع `context.Result` را چک کنید (مثلاً `is ViewResult`).
+3.  Short-Circuit در این سطح:  اگر `context.Result` را قبل از `next()` عوض کنید یا اصلاً `next()` را نزنید،  رندر View انجام نمی‌شود  و پاسخ همان چیزی است که شما تعیین کردید — این ابزار پروژه ۱۵ است.
+4.  اینترفیس سنکرون هم هست:  `IResultFilter` با دو متد `OnResultExecuting/OnResultExecuted`؛ همان قاعده قبلی: هر دو را پیاده کنید فقط Async اجرا می‌شود.
 
 ## ✅ خلاصه
 

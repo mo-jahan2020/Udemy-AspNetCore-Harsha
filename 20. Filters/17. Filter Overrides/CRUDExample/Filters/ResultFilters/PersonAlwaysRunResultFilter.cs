@@ -2,20 +2,21 @@
 
 namespace CRUDExample.Filters.ResultFilters
 {
- public class PersonAlwaysRunResultFilter : IAlwaysRunResultFilter
- {
-  public void OnResultExecuted(ResultExecutedContext context)
-  {
-  }
+    public class PersonAlwaysRunResultFilter : IAlwaysRunResultFilter
+    {
+        public void OnResultExecuted(ResultExecutedContext context)
+        {
+        }
 
-  public void OnResultExecuting(ResultExecutingContext context)
-  {
-   if (context.Filters.OfType<SkipFilter>().Any())
-   {
-    return;
-   }
+        public void OnResultExecuting(ResultExecutingContext context)
+        {
+            // آیا در زنجیره فیلترهای این درخواست، SkipFilter وجود دارد؟
+            if (context.Filters.OfType<SkipFilter>().Any())
+            {
+                return;// بله → این فیلتر خودش را معاف می‌کند
+            }
 
-   //TO DO: before logic here
-  }
- }
+            //TO DO: before logic here
+        }
+    }
 }

@@ -31,8 +31,9 @@ namespace CRUDExample
      Value = "My-Value-From-Global",
      Order = 2
     });
-
-    options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
+       // همین یک خط برای فعال سازی در سراسر برنامه کافی است مگر برای حالت های استثنا که 
+       // میخواهید با یک سایت خارجی ارتباط بگیرید یا باز کنید که آنگاه آن اکشن را استثناء میکنید[IgnoreAntiforgeryToken] 
+       options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
    });
 
 

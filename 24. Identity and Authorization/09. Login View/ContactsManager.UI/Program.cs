@@ -45,7 +45,14 @@ if (builder.Environment.IsEnvironment("Test") == false)
  Rotativa.AspNetCore.RotativaConfiguration.Setup("wwwroot", wkhtmltopdfRelativePath: "Rotativa");
 
 app.UseStaticFiles();
-
+// این دستور هم موجب مبشود دیتا در این برنامه کش نشود
+//app.Use(async (context, next) =>
+//{
+//    context.Response.Headers["Cache-Control"] = "no-cache, no-store, must-revalidate";
+//    context.Response.Headers["Pragma"] = "no-cache";
+//    context.Response.Headers["Expires"] = "0";
+//    await next();
+//});
 app.UseAuthentication(); //Reading Identity cookie
 app.MapControllers(); //Execute the filter pipiline (action + filters)
 

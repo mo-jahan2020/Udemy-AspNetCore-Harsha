@@ -55,18 +55,17 @@ namespace CRUDExample
    services.AddTransient<PersonsListActionFilter>();
 
 
-   //Enable Identity in this project
-   services.AddIdentity<ApplicationUser, ApplicationRole>()
-    .AddEntityFrameworkStores<ApplicationDbContext>()
-
-    .AddDefaultTokenProviders()
-
-    .AddUserStore<UserStore<ApplicationUser, ApplicationRole, ApplicationDbContext, Guid>>()
-
-    .AddRoleStore<RoleStore<ApplicationRole, ApplicationDbContext, Guid>>();
+            // سرویس اضافه میشود تا برنامه در ابتدای اجرا از آن استفاده کند
+            services.AddIdentity<ApplicationUser, ApplicationRole>()
+                .AddDefaultTokenProviders()// افزودن توکن پرووایدر که در تغییر کلمه عبور و ایمیل و تلفن استفاده میشود
+                .AddEntityFrameworkStores<ApplicationDbContext>()// این خط برای مشخ شدن محل نگهداری اطلاعات Indentiry میباشد این در لایه اپلیکیشن اننجام میشود
+                .AddUserStore<UserStore<ApplicationUser, ApplicationRole, ApplicationDbContext, Guid>>()// این ذخیره کاربران در لایه ریپازیتوری انجام میشود
+                .AddRoleStore<RoleStore<ApplicationRole, ApplicationDbContext, Guid>>()// این ذخیره نقش ها در لایه ریپازیتوری انجام میشود
+                ;
 
 
-   services.AddHttpLogging(options =>
+
+            services.AddHttpLogging(options =>
    {
     options.LoggingFields = Microsoft.AspNetCore.HttpLogging.HttpLoggingFields.RequestProperties | Microsoft.AspNetCore.HttpLogging.HttpLoggingFields.ResponsePropertiesAndHeaders;
    });

@@ -7,16 +7,18 @@
 
 ## 🎯 مبحث این پروژه چیست؟
 
-پروژه ۱۹ دو دنیا را مقابل هم گذاشت: سینتکس خوشگل Attribute اما بدون DI؛ یا DI کامل اما با سینتکس TypeFilter/ServiceFilter. **`IFilterFactory`** پل این دو دنیاست:
+پروژه ۱۹ دو دنیا را مقابل هم گذاشت: سینتکس خوشگل Attribute اما بدون DI؛ یا DI کامل اما با سینتکس TypeFilter/ServiceFilter.
+`IFilterFactory`  پل این دو دنیاست:
 
 - یک کلاس Attribute می‌سازیم که `IFilterFactory` را پیاده کند → سینتکس `[ResponseHeaderFilterFactory("k","v",1)]`؛
-- متد `CreateInstance(IServiceProvider)` آن، فیلترِ واقعی را **از DI** می‌گیرد و پیکربندی را رویش ست می‌کند → DI هم داریم!
+- متد `CreateInstance(IServiceProvider)` آن، فیلترِ واقعی را  از DI  می‌گیرد و پیکربندی را رویش ست می‌کند → DI هم داریم!
 
-جریان معرفی‌شده در کامنت کد پروژه: **Controller → FilterFactory → Filter**
+جریان معرفی‌شده در کامنت کد پروژه:  Controller → FilterFactory → Filter 
 
 ## 💡 چرا به این مبحث نیاز داریم؟
 
-این الگو استاندارد طلایی ساخت فیلترهای «قابل پیکربندی با آرگومان + تزریق سرویس» است. حتی اتریبیوت‌های داخلی خود ASP.NET Core (مثل `[ServiceFilter]` و `[TypeFilter]`) دقیقاً همین‌طور — با پیاده‌سازی `IFilterFactory` — ساخته شده‌اند. با این الگو:
+این الگو استاندارد طلایی ساخت فیلترهای «قابل پیکربندی با آرگومان + تزریق سرویس» است. حتی اتریبیوت‌های داخلی خود 
+ASP.NET Core (مثل `[ServiceFilter]` و `[TypeFilter]`) دقیقاً همین‌طور — با پیاده‌سازی `IFilterFactory` — ساخته شده‌اند. با این الگو:
 
 - سازنده فیلتر واقعی، `ILogger` و هر سرویس دیگری را از DI می‌گیرد (مشکل پروژه ۱۹ حل شد)؛
 - در محل استفاده، سینتکس ساده Attribute با آرگومان‌های ثابت داریم؛
@@ -90,13 +92,13 @@ namespace CRUDExample.Filters.ActionFilters
 }
 ```
 
-**ثبت فیلتر واقعی در DI (در نسخه نهایی این پروژه در StartupExtensions انجام می‌شود):**
+ ثبت فیلتر واقعی در DI (در نسخه نهایی این پروژه در StartupExtensions انجام می‌شود): 
 
 ```csharp
 builder.Services.AddTransient<ResponseHeaderActionFilter>();
 ```
 
-**استفاده — سینتکس تمیز Attribute:**
+ استفاده — سینتکس تمیز Attribute: 
 
 فایل: `CRUDExample/Controllers/PersonsController.cs`
 
@@ -138,10 +140,10 @@ Request
 
 ## ⚠️ نکات کلیدی و خطاهای رایج
 
-1. **`IsReusable` را با احتیاط روشن کنید:** true یعنی یک نمونه فیلتر واقعی بین Requestها مشترک می‌شود؛ اگر فیلتر State قابل تغییر دارد (مثل Key/Value اینجا)، باید false بماند.
-2. **فیلتر واقعی را حتماً در DI ثبت کنید:** ثبت با `AddTransient` منطقی‌ترین انتخاب است چون Factory خودش Key/Value/Order را بعد از ساخت ست می‌کند و Lifetime طولانی state را به‌اشتراک می‌گذارد.
-3. **دو کلاس در یک نقش:** کلاس Factory «پیکربندی» است و کلاس فیلتر «رفتار»؛ این جداسازی دقیقاً همان الگوی Options Pattern است — مقایسه کنید.
-4. **نام‌گذاری قراردادی:** نام کلاس با پسوند `Attribute` تعریف و بدون پسوند استفاده می‌شود؛ دیدن `[ResponseHeaderFilterFactory(...)]` یعنی همین کلاس Factory.
+1.  `IsReusable` را با احتیاط روشن کنید:  true یعنی یک نمونه فیلتر واقعی بین Requestها مشترک می‌شود؛ اگر فیلتر State قابل تغییر دارد (مثل Key/Value اینجا)، باید false بماند.
+2.  فیلتر واقعی را حتماً در DI ثبت کنید:  ثبت با `AddTransient` منطقی‌ترین انتخاب است چون Factory خودش Key/Value/Order را بعد از ساخت ست می‌کند و Lifetime طولانی state را به‌اشتراک می‌گذارد.
+3.  دو کلاس در یک نقش:  کلاس Factory «پیکربندی» است و کلاس فیلتر «رفتار»؛ این جداسازی دقیقاً همان الگوی Options Pattern است — مقایسه کنید.
+4.  نام‌گذاری قراردادی:  نام کلاس با پسوند `Attribute` تعریف و بدون پسوند استفاده می‌شود؛ دیدن `[ResponseHeaderFilterFactory(...)]` یعنی همین کلاس Factory.
 
 ## ✅ خلاصه
 

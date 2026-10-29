@@ -12,82 +12,86 @@ using Services;
 
 namespace CRUDExample
 {
- public static class ConfigureServicesExtension
- {
-  public static IServiceCollection ConfigureServices(this IServiceCollection services, IConfiguration configuration)
-  {
-   services.AddTransient<ResponseHeaderActionFilter>();
-
-   //it adds controllers and views as services
-   services.AddControllersWithViews(options => {
-    //options.Filters.Add<ResponseHeaderActionFilter>(5);
-
-    var logger = services.BuildServiceProvider().GetRequiredService<ILogger<ResponseHeaderActionFilter>>();
-
-    options.Filters.Add(new ResponseHeaderActionFilter(logger)
+    public static class ConfigureServicesExtension
     {
-     Key = "My-Key-From-Global",
-     Value = "My-Value-From-Global",
-     Order = 2
-    });
-   });
+        public static IServiceCollection ConfigureServices(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddTransient<ResponseHeaderActionFilter>();
 
-   //add services into IoC container
-   services.AddScoped<ICountriesRepository, CountriesRepository>();
-   services.AddScoped<IPersonsRepository, PersonsRepository>();
+            //it adds controllers and views as services
+            services.AddControllersWithViews(options =>
+            {
+                //options.Filters.Add<ResponseHeaderActionFilter>(5);
 
-   services.AddScoped<ICountriesGetterService, CountriesGetterService>();
-   services.AddScoped<ICountriesAdderService, CountriesAdderService>();
-   services.AddScoped<ICountriesUploaderService, CountriesUploaderService>();
+                var logger = services.BuildServiceProvider().GetRequiredService<ILogger<ResponseHeaderActionFilter>>();
 
-   services.AddScoped<IPersonsGetterService, PersonsGetterServiceWithFewExcelFields>();
-   services.AddScoped<PersonsGetterService, PersonsGetterService>();
+                options.Filters.Add(new ResponseHeaderActionFilter(logger)
+                {
+                    Key = "My-Key-From-Global",
+                    Value = "My-Value-From-Global",
+                    Order = 2
+                });
+            });
 
-   services.AddScoped<IPersonsAdderService, PersonsAdderService>();
-   services.AddScoped<IPersonsDeleterService, PersonsDeleterService>();
-   services.AddScoped<IPersonsUpdaterService, PersonsUpdaterService>();
-   services.AddScoped<IPersonsSorterService, PersonsSorterService>();
-   services.AddTransient<PersonsListActionFilter>();
+            //add services into IoC container
+            services.AddScoped<ICountriesRepository, CountriesRepository>();
+            services.AddScoped<IPersonsRepository, PersonsRepository>();
 
-   services.AddDbContext<ApplicationDbContext>(options =>
-   {
-    options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
-   });
+            services.AddScoped<ICountriesGetterService, CountriesGetterService>();
+            services.AddScoped<ICountriesAdderService, CountriesAdderService>();
+            services.AddScoped<ICountriesUploaderService, CountriesUploaderService>();
 
+            services.AddScoped<IPersonsGetterService, PersonsGetterServiceWithFewExcelFields>();
+            services.AddScoped<PersonsGetterService, PersonsGetterService>();
 
-   //Enable Identity in this project
-   services.AddIdentity<ApplicationUser, ApplicationRole>(options => {
-    options.Password.RequiredLength = 5;
-    options.Password.RequireNonAlphanumeric = false;
-    options.Password.RequireUppercase = false;
-    options.Password.RequireLowercase = true;
-    options.Password.RequireDigit = false;
-    options.Password.RequiredUniqueChars = 3; //Eg: AB12AB (unique characters are A,B,1,2)
-   })
-    .AddEntityFrameworkStores<ApplicationDbContext>()
+            services.AddScoped<IPersonsAdderService, PersonsAdderService>();
+            services.AddScoped<IPersonsDeleterService, PersonsDeleterService>();
+            services.AddScoped<IPersonsUpdaterService, PersonsUpdaterService>();
+            services.AddScoped<IPersonsSorterService, PersonsSorterService>();
+            services.AddTransient<PersonsListActionFilter>();
 
-    .AddDefaultTokenProviders()
-
-    .AddUserStore<UserStore<ApplicationUser, ApplicationRole, ApplicationDbContext, Guid>>()
-
-    .AddRoleStore<RoleStore<ApplicationRole, ApplicationDbContext, Guid>>();
+            services.AddDbContext<ApplicationDbContext>(options =>
+            {
+                options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
+            });
 
 
-   services.AddAuthorization(options =>
-   {
-    options.FallbackPolicy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build(); //enforces authoriation policy (user must be authenticated) for all the action methods
-   });
+            //Enable Identity in this project
+            services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
+            {
+                options.Password.RequiredLength = 5;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequireLowercase = true;
+                options.Password.RequireDigit = false;
+                options.Password.RequiredUniqueChars = 3; //Eg: AB12AB (unique characters are A,B,1,2)
+            })
+             .AddEntityFrameworkStores<ApplicationDbContext>()
 
-   services.ConfigureApplicationCookie(options => {
-    options.LoginPath = "/Account/Login";
-   });
+             .AddDefaultTokenProviders()
 
-   services.AddHttpLogging(options =>
-   {
-    options.LoggingFields = Microsoft.AspNetCore.HttpLogging.HttpLoggingFields.RequestProperties | Microsoft.AspNetCore.HttpLogging.HttpLoggingFields.ResponsePropertiesAndHeaders;
-   });
+             .AddUserStore<UserStore<ApplicationUser, ApplicationRole, ApplicationDbContext, Guid>>()
 
-   return services;
-  }
- }
+             .AddRoleStore<RoleStore<ApplicationRole, ApplicationDbContext, Guid>>();
+
+            // و اینجا باید با آپشن های آن آن را به سرویس ها اضافه کنیم
+            // به جای قرارگیری آن بعد از AddIdentity دقت کنید
+            services.AddAuthorization(options =>
+            {
+                options.FallbackPolicy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build(); //enforces authoriation policy (user must be authenticated) for all the action methods
+             });
+            // این یعنی اگر کاربر لاگ این نکرده بود خودبخود به این صفحه هدایت شود
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = "/Account/Login";
+            });
+
+            services.AddHttpLogging(options =>
+            {
+                options.LoggingFields = Microsoft.AspNetCore.HttpLogging.HttpLoggingFields.RequestProperties | Microsoft.AspNetCore.HttpLogging.HttpLoggingFields.ResponsePropertiesAndHeaders;
+            });
+
+            return services;
+        }
+    }
 }

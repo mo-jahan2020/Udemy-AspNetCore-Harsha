@@ -32,6 +32,7 @@ if (builder.Environment.IsDevelopment())
 }
 else
 {
+    // اینجا use میکنیم
  app.UseExceptionHandlingMiddleware();
 }
 

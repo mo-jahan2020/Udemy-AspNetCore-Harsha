@@ -1,13 +1,14 @@
 ﻿using ContactsManager.Core.Domain.IdentityEntities;
 using ContactsManager.Core.DTO;
 using CRUDExample.Controllers;
-using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization; // بخق [AllowAnonymous]
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ContactsManager.UI.Controllers
 {
  [Route("[controller]/[action]")]
+ // به این کنترلر همه حتی رجیستر نشده ها دسترسی دارند تا بتوانند لاگ این کنند
  [AllowAnonymous]
  public class AccountController : Controller
  {

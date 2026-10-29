@@ -14,9 +14,11 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-
-app.UseHsts();
-app.UseHttpsRedirection();
+// ابتدا پکیج زیر را نصب کنید تا خطا رفع شود
+// System.Security.Cryptography.Pkcs
+// در نهایت در package Manager:update-database
+//app.UseHsts();
+//app.UseHttpsRedirection();
 
 app.UseAuthorization();
 

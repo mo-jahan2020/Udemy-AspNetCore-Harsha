@@ -7,22 +7,26 @@
 
 ## 🎯 مبحث این پروژه چیست؟
 
-**Exception Filter** پنجمین نوع اصلی فیلتر است و آخرین حلقه‌ی Pipeline: هرگاه داخل Action، فیلترهای دیگر یا رندر نتیجه یک **استثنای مدیریت‌نشده** (Unhandled Exception) رخ دهد، Exception Filter فرصت پیدا می‌کند آن را ببیند، لاگ کند و پاسخ مناسبی تولید کند.
+ Exception Filter  پنجمین نوع اصلی فیلتر است و آخرین حلقه‌ی Pipeline:
+ هرگاه داخل Action، فیلترهای دیگر یا رندر نتیجه یک  استثنای مدیریت‌نشده  (Unhandled Exception) رخ دهد،
+ Exception Filter فرصت پیدا می‌کند آن را ببیند، لاگ کند و پاسخ مناسبی تولید کند.
 
-اینترفیس: **`IExceptionFilter`** (فقط متد `OnException`). در این پروژه فیلتر `HandleExceptionFilter` ساخته می‌شود که:
+اینترفیس:  `IExceptionFilter`  (فقط متد `OnException`). در این پروژه فیلتر `HandleExceptionFilter` ساخته می‌شود که:
 
 1. نوع و پیام استثنا را با لاگ ساختاریافته ثبت می‌کند؛
 2. در محیط Development، پیام استثنا را به‌صورت متن با کد 500 برمی‌گرداند.
 
 ## 💡 چرا به این مبحث نیاز داریم؟
 
-بدون Exception Filter، استثنای داخل Action به Middlewareهای بالاتر (Developer Exception Page یا Exception Handler) می‌رود. اما فیلترها این مزیت را دارند که:
+بدون Exception Filter، استثنای داخل Action به Middlewareهای بالاتر (Developer Exception Page یا Exception Handler) 
+می‌رود. اما فیلترها این مزیت را دارند که:
 
-- **نزدیک به نقطه خطا** هستند و می‌توانند خطا را لاگ کنند؛
-- می‌توانند بسته به نوع استثنا یا محیط، **پاسخ سفارشی** برگردانند؛
+-  نزدیک به نقطه خطا  هستند و می‌توانند خطا را لاگ کنند؛
+- می‌توانند بسته به نوع استثنا یا محیط،  پاسخ سفارشی  برگردانند؛
 - بدون گم شدن خطا، از Crash کردن ناخوشایند Response جلوگیری کنند.
 
-تفاوت با فصل Error Handling (پروژه ۲۱ دوره): Exception Filter فقط خطاهای داخل MVC Pipeline را می‌گیرد؛ خطاهای Middleware-level را نه. برای پوشش کامل، هر دو لازم‌اند.
+تفاوت با فصل Error Handling (پروژه ۲۱ دوره): Exception Filter فقط خطاهای داخل MVC Pipeline را می‌گیرد؛
+خطاهای Middleware-level را نه. برای پوشش کامل، هر دو لازم‌اند.
 
 ## 🔍 کد نمونه از خود پروژه
 
@@ -77,7 +81,7 @@ namespace CRUDExample.Filters.ExceptionFilters
 public class PersonsController : Controller { ... }
 ```
 
-چون در سطح Controller ثبت شده، هر استثنایی که در **هر Action از این Controller** رخ دهد به آن می‌رسد (می‌توانستیم Global هم ثبتش کنیم).
+چون در سطح Controller ثبت شده، هر استثنایی که در  هر Action از این Controller  رخ دهد به آن می‌رسد (می‌توانستیم Global هم ثبتش کنیم).
 
 ## 🧪 رفتار برنامه در اجرا
 
@@ -105,10 +109,10 @@ fail: Exception filter HandleExceptionFilter.OnException
 
 ## ⚠️ نکات کلیدی و خطاهای رایج
 
-1. **`ExceptionHandled` را فراموش نکنید:** در این مثال، ست‌کردن `context.Result` عملاً باعث مدیریت خطا می‌شود؛ اگر فقط لاگ کنید و Result ندهید، استثنا به Middlewareها ادامه می‌یابد. برای قطع قطعی، `context.ExceptionHandled = true` را هم ست کنید.
-2. **Exception Filter خطاهای Async را هم می‌گیرد:** استثنای داخل فیلترهای Async (قبل یا بعد از `next()`) و داخل رندر View هم توسط همین فیلتر گرفته می‌شود.
-3. **در Production چه کنیم؟** این فیلتر در Production عمداً پاسخ سفارشی نمی‌دهد تا جزئیات خطا فاش نشود؛ مدیریت کامل Production در فصل Error Handling با `UseExceptionHandler` انجام می‌شود. تکه‌کد بالا الگوی «رفتار متفاوت بر اساس محیط» را آموزش می‌دهد.
-4. **محدودیت مهم:** Exception Filter خطاهای Middleware (مثل خطای در `UseStaticFiles` یا مسیریابی) را نمی‌گیرد — فقط خطاهای داخل MVC (Action/Filter/Result) را.
+1.  `ExceptionHandled` را فراموش نکنید:  در این مثال، ست‌کردن `context.Result` عملاً باعث مدیریت خطا می‌شود؛ اگر فقط لاگ کنید و Result ندهید، استثنا به Middlewareها ادامه می‌یابد. برای قطع قطعی، `context.ExceptionHandled = true` را هم ست کنید.
+2.  Exception Filter خطاهای Async را هم می‌گیرد:  استثنای داخل فیلترهای Async (قبل یا بعد از `next()`) و داخل رندر View هم توسط همین فیلتر گرفته می‌شود.
+3.  در Production چه کنیم؟  این فیلتر در Production عمداً پاسخ سفارشی نمی‌دهد تا جزئیات خطا فاش نشود؛ مدیریت کامل Production در فصل Error Handling با `UseExceptionHandler` انجام می‌شود. تکه‌کد بالا الگوی «رفتار متفاوت بر اساس محیط» را آموزش می‌دهد.
+4.  محدودیت مهم:  Exception Filter خطاهای Middleware (مثل خطای در `UseStaticFiles` یا مسیریابی) را نمی‌گیرد — فقط خطاهای داخل MVC (Action/Filter/Result) را.
 
 ## ✅ خلاصه
 

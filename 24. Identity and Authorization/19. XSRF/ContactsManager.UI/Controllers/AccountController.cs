@@ -33,7 +33,7 @@ namespace ContactsManager.UI.Controllers
 
   [HttpPost]
   [Authorize("NotAuthorized")]
-  //[ValidateAntiForgeryToken]
+  //[ValidateAntiForgeryToken] اگر سراسری تنظیم نکردید با این دستور فقط این اکشن را فعال میکنید
   public async Task<IActionResult> Register(RegisterDTO registerDTO)
   {
    //Check for validation errors

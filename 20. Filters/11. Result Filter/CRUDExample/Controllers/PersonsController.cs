@@ -31,7 +31,7 @@ namespace CRUDExample.Controllers
   [Route("/")]
   [TypeFilter(typeof(PersonsListActionFilter), Order = 4)]
   [TypeFilter(typeof(ResponseHeaderActionFilter), Arguments = new object[] { "MyKey-FromAction", "MyValue-From-Action", 1 }, Order = 1)]
-
+  // فقط برای این اکشن اجرا میشود
   [TypeFilter(typeof(PersonsListResultFilter))]
   public async Task<IActionResult> Index(string searchBy, string? searchString, string sortBy = nameof(PersonResponse.PersonName), SortOrderOptions sortOrder = SortOrderOptions.ASC)
   {

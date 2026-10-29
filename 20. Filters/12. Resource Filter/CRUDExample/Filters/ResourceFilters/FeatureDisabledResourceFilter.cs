@@ -17,13 +17,14 @@ namespace CRUDExample.Filters.ResourceFilters
 
   public async Task OnResourceExecutionAsync(ResourceExecutingContext context, ResourceExecutionDelegate next)
   {
-   //TO DO: before logic
-   _logger.LogInformation("{FilterName}.{MethodName} - before", nameof(FeatureDisabledResourceFilter), nameof(OnResourceExecutionAsync));
+            //TO DO: before logic
+            // قبل از همه و فقت بعد از Authorization Filter اجرا میشود
+            _logger.LogInformation("{FilterName}.{MethodName} - before", nameof(FeatureDisabledResourceFilter), nameof(OnResourceExecutionAsync));
 
    if (_isDisabled)
    {
     //context.Result = new NotFoundResult(); //404 - Not Found
-
+    // اگر بله بود از دسترس خارج کن
     context.Result = new StatusCodeResult(501); //501 - Not Implemented
    }
    else
@@ -32,7 +33,7 @@ namespace CRUDExample.Filters.ResourceFilters
    }
    
 
-   //TO DO: after logic
+   //TO DO: after logic آخر همه اجرا میشود
    _logger.LogInformation("{FilterName}.{MethodName} - after", nameof(FeatureDisabledResourceFilter), nameof(OnResourceExecutionAsync));
   }
  }

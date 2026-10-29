@@ -7,11 +7,12 @@
 
 ## 🎯 مبحث این پروژه چیست؟
 
-تا حالا دو راه برای ساخت نمونه فیلتر دیدیم: `TypeFilter` (ساخت با ترکیب DI + آرگومان‌های دستی). این پروژه راه سوم و تمیزتر را معرفی می‌کند: **`ServiceFilter`** — فیلتری که **تماماً از DI Container** حل (resolve) می‌شود.
+تا حالا دو راه برای ساخت نمونه فیلتر دیدیم: `TypeFilter` ساخت با ترکیب DI + آرگومان‌های دستی. این پروژه راه سوم و تمیزتر را معرفی می‌کند:  
+`ServiceFilter`  — فیلتری که  تماماً از DI Container  حل (resolve) می‌شود.
 
 دو تغییر در کد لازم است:
 
-**۱) ثبت فیلتر در DI (مثل هر سرویس دیگر):**
+ ۱) ثبت فیلتر در DI (مثل هر سرویس دیگر): 
 
 فایل: `CRUDExample/Program.cs`
 
@@ -19,7 +20,7 @@
 builder.Services.AddTransient<PersonsListActionFilter>();   // ← فیلتر به‌عنوان سرویس
 ```
 
-**۲) اتصال با `ServiceFilter` به‌جای `TypeFilter`:**
+ ۲) اتصال با `ServiceFilter` به‌جای `TypeFilter`: 
 
 فایل: `CRUDExample/Controllers/PersonsController.cs`
 
@@ -35,21 +36,21 @@ public async Task<IActionResult> Index(...) { ... }
 
 ## 💡 چرا به این مبحث نیاز داریم؟
 
-`TypeFilter` هر بار که لازم شود، نمونه فیلتر را با `ActivatorUtilities` می‌سازد؛ فیلتر در DI **ثبت نیست**. `ServiceFilter` برعکس:
+`TypeFilter` هر بار که لازم شود، نمونه فیلتر را با `ActivatorUtilities` می‌سازد؛ فیلتر در DI  ثبت نیست . `ServiceFilter` برعکس:
 
 | جنبه | `[TypeFilter]` | `[ServiceFilter]` |
 |---|---|---|
-| نمونه‌سازی | درجا ساخته می‌شود | از **DI Container** گرفته می‌شود |
-| نیاز به ثبت در DI | ❌ لازم ندارد | ✅ **اجباری** (وگرنه Exception) |
+| نمونه‌سازی | درجا ساخته می‌شود | از  DI Container  گرفته می‌شود |
+| نیاز به ثبت در DI | ❌ لازم ندارد | ✅  اجباری  (وگرنه Exception) |
 | آرگومان دستی سازنده | ✅ با `Arguments` | ❌ ممکن نیست — همه‌چیز باید از DI بیاید |
 | Lifetime | هر بار جدید (به‌جز پیکربندی خاص) | طبق Lifetime ثبت‌شده (Transient/Scoped/Singleton) |
 | کاربرد | فیلتر با پیکربندی محلی | فیلتر با وابستگی‌های سنگین DI |
 
-مزیت کلیدی ServiceFilter: فیلتر می‌تواند **هر تعداد سرویس** را در سازنده بگیرد و شما فقط ثبتش می‌کنید؛ و Lifetime آن کاملاً قابل کنترل است.
+مزیت کلیدی ServiceFilter: فیلتر می‌تواند  هر تعداد سرویس  را در سازنده بگیرد و شما فقط ثبتش می‌کنید؛ و Lifetime آن کاملاً قابل کنترل است.
 
 ## 🔍 فیلتر مورد استفاده
 
-`PersonsListActionFilter` از پروژه‌های قبل تغییری نکرده است (ILogger و منطق ViewData). تنها نکته جدید این است که حالا **خودِ کلاس فیلتر، یک سرویس ثبت‌شده** است:
+`PersonsListActionFilter` از پروژه‌های قبل تغییری نکرده است (ILogger و منطق ViewData). تنها نکته جدید این است که حالا  خودِ کلاس فیلتر، یک سرویس ثبت‌شده  است:
 
 ```csharp
 public class PersonsListActionFilter : IActionFilter
@@ -76,7 +77,7 @@ Request به Index می‌رسد
 
 ## 🧪 رفتار برنامه در اجرا
 
-رفتار بیرونی دقیقاً مثل قبل است (لاگ، اصلاح searchBy، ست ViewData). تفاوت فقط در **منبع نمونه‌سازی** است:
+رفتار بیرونی دقیقاً مثل قبل است (لاگ، اصلاح searchBy، ست ViewData). تفاوت فقط در  منبع نمونه‌سازی  است:
 
 - اگر ثبت `AddTransient<PersonsListActionFilter>()` را حذف کنید، این Exception را می‌گیرید:
 
@@ -97,10 +98,10 @@ InvalidOperationException: No service for type
 
 ## ⚠️ نکات کلیدی و خطاهای رایج
 
-1. **فراموشی ثبت = Exception در زمان اجرا:** رایج‌ترین خطای این پروژه همان است که بالا دیدید؛ اگر با `ServiceFilter` خطای "No service for type..." گرفتید، اول سراغ Program.cs بروید.
-2. **با ServiceFilter آرگومان دستی پاس نمی‌دهید:** سازنده فیلتر فقط سرویس‌ها را می‌گیرد؛ اگر به «مقدار پیکربندی» نیاز دارید یا آن را از Configuration تزریق کنید یا سراغ پروژه ۲۰ (IFilterFactory) بروید.
-3. **احتیاط با Singleton:** فیلتر Singleton نمی‌تواند سرویس Scoped (مثل DbContext) را مستقیم تزریق کند (Captive Dependency)؛ Transient/Scoped امن‌ترین انتخاب‌ها برای فیلترهاست.
-4. **`Order` هنوز کار می‌کند:** همان قواعد پروژه‌های ۰۷/۰۸ روی ServiceFilter هم برقرار است.
+1.  فراموشی ثبت = Exception در زمان اجرا:  رایج‌ترین خطای این پروژه همان است که بالا دیدید؛ اگر با `ServiceFilter` خطای "No service for type..." گرفتید، اول سراغ Program.cs بروید.
+2.  با ServiceFilter آرگومان دستی پاس نمی‌دهید:  سازنده فیلتر فقط سرویس‌ها را می‌گیرد؛ اگر به «مقدار پیکربندی» نیاز دارید یا آن را از Configuration تزریق کنید یا سراغ پروژه ۲۰ (IFilterFactory) بروید.
+3.  احتیاط با Singleton:  فیلتر Singleton نمی‌تواند سرویس Scoped (مثل DbContext) را مستقیم تزریق کند (Captive Dependency)؛ Transient/Scoped امن‌ترین انتخاب‌ها برای فیلترهاست.
+4.  `Order` هنوز کار می‌کند:  همان قواعد پروژه‌های ۰۷/۰۸ روی ServiceFilter هم برقرار است.
 
 ## ✅ خلاصه
 

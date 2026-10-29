@@ -39,6 +39,7 @@ namespace CitiesManager.WebAPI.Controllers
 
    if (city == null)
    {
+                // بجای BadRequest میتوانیم مشکل را خودمان کاستوم ایجاد کرده و به کاربر برگدانیم
     return Problem(detail: "Invalid CityID", statusCode: 400, title: "City Search");
     //return BadRequest();
    }

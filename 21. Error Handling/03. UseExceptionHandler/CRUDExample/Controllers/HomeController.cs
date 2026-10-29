@@ -5,10 +5,11 @@ namespace CRUDExample.Controllers
 {
  public class HomeController : Controller
  {
+        // تعریف Routing آن
   [Route("Error")]
   public IActionResult Error()
   {
-   IExceptionHandlerPathFeature ? exceptionHandlerPathFeature = HttpContext.Features.Get<IExceptionHandlerPathFeature>();
+   IExceptionHandlerPathFeature? exceptionHandlerPathFeature = HttpContext.Features.Get<IExceptionHandlerPathFeature>();
    if (exceptionHandlerPathFeature != null && exceptionHandlerPathFeature.Error != null)
    {
     ViewBag.ErrorMessage = exceptionHandlerPathFeature.Error.Message;

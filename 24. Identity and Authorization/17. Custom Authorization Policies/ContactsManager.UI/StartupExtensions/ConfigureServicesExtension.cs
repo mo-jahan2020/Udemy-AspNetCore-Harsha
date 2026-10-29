@@ -76,7 +76,7 @@ namespace CRUDExample
    services.AddAuthorization(options =>
    {
     options.FallbackPolicy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build(); //enforces authoriation policy (user must be authenticated) for all the action methods
-
+       // اینجا آپشن جدید برای کابران ثبت نام نشده ایجاد میکنیم
     options.AddPolicy("NotAuthorized", policy =>
     {
      policy.RequireAssertion(context =>

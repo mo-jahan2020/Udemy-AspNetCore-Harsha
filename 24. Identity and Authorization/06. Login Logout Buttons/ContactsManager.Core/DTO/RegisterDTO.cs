@@ -28,7 +28,7 @@ namespace ContactsManager.Core.DTO
 
   [Required(ErrorMessage = "Confirm Password can't be blank")]
   [DataType(DataType.Password)]
-  [Compare("Password", ErrorMessage = "Password and confirm password do not match")]
+  [Compare("Password", ErrorMessage = "Password and confirm password do not match")]// مقایسه با کلمه عبور خط قبل
   public string ConfirmPassword { get; set; }
  }
 }

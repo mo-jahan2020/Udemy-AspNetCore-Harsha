@@ -17,8 +17,9 @@ builder.Host.UseSerilog((HostBuilderContext context, IServiceProvider services, 
  .ReadFrom.Configuration(context.Configuration) //read configuration settings from built-in IConfiguration
  .ReadFrom.Services(services); //read out current app's services and make them available to serilog
 } );
-
-builder.Services.ConfigureServices(builder.Configuration);
+// این فایل بسیار شلوغ شده بود با این تکنیک فراخوانی سرویس ها را به فایل دیگر منتقل میکنیم
+// لذا خوانایی برنامه هم افزایش پیدا میکند
+builder.Services.ConfigureServices(builder.Configuration);// اینچا یک فایل جدید به سرویس اضافه میکنیمConfigureServices
 
 
 var app = builder.Build();

@@ -25,7 +25,7 @@ namespace CitiesManager.WebAPI.Controllers
   /// </summary>
   /// <returns></returns>
   [HttpGet]
-  //[Produces("application/xml")]
+  [Produces("application/xml")]// خروجی اسن اکشن ایکس ام ال خواهد شد البته به شرط وجود خط مورد نظر در program.cs
   public async Task<ActionResult<IEnumerable<City>>> GetCities()
   {
    var cities = await _context.Cities

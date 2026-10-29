@@ -14,8 +14,9 @@ using ServiceContracts.Enums;
 namespace CRUDExample.Controllers
 {
  [Route("[controller]")]
- [TypeFilter(typeof(ResponseHeaderActionFilter), Arguments = new object[] { "My-Key-From-Controller", "My-Value-From-Controller", 3 }, Order = 3)]
- [TypeFilter(typeof(HandleExceptionFilter))]
+    //[TypeFilter(typeof(ResponseHeaderActionFilter), ...)]      // کد قدیمی کامنت شده
+    [TypeFilter(typeof(ResponseHeaderActionFilter), Arguments = new object[] { "My-Key-From-Controller", "My-Value-From-Controller", 3 }, Order = 3)] // ← جدید
+    [TypeFilter(typeof(HandleExceptionFilter))]
  [TypeFilter(typeof(PersonAlwaysRunResultFilter))]
  public class PersonsController : Controller
  {

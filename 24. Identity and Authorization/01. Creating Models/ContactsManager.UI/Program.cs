@@ -1,3 +1,5 @@
+// install package Microsoft.AspNetCore.Identity.EntityFrameworkCore برای ارتباط Identiry با بانک اطلاعاتی و ذخیر و بازیابی اطلاعات در بانک و  جدول Identity
+
 using ServiceContracts;
 using Services;
 using Microsoft.EntityFrameworkCore;

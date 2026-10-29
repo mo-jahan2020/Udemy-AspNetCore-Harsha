@@ -109,6 +109,7 @@ namespace CRUDExample.Controllers
   [HttpPost]
   [Route("[action]/{personID}")]
   [TypeFilter(typeof(PersonCreateAndEditPostActionFilter))]
+  // اجباری بودن Authorize را فقط به متد پوست ویرایش داده ایم
   [TypeFilter(typeof(TokenAuthorizationFilter))]
   public async Task<IActionResult> Edit(PersonUpdateRequest personRequest)
   {

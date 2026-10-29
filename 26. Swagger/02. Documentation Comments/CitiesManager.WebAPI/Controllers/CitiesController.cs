@@ -20,10 +20,12 @@ namespace CitiesManager.WebAPI.Controllers
   }
 
   // GET: api/Cities
+  // حالا روی هر اکشن راست کلیک کرده و از گزینهsnipped-> Insert comment را بزنید و مقادیر ایجاد شده زیر را کامل کنید
+  // با این کار خود بخود این مقادیر در فایل api.xml ذخیره شده و در هنگام اجرای برنامه فراخوانی خواهد شد
   /// <summary>
   /// To get list of cities (including city ID and city name) from 'cities' table
   /// </summary>
-  /// <returns></returns>
+  /// <returns>Retrun List of cities</returns>
   [HttpGet]
   [Produces("application/json")]
   public async Task<ActionResult<IEnumerable<City>>> GetCities()

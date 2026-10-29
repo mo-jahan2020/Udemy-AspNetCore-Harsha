@@ -45,10 +45,10 @@ if (builder.Environment.IsEnvironment("Test") == false)
  Rotativa.AspNetCore.RotativaConfiguration.Setup("wwwroot", wkhtmltopdfRelativePath: "Rotativa");
 
 app.UseStaticFiles();
-
-
-app.UseAuthentication(); //Reading Identity cookie
-app.UseAuthorization(); //Validates access permissions of the user
+// این ترتیب حتماً باید حفظ شود
+app.UseRouting();
+app.UseAuthentication(); //Reading Identity cookie میگوید آیا کاربر لاگ این کرده است یا خیر
+app.UseAuthorization(); //Validates access permissions of the user حال این کاربر وارد شده به چه چیزی دسترسی دارد و به چه ندارد
 app.MapControllers(); //Execute the filter pipiline (action + filters)
 
 app.Run();

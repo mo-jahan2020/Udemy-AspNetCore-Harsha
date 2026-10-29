@@ -56,13 +56,14 @@ namespace CRUDExample
 
 
    //Enable Identity in this project
+   // و نیز تنظیم پیچیدگی کلمه عبور
    services.AddIdentity<ApplicationUser, ApplicationRole>(options => {
     options.Password.RequiredLength = 5;
     options.Password.RequireNonAlphanumeric = false;
     options.Password.RequireUppercase = false;
     options.Password.RequireLowercase = true;
     options.Password.RequireDigit = false;
-    options.Password.RequiredUniqueChars = 3; //Eg: AB12AB
+    options.Password.RequiredUniqueChars = 2; //Eg: AB12AB
    })
     .AddEntityFrameworkStores<ApplicationDbContext>()
 

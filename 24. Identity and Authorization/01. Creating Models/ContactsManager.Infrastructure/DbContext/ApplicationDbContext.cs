@@ -1,4 +1,5 @@
-﻿using System;
+﻿// install package Microsoft.AspNetCore.Identity.EntityFrameworkCore برای ارتباط Identiry با بانک اطلاعاتی و ذخیر و بازیابی اطلاعات در بانک و  جدول Identity
+using System;
 using System.Collections.Generic;
 using ContactsManager.Core.Domain.IdentityEntities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -7,7 +8,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Entities
 {
- public class ApplicationDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, Guid>
+    // این تغییر را میدهیم
+    // DbContext نیار به این نیست این هر دو نمیتوانند باشند
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, Guid>
  {
   public ApplicationDbContext(DbContextOptions options) : base(options)
   {

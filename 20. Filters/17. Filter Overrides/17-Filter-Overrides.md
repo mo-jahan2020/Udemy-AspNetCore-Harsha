@@ -7,11 +7,13 @@
 
 ## 🎯 مبحث این پروژه چیست؟
 
-مشکل: `PersonAlwaysRunResultFilter` در سطح Controller است و «همیشه» اجرا می‌شود؛ اما برای یک Action خاص (`Index`) نمی‌خواهیم اجرا شود. راه‌حل دوره: ساختن یک **Attribute سفارشی به‌نام `[SkipFilter]`** و چک‌کردن آن داخل فیلترها — یعنی خودمان مکانیزم «معافیت از فیلتر» را می‌سازیم (پیاده‌سازی دستی مفهومی شبیه `[OverrideXxxFilters]` داخلی ASP.NET Core).
+مشکل: `PersonAlwaysRunResultFilter` در سطح Controller است و «همیشه» اجرا می‌شود؛ اما برای یک Action خاص (`Index`) 
+نمی‌خواهیم اجرا شود. راه‌حل دوره: ساختن یک  Attribute سفارشی به‌نام `[SkipFilter]`  و چک ‌کردن آن داخل فیلترها —
+یعنی خودمان مکانیزم «معافیت از فیلتر» را می‌سازیم (پیاده‌سازی دستی مفهومی شبیه `[OverrideXxxFilters]` داخلی ASP.NET Core).
 
 دو بخش دارد:
 
-**۱) Attribute علامت‌گذار (Marker):**
+ ۱) Attribute علامت‌گذار (Marker): 
 
 فایل: `CRUDExample/Filters/SkipFilter.cs`
 
@@ -27,7 +29,7 @@ namespace CRUDExample.Filters
 }
 ```
 
-**۲) احترام به علامت، داخل فیلتر:**
+ ۲) احترام به علامت، داخل فیلتر: 
 
 فایل: `CRUDExample/Filters/ResultFilters/PersonAlwaysRunResultFilter.cs`
 
@@ -56,7 +58,7 @@ namespace CRUDExample.Filters.ResultFilters
 }
 ```
 
-**۳) استفاده:**
+ ۳) استفاده: 
 
 فایل: `CRUDExample/Controllers/PersonsController.cs`
 
@@ -74,11 +76,11 @@ public async Task<IActionResult> Index(...) { ... }
 
 - هر فیلتری که بخواهد، با یک `if` به این Attribute احترام می‌گذارد؛
 - کنترل کامل دست شماست: می‌توانید انواع SkipFilter با اسم‌های معنادار بسازید (SkipCaching، SkipAudit و...);‌
-- این الگو در واقع همان مفهوم `context.Filters` را آموزش می‌دهد: **لیست تمام فیلترهای اعمال‌شده روی درخواست جاری در دسترس هر فیلتر است.**
+- این الگو در واقع همان مفهوم `context.Filters` را آموزش می‌دهد:  لیست تمام فیلترهای اعمال‌شده روی درخواست جاری در دسترس هر فیلتر است. 
 
 ## ⚙️ چطور `context.Filters` کار می‌کند؟
 
-`context.Filters` یک `IList<IFilterMetadata>` است که **همه فیلترهای** اعمال‌شده روی این درخواست را دارد (Global + Controller + Action). پس فیلتر می‌تواند بپرسد:
+`context.Filters` یک `IList<IFilterMetadata>` است که  همه فیلترهای  اعمال‌شده روی این درخواست را دارد (Global + Controller + Action). پس فیلتر می‌تواند بپرسد:
 
 ```csharp
 context.Filters.OfType<SkipFilter>().Any()   // آیا کسی SkipFilter گذاشته؟
@@ -104,10 +106,10 @@ context.Filters.OfType<SkipFilter>().Any()   // آیا کسی SkipFilter گذا�
 
 ## ⚠️ نکات کلیدی و خطاهای رایج
 
-1. **SkipFilter خودش کاری نمی‌کند:** این Attribute هیچ منطق اجرایی ندارد؛ منطقِ احترام به آن را «فیلترهای دیگر» می‌نویسند. اگر فیلتری آن را چک نکند، رفتارش تغییری نمی‌کند.
-2. **مقایسه با `[OverrideActionFilters]` داخلی:** ASP.NET Core اتریبیوت‌های Override رسمی دارد (مثل `OverrideActionFiltersAttribute`) که فیلترهای سطح پایین‌تر را کلاً حذف می‌کنند؛ رویکرد این پروژه دستی و هدفمندتر است و فقط فیلترهای «همکاری‌کننده» را کنترل می‌کند.
-3. **اگر می‌خواهید فیلتر دیگری هم Skip را رعایت کند:** همان دو خط `if (context.Filters.OfType<SkipFilter>().Any()) return;` را در آن فیلتر اضافه کنید — الگو تکرارشدنی است (در نسخه‌های بعدی همین پروژه در Repository انجام شده است).
-4. **جای اتریبیوت مهم نیست:** چه در سطح Action و چه Controller/Global باشد، `context.Filters` همه را می‌بیند؛ پس `[SkipFilter]` حتی در سطح Controller هم معنا دارد.
+1.  SkipFilter خودش کاری نمی‌کند:  این Attribute هیچ منطق اجرایی ندارد؛ منطقِ احترام به آن را «فیلترهای دیگر» می‌نویسند. اگر فیلتری آن را چک نکند، رفتارش تغییری نمی‌کند.
+2.  مقایسه با `[OverrideActionFilters]` داخلی:  ASP.NET Core اتریبیوت‌های Override رسمی دارد (مثل `OverrideActionFiltersAttribute`) که فیلترهای سطح پایین‌تر را کلاً حذف می‌کنند؛ رویکرد این پروژه دستی و هدفمندتر است و فقط فیلترهای «همکاری‌کننده» را کنترل می‌کند.
+3.  اگر می‌خواهید فیلتر دیگری هم Skip را رعایت کند:  همان دو خط `if (context.Filters.OfType<SkipFilter>().Any()) return;` را در آن فیلتر اضافه کنید — الگو تکرارشدنی است (در نسخه‌های بعدی همین پروژه در Repository انجام شده است).
+4.  جای اتریبیوت مهم نیست:  چه در سطح Action و چه Controller/Global باشد، `context.Filters` همه را می‌بیند؛ پس `[SkipFilter]` حتی در سطح Controller هم معنا دارد.
 
 ## ✅ خلاصه
 

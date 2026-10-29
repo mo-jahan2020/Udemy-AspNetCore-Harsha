@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>آموزش محافظت در برابر CSRF در ASP.NET Core</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: "Vazirmatn", "Segoe UI", Tahoma, Arial, sans-serif;
+    background: #f4f6fb;
+    color: #1f2937;
+    line-height: 1.9;
+    padding: 24px 16px;
+  }
+  .container { max-width: 860px; margin: 0 auto; }
+  .card {
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 28px 30px;
+    margin-bottom: 22px;
+    box-shadow: 0 2px 10px rgba(15, 23, 42, 0.07);
+  }
+  h1 {
+    font-size: 26px;
+    color: #0f172a;
+    margin-bottom: 10px;
+  }
+  h2 {
+    font-size: 20px;
+    color: #1d4ed8;
+    margin-bottom: 14px;
+    border-right: 4px solid #3b82f6;
+    padding-right: 12px;
+  }
+  p { margin-bottom: 12px; font-size: 15.5px; }
+  ul { padding-right: 22px; margin-bottom: 12px; }
+  li { margin-bottom: 6px; }
+  code.inline {
+    direction: ltr;
+    unicode-bidi: embed;
+    display: inline-block;
+    background: #eef2ff;
+    color: #3730a3;
+    padding: 1px 8px;
+    border-radius: 6px;
+    font-family: Consolas, "Courier New", monospace;
+    font-size: 13.5px;
+  }
+  pre {
+    direction: ltr;
+    text-align: left;
+    background: #0f172a;
+    color: #e2e8f0;
+    border-radius: 10px;
+    padding: 16px 18px;
+    overflow-x: auto;
+    margin: 12px 0 16px 0;
+    font-family: Consolas, "Courier New", monospace;
+    font-size: 13.5px;
+    line-height: 1.7;
+  }
+  pre .c { color: #7dd3fc; }
+  pre .g { color: #86efac; }
+  pre .r { color: #fca5a5; }
+  pre .y { color: #fde047; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 14px 0;
+    font-size: 14.5px;
+  }
+  th, td {
+    border: 1px solid #e2e8f0;
+    padding: 10px 12px;
+    text-align: right;
+  }
+  th { background: #eff6ff; color: #1e3a8a; }
+  tr:nth-child(even) td { background: #f8fafc; }
+  .badge {
+    display: inline-block;
+    font-size: 13px;
+    font-weight: bold;
+    padding: 2px 12px;
+    border-radius: 999px;
+    margin-left: 6px;
+  }
+  .ok   { background: #dcfce7; color: #166534; }
+  .no   { background: #fee2e2; color: #991b1b; }
+  .warn { background: #fef9c3; color: #854d0e; }
+  .summary li { font-size: 15px; }
+  .exercise {
+    background: #fffbeb;
+    border: 1px solid #fde68a;
+  }
+  .footer-note {
+    text-align: center;
+    color: #64748b;
+    font-size: 13px;
+    margin-top: 8px;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="card">
+    <h1>🔐 آموزش محافظت در برابر حملات CSRF در ASP.NET Core</h1>
+    <p>پاسخ چهار سؤال کلیدی دربارهٔ AntiForgery در سطح Program.cs، کنترلر، اکشن و View.</p>
+  </div>
+
+  <div class="card">
+    <h2>سؤال ۱: آیا فیلتر سراسری در Program.cs کافی است؟</h2>
+    <p><strong>بله، به شرطی که فرم‌هایتان استاندارد باشند.</strong> فیلتر سراسری فقط «اعتبارسنجی» را سراسری می‌کند؛ «تولید توکن» در سمت View اتفاق می‌افتد که فرم‌های استاندارد آن را خودکار انجام می‌دهند.</p>
+    <table>
+      <tr><th>سمت</th><th>وظیفه</th><th>کجا انجام می‌شود؟</th></tr>
+      <tr><td>تولید توکن</td><td>توکن ساخته و داخل فرم قرار می‌گیرد</td><td>View</td></tr>
+      <tr><td>اعتبارسنجی توکن</td><td>سرور معتبر بودن توکن را بررسی می‌کند</td><td>Controller (با فیلتر سراسری)</td></tr>
+    </table>
+    <p>تنظیم سراسری در <span class="inline code">Program.cs</span>:</p>
+    <pre>builder.Services.AddControllersWithViews(options =&gt;
+{
+    options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
+});</pre>
+  </div>
+
+  <div class="card">
+    <h2>سؤال ۲: باید روی همهٔ کنترلرها [AutoValidateAntiforgeryToken] بنویسم؟</h2>
+    <p><span class="badge no">خیر</span> این دقیقاً همان کاری است که فیلتر سراسری می‌کند؛ نوشتن دوبارهٔ آن روی تک‌تک کنترلرها تکرار بیهوده است.</p>
+    <pre><span class="c">// ❌ لازم نیست — فیلتر سراسری همین را برای همه انجام می‌دهد</span>
+[AutoValidateAntiforgeryToken]
+public class AccountController : Controller { ... }</pre>
+    <p>فقط در دو حالت این ویژگی را می‌نویسید:</p>
+    <ul>
+      <li>وقتی فیلتر سراسری ندارید ولی می‌خواهید فقط یک کنترلر خاص محافظت شود.</li>
+      <li>وقتی می‌خواهید روی یک کنترلر حساس (مثلاً پرداخت) صراحتاً برچسب امنیتی بگذارید.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>سؤال ۳: باید روی همهٔ اکشن‌های POST بنویسم [ValidateAntiForgeryToken]؟</h2>
+    <p><span class="badge no">خیر</span> با وجود فیلتر سراسری، همهٔ متدهای ناامن (POST، PUT، PATCH، DELETE) به‌صورت خودکار بررسی می‌شوند. تنها چیزی که ممکن است بنویسید، استثنا کردن موارد خاص است:</p>
+    <pre>[HttpPost]
+[IgnoreAntiforgeryToken] <span class="c">// ⚠️ فقط برای موارد خاص مثل Webhook خارجی</span>
+[Route("api/payment-callback")]
+public IActionResult Callback(...) { ... }</pre>
+    <p><strong>تفاوت ظریف برای یادگیری عمیق‌تر:</strong></p>
+    <ul>
+      <li><span class="inline code">[ValidateAntiForgeryToken]</span> روی هر متدی که بگذارید، حتی GET هم توکن می‌خواهد.</li>
+      <li><span class="inline code">[AutoValidateAntiforgeryToken]</span> فقط متدهای ناامن را بررسی می‌کند و GET آزاد می‌ماند.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>سؤال ۴: روی View های POST چه چیزی بنویسم؟</h2>
+    <p><span class="badge ok">هیچ چیزی!</span> به شرطی که یکی از این سه الگوی استاندارد را استفاده کنید:</p>
+    <p>✅ الگوی ۱ — MVC با Tag Helper (توکن خودکار اضافه می‌شود):</p>
+    <pre>&lt;form asp-action="Transfer" method="post"&gt;</pre>
+    <p>✅ الگوی ۲ — Razor Pages (کاملاً خودکار):</p>
+    <pre>&lt;form method="post"&gt;</pre>
+    <p>✅ الگوی ۳ — HTML Helper (خودکار):</p>
+    <pre>@using (Html.BeginForm("Transfer", "Account", FormMethod.Post))
+{
+    ...
+}</pre>
+    <p><span class="badge warn">⚠️ تنها حالت خطرناک</span> فرم دستی با action دست‌نویس است که توکن به آن اضافه نمی‌شود:</p>
+    <pre><span class="r">&lt;!-- ⚠️ این حالت توکن ندارد --&gt;</span>
+&lt;form method="post" action="/Home/Transfer"&gt;
+    &lt;input name="__RequestVerificationToken"
+           type="hidden" value="..." /&gt; <span class="c">&lt;!-- باید دستی اضافه شود --&gt;</span>
+&lt;/form&gt;</pre>
+    <p>راه‌حل: به فرم <span class="inline code">asp-antiforgery="true"</span> اضافه کنید یا داخل فرم بنویسید <span class="inline code">@Html.AntiForgeryToken()</span></p>
+  </div>
+
+  <div class="card">
+    <h2>📋 خلاصهٔ نهایی</h2>
+    <ul class="summary">
+      <li><span class="badge ok">بله</span> فیلتر سراسری در Program.cs کافی است + فرم‌های استاندارد خودشان توکن می‌سازند</li>
+      <li><span class="badge no">نه</span> نیازی به ویژگی روی همهٔ کنترلرها نیست؛ فیلتر سراسری جایگزین آن است</li>
+      <li><span class="badge no">نه</span> نیازی به ویژگی روی همهٔ اکشن‌های POST نیست؛ فقط Ignore برای استثناها</li>
+      <li><span class="badge no">نه</span> در View ها چیزی لازم نیست؛ فقط از Tag Helper فرم استفاده کنید</li>
+    </ul>
+    <p><strong>مکانیزم کار (Double-Submit Cookie):</strong> توکن همزمان در یک کوکی به نام <span class="inline code">AspNetCore.Antiforgery.xxx</span> و در یک فیلد مخفی فرم قرار می‌گیرد؛ سرور تطابق این دو را هنگام Submit بررسی می‌کند.</p>
+  </div>
+
+  <div class="card exercise">
+    <h2>🧪 تمرین عملی (برای یادگیری عمیق)</h2>
+    <ul>
+      <li><strong>گام ۱:</strong> یک فرم POST بسازید و Submit کنید → باید درست کار کند ✅</li>
+      <li><strong>گام ۲:</strong> در DevTools مرورگر، فیلد مخفی <span class="inline code">__RequestVerificationToken</span> را حذف کنید و دوباره Submit کنید → خطای HTTP 400 می‌بینید ❌</li>
+      <li><strong>گام ۳:</strong> کوکی <span class="inline code">AspNetCore.Antiforgery.xxx</span> را پاک کنید و Submit کنید → باز هم 400 ❌</li>
+    </ul>
+    <p>این تمرین نشان می‌دهد مکانیزم Double-Submit (تطابق کوکی و فیلد فرم) چگونه عمل می‌کند.</p>
+    <p><strong>نکتهٔ جانبی:</strong> برای فرم‌های AJAX / SPA به تنظیم <span class="inline code">HeaderName</span> و کد جاوااسکریپت نیاز دارید؛ فیلد مخفی وجود ندارد و توکن باید در هدر ارسال شود.</p>
+  </div>
+
+  <p class="footer-note">آموزش محافظت در برابر CSRF در ASP.NET Core — نسخهٔ مرور‌شدنی برای مطالعهٔ آفلاین</p>
+
+</div>
+</body>
+</html>

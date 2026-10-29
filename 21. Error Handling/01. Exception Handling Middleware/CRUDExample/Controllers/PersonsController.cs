@@ -16,7 +16,7 @@ namespace CRUDExample.Controllers
  [Route("[controller]")]
 
  [ResponseHeaderFilterFactory("My-Key-From-Controller", "My-Value-From-Controller", 3)]
- //[TypeFilter(typeof(HandleExceptionFilter))]
+ //[TypeFilter(typeof(HandleExceptionFilter))] // مهم در غیر این صورت این در اولویت است
  [TypeFilter(typeof(PersonAlwaysRunResultFilter))]
  public class PersonsController : Controller
  {

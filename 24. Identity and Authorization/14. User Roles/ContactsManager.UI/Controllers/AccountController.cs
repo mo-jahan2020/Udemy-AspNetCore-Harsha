@@ -13,6 +13,7 @@ namespace ContactsManager.UI.Controllers
  {
   private readonly UserManager<ApplicationUser> _userManager;
   private readonly SignInManager<ApplicationUser> _signInManager;
+        // قدم چهارم
   private readonly RoleManager<ApplicationRole> _roleManager;
 
   public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, RoleManager<ApplicationRole> roleManager)
@@ -45,8 +46,10 @@ namespace ContactsManager.UI.Controllers
    IdentityResult result = await _userManager.CreateAsync(user, registerDTO.Password);
    if (result.Succeeded)
    {
-    //Check status of radio button
-    if (registerDTO.UserType == Core.Enums.UserTypeOptions.Admin)
+                // قدم پنجم
+                // با این خطوط در دو جدول زیر این نقش ها ایجاد خواهد شد: AspNetRoles و AspNetUserRoles
+                //Check status of radio button
+                if (registerDTO.UserType == Core.Enums.UserTypeOptions.Admin)
     {
      //Create 'Admin' role
      if (await _roleManager.FindByNameAsync(UserTypeOptions.Admin.ToString()) is null)

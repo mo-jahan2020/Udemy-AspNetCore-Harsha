@@ -125,7 +125,7 @@ namespace CRUDExample.Controllers
    {
     return RedirectToAction("Index");
    }
-
+   // با کامنت گذاری این خط میتوانید خطا را چک کنید
    personRequest.PersonID = Guid.NewGuid();
    PersonResponse updatedPerson = await _personsService.UpdatePerson(personRequest);
    return RedirectToAction("Index");

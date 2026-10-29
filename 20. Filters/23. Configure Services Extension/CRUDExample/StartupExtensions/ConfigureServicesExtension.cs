@@ -8,6 +8,7 @@ using Services;
 
 namespace CRUDExample
 {
+    // و اینجا آن را طراحی می کنیم
  public static class ConfigureServicesExtension
  {
   public static IServiceCollection ConfigureServices(this IServiceCollection services, IConfiguration configuration)
