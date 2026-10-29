@@ -1,9 +1,8 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using SabtAhval.Common;
 using SabtAhval.Models.Dtos;
-using SabtAhval.Services;
+using SabtAhval.Models.Entities;
 using SabtAhval.Services.Interfaces;
-//using Serilog.Core;
 
 namespace SabtAhval.Controllers
 {
@@ -11,53 +10,44 @@ namespace SabtAhval.Controllers
     [Route("[controller]")]
     public class ProxyController : ControllerBase
     {
-        private readonly IApiKeyService _apiClientService;
-        private readonly IIpWhitelistService _ipAuthService;
         private readonly ITargetApiServerService _serverService;
         private readonly IJsonPlaceholderService _jsonPlaceholderService;
         private readonly IAuditService _auditService;
 
-        public ProxyController(ApiKeyService apiClientService, IIpWhitelistService ipAuthService, ITargetApiServerService serverService, IJsonPlaceholderService jsonPlaceholderService, IAuditService auditService)
+        // دقت کن: دیگر IApiKeyService و IIpWhitelistService اینجا لازم نیست!
+        // چک IP و کلید حالا کار Middleware هاست، نه کنترلر
+        public ProxyController(ITargetApiServerService serverService,
+                               IJsonPlaceholderService jsonPlaceholderService,
+                               IAuditService auditService)
         {
-            _apiClientService = apiClientService;
-            _ipAuthService = ipAuthService;
             _serverService = serverService;
             _jsonPlaceholderService = jsonPlaceholderService;
             _auditService = auditService;
         }
 
+        // 1️⃣ GET: /Proxy/data
         [HttpGet("data")]
-        public async Task<IActionResult> GetData([FromHeader(Name = "X-Api-Key")] string apiKey)
+        public async Task<IActionResult> GetData()
         {
-            var server = await _serverService.GetDefaultAsync();
+            // Middleware کلید را تأیید کرده و client را در کیف گذاشته؛ فقط برمی‌داریم
+            var client = HttpContext.Items[Constants.ApiClientItemKey] as ApiClient;
+
+            // چک دفاعی: در مسیرهای عادی هیچ‌وقت نباید null باشد
+            if (client is null)
+                return Unauthorized(new { message = "API key is missing or invalid." });
+
+            // سرور اختصاصی همین کاربر (که Include شده) وگرنه سرور پیش‌فرض فعال
+            var server = client.TargetApiServer ?? await _serverService.GetDefaultAsync();
 
             if (server is null)
                 return NotFound(new { message = "No active target API server found." });
 
-            int clientId = 1; // در عمل از توکن یا هدر گرفته می‌شود
-
-            // IP کاربر را از Connection استخراج کن
-            string? ip = HttpContext.Connection.RemoteIpAddress?.ToString();
-
-            bool isAllowed = await _ipAuthService.IsIpAllowedAsync(ip!, clientId);
-
-            if (!isAllowed)
-                return StatusCode(403, new { message = "IP is not allowed." });
-
-            var client = await _apiClientService.GetByApiKeyAsync(apiKey);
-
-            if (client is null)
-            {
-                await _auditService.LogRejectedAsync("Failed");
-                return Unauthorized(new { message = "Invalid or inactive API key." });
-            }
-            // ادامه منطق: ارسال درخواست به TargetApiServer با استفاده از client.TargetApiServer.BaseUrl
-            await _auditService.LogSuccessAsync("OK");
+            await _auditService.LogSuccessAsync($"Client '{client.Username}' reached /Proxy/data");
 
             return Ok(new { client = client.Username, target = server.BaseUrl });
-
         }
-        // 2️⃣ GET: api/posts/5
+
+        // 2️⃣ GET: /Proxy/5  — بدون تغییر
         [HttpGet("{id:int}")]
         public async Task<IActionResult> GetPostById(int id)
         {
@@ -69,19 +59,19 @@ namespace SabtAhval.Controllers
                 var post = await _jsonPlaceholderService.GetPostByIdAsync(id);
 
                 if (post is null)
-                    return NotFound(new { message = $"Post with id {id} was not found." }); // 404
+                    return NotFound(new { message = $"Post with id {id} was not found." });
 
-                return Ok(post); // 200
+                return Ok(post);
             }
-            catch (HttpRequestException ex)
+            catch (HttpRequestException)
             {
-                await _auditService.LogRejectedAsync($"Error while fetching post {id}.");
+                await _auditService.LogRejectedAsync($"Failed to fetch post {id} from target API.");
                 return StatusCode(StatusCodes.Status502BadGateway,
-                    new { message = "Failed to reach target API.", detail = ex.Message });
+                    new { message = "Failed to reach target API." });
             }
         }
 
-        // 3️⃣ POST: api/posts
+        // 3️⃣ POST: /Proxy — بدون تغییر
         [HttpPost]
         public async Task<IActionResult> CreatePost([FromBody] CreatePostRequestDto request)
         {
@@ -102,20 +92,17 @@ namespace SabtAhval.Controllers
                     return StatusCode(StatusCodes.Status502BadGateway,
                         new { message = "Target API did not return a valid response." });
 
-                // 201 Created + Location header
                 return CreatedAtAction(
                     nameof(GetPostById),
-                    new { id = created.id},
+                    new { id = created.id },
                     created);
             }
-            catch (HttpRequestException ex)
+            catch (HttpRequestException)
             {
-                await _auditService.LogRejectedAsync("Error while creating post.");
+                await _auditService.LogRejectedAsync("Failed to create post on target API.");
                 return StatusCode(StatusCodes.Status502BadGateway,
-                    new { message = "Failed to reach target API.", detail = ex.Message });
+                    new { message = "Failed to reach target API." });
             }
         }
     }
-
 }
-

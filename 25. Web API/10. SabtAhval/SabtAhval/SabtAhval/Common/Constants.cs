@@ -4,7 +4,7 @@ namespace SabtAhval.Common
 {
     public static class Constants
     {
-        public const string ApiKeyHeader = "Ali110@";//X-Api-Key
+        public const string ApiKeyHeader = "X-Api-Key";//98AHGG^%^aassjd12
         public const string ApiClientItemKey = "ApiClient";
 
         // مسیرهایی که نباید قفل امنیتی داشته باشند

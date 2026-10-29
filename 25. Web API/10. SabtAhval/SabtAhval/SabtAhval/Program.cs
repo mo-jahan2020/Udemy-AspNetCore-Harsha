@@ -1,10 +1,11 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using SabtAhval.Data;
+using SabtAhval.Middlewares;
 using SabtAhval.Services;
 using SabtAhval.Services.Interfaces;
 using Serilog;
-
+//98AHGG^%^aassjd12
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Host.UseSerilog((HostBuilderContext context, IServiceProvider services, LoggerConfiguration loggerConfiguration) => {
@@ -24,7 +25,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddScoped<IIpWhitelistService,IpWhitelistService>();
 builder.Services.AddScoped<IApiKeyService,ApiKeyService>();
 builder.Services.AddScoped<IAuditService,AuditService>();
-//builder.Services.AddScoped<IJsonPlaceholderService,JsonPlaceholderService>();
+
 builder.Services.AddScoped<ITargetApiServerService,TargetApiServerService>();
 builder.Services.AddHttpClient<IJsonPlaceholderService,JsonPlaceholderService>(client =>
 {
@@ -46,7 +47,9 @@ if (app.Environment.IsDevelopment())
 
 app.UseSwagger();
 app.UseSwaggerUI();
-
+app.UseMiddleware<ExceptionHandlingMiddleware>();  // ۱) بیرونی‌ترین
+app.UseMiddleware<IpWhitelistMiddleware>();       // ۲)
+app.UseMiddleware<ApiKeyValidationMiddleware>();  // ۳)
 app.UseAuthorization();
 
 app.MapControllers();
