@@ -5,6 +5,8 @@ using SabtAhval.Middlewares;
 using SabtAhval.Services;
 using SabtAhval.Services.Interfaces;
 using Serilog;
+using Microsoft.OpenApi;      // ⚠️ در OpenApi v2 دیگر Microsoft.OpenApi.Models وجود ندارد
+using SabtAhval.Common;       // برای Constants
 //98AHGG^%^aassjd12
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,16 +35,32 @@ builder.Services.AddHttpClient<IJsonPlaceholderService,JsonPlaceholderService>(c
 });
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+//builder.Services.AddOpenApi();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    // ۱) تعریف طرح امنیتی: دکمه Authorize (قفل 🔒) در Swagger ظاهر می‌شود
+    options.AddSecurityDefinition("ApiKey", new OpenApiSecurityScheme
+    {
+        Name = Constants.ApiKeyHeader,   // "X-Api-Key" ← اسمِ هدر، نه مقدار کلید!
+        Description = "کلید API خود را وارد کنید. مثال: 98AHGG^%^aassjd12",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.ApiKey
+    });
 
+    // ۲) الزام امنیتی — در Swashbuckle 10 به‌صورت lambda است:
+    //    Swashbuckle سند (document) را در لحظه تولید، به ما می‌دهد تا به ارجاع پاس دهیم
+    options.AddSecurityRequirement(document => new OpenApiSecurityRequirement
+    {
+        [new OpenApiSecuritySchemeReference("ApiKey", document)] = new List<string>()
+    });
+});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+    //app.MapOpenApi();
 }
 
 app.UseSwagger();
