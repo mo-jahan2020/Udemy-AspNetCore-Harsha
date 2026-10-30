@@ -1,8 +1,12 @@
-﻿namespace SabtAhval.Services.Interfaces
+﻿// Services/Interfaces/IAuditService.cs
+using SabtAhval.Models.Entities;
+
+namespace SabtAhval.Services.Interfaces
 {
-    public  interface IAuditService
+    public interface IAuditService
     {
-         Task LogSuccessAsync(string reason);
-         Task LogRejectedAsync(string reason);
+        Task LogRequestAsync(ApiRequestLog entry);   // ثبت کامل در دیتابیس (میان‌افزار Audit)
+        Task LogSuccessAsync(string message);        // فقط لاگ Serilog
+        Task LogRejectedAsync(string reason);        // فقط هشدار امنیتی Serilog
     }
 }

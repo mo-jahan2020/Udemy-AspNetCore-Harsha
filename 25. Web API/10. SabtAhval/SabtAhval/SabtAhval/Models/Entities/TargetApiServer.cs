@@ -20,6 +20,6 @@ namespace SabtAhval.Models.Entities
         public string? Description {  get; set; }
         [Required(ErrorMessage = "Create At coulde not Be Null")]
         [StringLength(25)]
-        public string? CreatedAt {  get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }
 }

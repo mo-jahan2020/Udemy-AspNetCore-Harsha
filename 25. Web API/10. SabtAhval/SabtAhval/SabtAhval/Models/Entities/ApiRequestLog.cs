@@ -6,28 +6,27 @@ namespace SabtAhval.Models.Entities
     public class ApiRequestLog
     {
         public int Id { get; set; }
-        [Required(ErrorMessage = "User Name coulde not Be Null")]
-        [StringLength(20)]
-        public string? Username { get; set; }
+
+        // نال‌پذیر: درخواست‌های ردشده (401/403) هنوز کاربر شناخته‌شده ندارند
+        public int? ApiClientId { get; set; }
+
+        // ⚠️ قبلاً private بود → Include خراب می‌شد. باید public باشد!
+        [ForeignKey(nameof(ApiClientId))]
+        public ApiClient? ApiClient { get; set; }
+
+        public string? Username { get; set; }        // اسنپ‌شات لحظه ثبت (حتی اگر بعداً کاربر حذف شود)
+        [StringLength(64)]
         public string? ClientIp { get; set; }
-        [Required(ErrorMessage = "HTTP Method coulde not Be Null")]
         [StringLength(10)]
-        public string? HttpMethod {  get; set; }
-        [Required(ErrorMessage = "Request Path coulde not Be Null")]
+        public string? HttpMethod { get; set; }
         [StringLength(200)]
-        public string? RequestPath {  get; set; }
-        [Required(ErrorMessage = "Query String coulde not Be Null")]
-        [StringLength(50)]
+        public string? RequestPath { get; set; }
+        [StringLength(200)]
         public string? QueryString { get; set; }
-        public string? RequestBody { get; set; }
-        public Int16 StatusCode { get; set; }
-        [Required(ErrorMessage = "Response Body coulde not Be Null")]
-        [StringLength(250)]
-        public string? ResponseBody {  get; set; }
-        public int ApiClientId {  get; set; }
-        [ForeignKey("ApiClientId")]
-        ApiClient? ApiClient { get; set; }  
-
-
+        public string? RequestBody { get; set; }     // nvarchar(max)
+        public string? ResponseBody { get; set; }    // بدون محدودیت 250 تایی
+        public short StatusCode { get; set; }
+        public int DurationMs { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;   // همیشه UTC — نه رشته شمسی!
     }
 }

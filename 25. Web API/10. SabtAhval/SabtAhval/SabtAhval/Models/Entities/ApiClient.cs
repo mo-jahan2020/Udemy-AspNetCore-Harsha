@@ -21,7 +21,7 @@ namespace SabtAhval.Models.Entities
 
         [Required(ErrorMessage = "Created At coulde not Be Null")]
         [StringLength(25)]
-        public string CreatedAt { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         public int TargetApiServerId { get; set; }
         [ForeignKey("TargetApiServerId")]

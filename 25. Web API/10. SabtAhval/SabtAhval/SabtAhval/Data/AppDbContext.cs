@@ -34,7 +34,7 @@ namespace SabtAhval.Data
                     Id = 1,
                     Name = "typicode",
                     BaseUrl = "https://jsonplaceholder.typicode.com",
-                    CreatedAt = new DateTime(2026, 1, 1).ToString(),
+                    CreatedAt = new DateTime(2026, 1, 1),
                     IsActive = true,
                     TimeoutSeconds = 30,
                     Description = "jsonplaceholder typicode"
@@ -49,17 +49,12 @@ namespace SabtAhval.Data
                     IsActive = true,
                     TargetApiServerId = 1,
                     Username = "240",
-                    CreatedAt = new DateTime(2026, 1, 1).ToString(),
+                    CreatedAt = new DateTime(2026, 1, 1),
 
                 });
             modelBuilder.Entity<AllowedIp>().HasData(
-                new AllowedIp()
-                {
-                    Id = 1,
-                    ApiClientId = 1,
-                    IpAddress = "127.0.0.1",
-                    IsActive = true
-                });
+                new AllowedIp() { Id = 1, ApiClientId = 1, IpAddress = "127.0.0.1", IsActive = true },
+                new AllowedIp() { Id = 2, ApiClientId = 1, IpAddress = "::1", IsActive = true });
         }
 
 
