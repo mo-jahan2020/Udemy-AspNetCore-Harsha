@@ -75,6 +75,28 @@ namespace SabtAhval.Controllers
             }
         }
 
+        // 2️⃣ GET: /Proxy  — بدون تغییر
+        [HttpGet]
+        public async Task<IActionResult> GetPosts()
+        {
+
+            try
+            {
+                List<PostDto> posts= await _jsonPlaceholderService.GetPostsAsync();
+
+                if (posts is null)
+                    return NotFound(new { message = $"Post was not found." });
+
+                return Ok(posts);
+            }
+            catch (HttpRequestException)
+            {
+                await _auditService.LogRejectedAsync($"Failed to fetch posts from target API.");
+                return StatusCode(StatusCodes.Status502BadGateway,
+                    new { message = "Failed to reach target API." });
+            }
+        }
+
         // 3️⃣ POST: /Proxy — بدون تغییر
         [HttpPost]
         public async Task<IActionResult> CreatePost([FromBody] CreatePostRequestDto request)

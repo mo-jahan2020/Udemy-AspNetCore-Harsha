@@ -4,9 +4,10 @@ using SabtAhval.Data;
 using SabtAhval.Middlewares;
 using SabtAhval.Services;
 using SabtAhval.Services.Interfaces;
+using SabtAhval.Common;       // برای Constants
+
 using Serilog;
 using Microsoft.OpenApi;      // ⚠️ در OpenApi v2 دیگر Microsoft.OpenApi.Models وجود ندارد
-using SabtAhval.Common;       // برای Constants
 //98AHGG^%^aassjd12
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,14 +28,14 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddScoped<IIpWhitelistService,IpWhitelistService>();
 builder.Services.AddScoped<IApiKeyService,ApiKeyService>();
 builder.Services.AddScoped<IAuditService,AuditService>();
-
 builder.Services.AddScoped<ITargetApiServerService,TargetApiServerService>();
 builder.Services.AddHttpClient<IJsonPlaceholderService,JsonPlaceholderService>(client =>
 {
+    // برای مقدار دهی اوبیه نمیتوانیم اینجا از بانک بخوانیم
+    // لذا مجبوریم یک آدرس پیش فرض اینجا بدهیم 
     client.BaseAddress = new Uri("https://jsonplaceholder.typicode.com/");
 });
 
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
@@ -43,7 +44,7 @@ builder.Services.AddSwaggerGen(options =>
     options.AddSecurityDefinition("ApiKey", new OpenApiSecurityScheme
     {
         Name = Constants.ApiKeyHeader,   // "X-Api-Key" ← اسمِ هدر، نه مقدار کلید!
-        Description = "کلید API خود را وارد کنید. مثال: 98AHGG^%^aassjd12",
+        Description = "API-Key : 98AHGG^%^aassjd12",
         In = ParameterLocation.Header,
         Type = SecuritySchemeType.ApiKey
     });
