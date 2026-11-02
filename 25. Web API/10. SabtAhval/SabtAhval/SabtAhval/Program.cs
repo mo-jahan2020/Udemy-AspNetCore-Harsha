@@ -25,7 +25,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
-builder.Services.AddScoped<IIpWhitelistService,IpWhitelistService>();
+//builder.Services.AddScoped<IIpWhitelistService,IpWhitelistService>();
 builder.Services.AddScoped<IApiKeyService,ApiKeyService>();
 builder.Services.AddScoped<IAuditService,AuditService>();
 builder.Services.AddScoped<ITargetApiServerService,TargetApiServerService>();
@@ -66,10 +66,12 @@ if (app.Environment.IsDevelopment())
 
 app.UseSwagger();
 app.UseSwaggerUI();
-app.UseMiddleware<AuditMiddleware>();
-app.UseMiddleware<ExceptionHandlingMiddleware>();  // ۱) بیرونی‌ترین
-app.UseMiddleware<IpWhitelistMiddleware>();       // ۲)
-app.UseMiddleware<ApiKeyValidationMiddleware>();  // ۳)
+
+app.UseMiddleware<AuditMiddleware>();// 1 بیرونی ترین
+app.UseMiddleware<ExceptionHandlingMiddleware>();  // 2 
+app.UseMiddleware<IpWhitelistMiddleware>();       // 3
+app.UseMiddleware<ApiKeyValidationMiddleware>();  // 4
+
 app.UseAuthorization();
 
 app.MapControllers();

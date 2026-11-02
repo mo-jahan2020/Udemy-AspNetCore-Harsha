@@ -1,12 +1,14 @@
+// فایل ساخته شده را به این شکل ویرایش میکنیم
 import { Injectable } from '@angular/core';
-import { City } from "../models/city";
+import { City } from "../models/city"; // مدا سیتی را وارد برنامه کنید
 
 @Injectable({
   providedIn: 'root'
 })
 export class CitiesService {
-  cities: City[] = [];
+  cities: City[] = [];// متغییر cities از نوع آرایه ای از City است
 
+  // و سازنده را میسازیم
   constructor() {
     this.cities = [
       new City("101", "New York"),
@@ -16,6 +18,7 @@ export class CitiesService {
     ];
   }
 
+  // و متد مورد نظر برای باز گرداندن آن
   public getCities(): City[] {
     return this.cities;
   }

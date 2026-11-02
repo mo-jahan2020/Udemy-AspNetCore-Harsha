@@ -1,7 +1,12 @@
+// install node.js
+// Create Folder ClientApp ->RightClick->Open in terminal->npm install @angular/cli@15 -g OR  npm install @angular/cli -g
+// then ng new CitiesAngularApp --style=css --routing Yes=Share Data With Google No: Do not Share agar khata dad enteda:
+// Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 using CitiesManager.WebAPI.DatabaseContext;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.EntityFrameworkCore;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -43,9 +48,9 @@ builder.Services.AddEndpointsApiExplorer(); //Generates description for all endp
 builder.Services.AddSwaggerGen(options => {
  options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, "api.xml"));
 
- options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo() { Title = "Cities Web API", Version = "1.0" });
+ options.SwaggerDoc("v1", new Microsoft.OpenApi.OpenApiInfo() { Title = "Cities Web API", Version = "1.0" });
 
- options.SwaggerDoc("v2", new Microsoft.OpenApi.Models.OpenApiInfo() { Title = "Cities Web API", Version = "2.0" });
+ options.SwaggerDoc("v2", new Microsoft.OpenApi.OpenApiInfo() { Title = "Cities Web API", Version = "2.0" });
 
 }); //generates OpenAPI specification
 

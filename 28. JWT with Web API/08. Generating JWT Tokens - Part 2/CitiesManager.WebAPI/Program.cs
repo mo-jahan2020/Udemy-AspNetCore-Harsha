@@ -17,7 +17,7 @@ builder.Services.AddControllers(options => {
  options.Filters.Add(new ConsumesAttribute("application/json"));
 })
  .AddXmlSerializerFormatters();
-
+// 1 تزریق وابستگی
 builder.Services.AddTransient<IJwtService, JwtService>();
 
 //Enable versioning in Web API controllers
@@ -49,9 +49,9 @@ builder.Services.AddEndpointsApiExplorer(); //Generates description for all endp
 builder.Services.AddSwaggerGen(options => {
  options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, "api.xml"));
 
- options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo() { Title = "Cities Web API", Version = "1.0" });
+ options.SwaggerDoc("v1", new Microsoft.OpenApi.OpenApiInfo() { Title = "Cities Web API", Version = "1.0" });
 
- options.SwaggerDoc("v2", new Microsoft.OpenApi.Models.OpenApiInfo() { Title = "Cities Web API", Version = "2.0" });
+ options.SwaggerDoc("v2", new Microsoft.OpenApi.OpenApiInfo() { Title = "Cities Web API", Version = "2.0" });
 
 }); //generates OpenAPI specification
 

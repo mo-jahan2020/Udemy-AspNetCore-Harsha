@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿// این پوشه را ایجاد کرده و سپس این کلاس را داخل آن ایجاد میکنیم
+// پکیج  Microsoft.AspNetCore.Mvc.Viewfeutures  را نصب کنید
+using Microsoft.AspNetCore.Mvc; // این را استفاده کنید
 using System;
 using System.ComponentModel.DataAnnotations;
 
@@ -12,7 +14,8 @@ namespace CitiesManager.Core.DTO
 
   [Required(ErrorMessage = "Email can't be blank")]
   [EmailAddress(ErrorMessage = "Email should be in a proper email address format")]
-  [Remote(action: "IsEmailAlreadyRegistered", controller: "Account", ErrorMessage = "Email is already is use")]
+        // این اکشن IsEmailAlreadyRegistered در کنترلر Account باید باشد
+        [Remote(action: "IsEmailAlreadyRegistered", controller: "Account", ErrorMessage = "Email is already is use")]
   public string Email { get; set; } = string.Empty;
 
 

@@ -4,6 +4,7 @@
   <div class="flex-1 w-50">
 
     <div class="table-container">
+      <!--6-->
       <table class="table w-100" [formGroup]="putCityForm">
 
         <thead>
@@ -17,7 +18,7 @@
         <tbody formArrayName="cities">
           <tr *ngFor="let city of cities; let i = index">
             <td>{{i+1}}</td>
-
+            <!--7-->
             <td [formGroupName]="i">
               <input type="text" formControlName="cityName" [ngClass]="{ 'border-less-textbox': city.cityID != editCityID, 'form-input': city.cityID == editCityID }" [disableControl]="city.cityID != editCityID" />
             </td>

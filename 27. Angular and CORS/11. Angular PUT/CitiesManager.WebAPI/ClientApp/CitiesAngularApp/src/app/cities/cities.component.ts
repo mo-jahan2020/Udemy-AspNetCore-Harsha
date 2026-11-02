@@ -13,19 +13,20 @@ export class CitiesComponent {
   postCityForm: FormGroup;
   isPostCityFormSubmitted: boolean = false;
 
-  putCityForm: FormGroup;
+  putCityForm: FormGroup;  //2
   editCityID: string | null = null;
 
   constructor(private citiesService: CitiesService) {
     this.postCityForm = new FormGroup({
       cityName: new FormControl(null, [ Validators.required ])
     });
-
+    //3
     this.putCityForm = new FormGroup({
       cities: new FormArray([])
     });
   }
 
+  //5
   get putCityFormArray() : FormArray {
     return this.putCityForm.get("cities") as FormArray;
   }
@@ -36,7 +37,7 @@ export class CitiesComponent {
 
         next: (response: City[]) => {
           this.cities = response;
-
+          //4
           this.cities.forEach(city => {
             this.putCityFormArray.push(new FormGroup({
               cityID: new FormControl(city.cityID, [Validators.required]),
@@ -88,12 +89,12 @@ export class CitiesComponent {
     });
   }
 
-  //Executes when the clicks on 'Edit' button the for the particular city
+  //8 Executes when the clicks on 'Edit' button the for the particular city
   editClicked(city: City) : void {
     this.editCityID = city.cityID;
   }
 
-  //executes when the clicks on 'Update' button after editing
+  // 9 executes when the clicks on 'Update' button after editing
   updateClicked(i: number): void {
 
     this.citiesService.putCity(this.putCityFormArray.controls[i].value).subscribe({

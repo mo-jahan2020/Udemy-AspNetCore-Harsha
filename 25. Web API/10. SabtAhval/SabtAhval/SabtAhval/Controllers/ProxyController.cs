@@ -55,6 +55,7 @@ namespace SabtAhval.Controllers
         [HttpGet("{id:int}")]
         public async Task<IActionResult> GetPostById(int id)
         {
+            // با فراخوانی این اکشن ابتدا هر چهار میان افزار اجرا شده اگر خطایی رخ نداد به اینجا می رسد
             if (id <= 0)
                 return BadRequest(new { message = "Id must be greater than zero." });
 
@@ -66,6 +67,8 @@ namespace SabtAhval.Controllers
                     return NotFound(new { message = $"Post with id {id} was not found." });
 
                 return Ok(post);
+                // پاسخ که آماده شد حال میان افزار ها از آخر دوباره اجرا میشوند و مهم کرسر به بعد از  await _next(context); منتقل میشود
+                // بجز AuditMiddleware که کرسر به داخل finally منتقل میشود و لاگ ساخته و نوشته میشود
             }
             catch (HttpRequestException)
             {
@@ -79,7 +82,6 @@ namespace SabtAhval.Controllers
         [HttpGet]
         public async Task<IActionResult> GetPosts()
         {
-
             try
             {
                 List<PostDto> posts= await _jsonPlaceholderService.GetPostsAsync();
@@ -92,8 +94,7 @@ namespace SabtAhval.Controllers
             catch (HttpRequestException)
             {
                 await _auditService.LogRejectedAsync($"Failed to fetch posts from target API.");
-                return StatusCode(StatusCodes.Status502BadGateway,
-                    new { message = "Failed to reach target API." });
+                return StatusCode(StatusCodes.Status502BadGateway, new { message = "Failed to reach target API." });
             }
         }
 

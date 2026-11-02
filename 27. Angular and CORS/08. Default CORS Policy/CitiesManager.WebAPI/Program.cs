@@ -43,9 +43,9 @@ builder.Services.AddEndpointsApiExplorer(); //Generates description for all endp
 builder.Services.AddSwaggerGen(options => {
  options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, "api.xml"));
 
- options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo() { Title = "Cities Web API", Version = "1.0" });
+ options.SwaggerDoc("v1", new Microsoft.OpenApi.OpenApiInfo() { Title = "Cities Web API", Version = "1.0" });
 
- options.SwaggerDoc("v2", new Microsoft.OpenApi.Models.OpenApiInfo() { Title = "Cities Web API", Version = "2.0" });
+ options.SwaggerDoc("v2", new Microsoft.OpenApi.OpenApiInfo() { Title = "Cities Web API", Version = "2.0" });
 
 }); //generates OpenAPI specification
 
@@ -55,7 +55,8 @@ builder.Services.AddVersionedApiExplorer(options => {
  options.SubstituteApiVersionInUrl = true;
 });
 
-//CORS: localhost:4200
+//CORS: localhost:4200 
+// در نهایت دستور ng serve
 builder.Services.AddCors(options => {
  options.AddDefaultPolicy(policyBuilder =>
  {

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - آموزش JWT</title>
+    @* فقط CSS آفلاین محلی — بدون هیچ CDN یا فایل آنلاین *@
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+    <header class="site-header">
+        <div class="container header-inner">
+            <a class="brand" asp-page="/Persons">آموزش JWT</a>
+            <nav class="nav">
+                @if (User.Identity?.IsAuthenticated == true)
+                {
+                    <a asp-page="/Persons">اشخاص</a>
+                    <span class="nav-user">کاربر: @User.Identity.Name</span>
+                    <form asp-page="/Logout" method="post" class="inline-form">
+                        <button type="submit" class="btn btn-ghost btn-sm">خروج</button>
+                    </form>
+                }
+                else
+                {
+                    <a asp-page="/Login">ورود</a>
+                    <a asp-page="/Register">ثبت‌نام</a>
+                }
+            </nav>
+        </div>
+    </header>
+
+    <main class="container main-content">
+        @RenderBody()
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            نمونه‌ی آموزشی JWT — ASP.NET Core 10 · Razor Pages · EF Core · SQL Express (فقط CSS آفلاین)
+        </div>
+    </footer>
+</body>
+</html>

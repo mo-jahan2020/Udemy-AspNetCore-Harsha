@@ -3,7 +3,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { LoginUser } from '../models/login-user';
 import { AccountService } from '../services/account.service';
-
+// 5 بسیار شبیه به register است
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -41,7 +41,7 @@ export class LoginComponent {
           console.log(response);
 
           this.isLoginFormSubmitted = false;
-          this.accountService.currentUserName = response.email;
+          this.accountService.currentUserName = response.email; // مهم
 
           this.router.navigate(['/cities']);
 

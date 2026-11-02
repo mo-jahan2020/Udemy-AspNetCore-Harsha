@@ -46,9 +46,9 @@ builder.Services.AddEndpointsApiExplorer(); //Generates description for all endp
 builder.Services.AddSwaggerGen(options => {
  options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, "api.xml"));
 
- options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo() { Title = "Cities Web API", Version = "1.0" });
+ options.SwaggerDoc("v1", new Microsoft.OpenApi.OpenApiInfo() { Title = "Cities Web API", Version = "1.0" });
 
- options.SwaggerDoc("v2", new Microsoft.OpenApi.Models.OpenApiInfo() { Title = "Cities Web API", Version = "2.0" });
+ options.SwaggerDoc("v2", new Microsoft.OpenApi.OpenApiInfo() { Title = "Cities Web API", Version = "2.0" });
 
 }); //generates OpenAPI specification
 
@@ -80,7 +80,7 @@ builder.Services.AddCors(options => {
 });
 
 
-//Identity
+//Identity مهم
 builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options => {
  options.Password.RequiredLength = 5;
  options.Password.RequireNonAlphanumeric = false;
@@ -111,6 +111,7 @@ app.UseSwaggerUI(options  =>
 app.UseRouting();
 app.UseCors();
 
+// مهم 
 app.UseAuthentication();
 app.UseAuthorization();
 

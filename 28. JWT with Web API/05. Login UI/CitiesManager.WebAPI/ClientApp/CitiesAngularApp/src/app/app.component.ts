@@ -9,6 +9,7 @@ import { AccountService } from './services/account.service';
 })
 export class AppComponent {
 
+  // 8
   constructor(public accountService: AccountService, private router: Router) { }
 
   onLogOutClicked() {

@@ -4,6 +4,7 @@ using SabtAhval.Models.Dtos;
 
 namespace SabtAhval.Middlewares
 {
+    // دومین میان افزاری که اجرا می شود
     public class ExceptionHandlingMiddleware
     {
         private readonly RequestDelegate _next;
@@ -27,6 +28,7 @@ namespace SabtAhval.Middlewares
             }
             catch (Exception ex)
             {
+                // در مراحل بعدی خطایی رخ داده است حال در بازگشت باید آن خطا ثبت شود
                 if (context.Response.HasStarted)
                 {
                     // دیر شده! هدرها رفته‌اند؛ فقط دوباره پرتاب کن

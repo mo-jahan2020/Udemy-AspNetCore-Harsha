@@ -1,0 +1,183 @@
+@page
+@model JwtDemo.Pages.PersonsModel
+@{
+    ViewData["Title"] = "اشخاص";
+
+    var accessRemainingSeconds = Model.AccessExpiresAtUtc is null
+        ? (int?)null
+        : (int)(Model.AccessExpiresAtUtc.Value - DateTime.UtcNow).TotalSeconds;
+}
+
+<div class="page-grid">
+
+    @* ─────────── ستون اصلی: مدیریت اشخاص ─────────── *@
+    <section class="card">
+        <h2>مدیریت اشخاص</h2>
+
+        <form method="post" asp-page-handler="Add" class="form form-inline">
+            <div class="form-group">
+                <label asp-for="Person.FirstName"></label>
+                <input asp-for="Person.FirstName" class="input" required maxlength="50" />
+                <span asp-validation-for="Person.FirstName" class="field-error"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Person.LastName"></label>
+                <input asp-for="Person.LastName" class="input" required maxlength="50" />
+                <span asp-validation-for="Person.LastName" class="field-error"></span>
+            </div>
+            <div class="form-group col-age">
+                <label asp-for="Person.Age"></label>
+                <input asp-for="Person.Age" class="input" required min="1" max="120" />
+                <span asp-validation-for="Person.Age" class="field-error"></span>
+            </div>
+            <button type="submit" class="btn btn-primary">افزودن</button>
+        </form>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th class="col-id">#</th>
+                    <th>نام</th>
+                    <th>نام خانوادگی</th>
+                    <th>سن</th>
+                    <th class="col-actions">عملیات</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var person in Model.People)
+                {
+                    if (Model.EditId == person.Id)
+                    {
+                        <tr>
+                            <td colspan="5">
+                                <form method="post" asp-page-handler="Edit" class="edit-row-form">
+                                    <input type="hidden" asp-for="Person.Id" />
+                                    <input asp-for="Person.FirstName" class="input input-sm" required maxlength="50" />
+                                    <input asp-for="Person.LastName" class="input input-sm" required maxlength="50" />
+                                    <input asp-for="Person.Age" class="input input-sm" required min="1" max="120" style="width:70px" />
+                                    <button type="submit" class="btn btn-primary btn-sm">ذخیره</button>
+                                    <a asp-page="/Persons" class="btn btn-ghost btn-sm">انصراف</a>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        <tr>
+                            <td>@person.Id</td>
+                            <td>@person.FirstName</td>
+                            <td>@person.LastName</td>
+                            <td>@person.Age</td>
+                            <td class="col-actions">
+                                <a asp-page="/Persons" asp-route-editId="@person.Id" class="btn btn-ghost btn-sm">ویرایش</a>
+                                <form method="post" asp-page-handler="Delete" class="inline-form">
+                                    <input type="hidden" name="id" value="@person.Id" />
+                                    <button type="submit" class="btn btn-danger btn-sm">حذف</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </section>
+
+    @* ─────────── ستون کناری: پنل آموزشی JWT ─────────── *@
+    <aside class="card">
+        <h2>پنل آموزشی JWT</h2>
+
+        <div class="jwt-user">
+            کاربر وارد شده: <strong>@Model.CurrentUsername</strong>
+        </div>
+
+        <div class="token-status">
+            @if (accessRemainingSeconds is not null && accessRemainingSeconds > 0)
+            {
+                <span class="badge badge-success">توکن دسترسی معتبر است</span>
+                <span class="muted small">@accessRemainingSeconds ثانیه تا انقضا</span>
+            }
+            else
+            {
+                <span class="badge badge-danger">توکن دسترسی منقضی شده</span>
+                <span class="muted small">درخواست بعدی به صورت خودکار تمدید می‌شود (گام 21)</span>
+            }
+        </div>
+
+        <h3>توکن دسترسی (Access Token)</h3>
+        @if (Model.AccessToken is not null)
+        {
+            <div class="token-box">@Model.AccessToken</div>
+        }
+
+        @if (Model.TokenHeaderJson is not null)
+        {
+            <h3>بخش اول: Header</h3>
+            <pre class="code-box">@Model.TokenHeaderJson</pre>
+
+            <h3>بخش دوم: Payload</h3>
+            <pre class="code-box">@Model.TokenPayloadJson</pre>
+        }
+
+        @if (Model.TokenClaims.Count > 0)
+        {
+            <h3>Claims خامِ داخل توکن</h3>
+            <table class="table table-sm">
+                <thead>
+                    <tr><th>Claim</th><th>مقدار</th></tr>
+                </thead>
+                <tbody>
+                    @foreach (var claim in Model.TokenClaims)
+                    {
+                        <tr>
+                            <td dir="ltr">@claim.Type</td>
+                            <td dir="ltr">@claim.Value</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+
+        <h3>Claims پس از اعتبارسنجی (User.Claims) — گام 14</h3>
+        <table class="table table-sm">
+            <thead>
+                <tr><th>Claim</th><th>مقدار</th></tr>
+            </thead>
+            <tbody>
+                @foreach (var claim in User.Claims)
+                {
+                    <tr>
+                        <td dir="ltr">@claim.Type</td>
+                        <td dir="ltr">@claim.Value</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <h3>توکن تمدید (Refresh Token) — گام‌های 15 تا 22</h3>
+        @if (Model.RefreshTokenMasked is not null)
+        {
+            <div class="token-box">@Model.RefreshTokenMasked</div>
+            @if (Model.RefreshExpiresAtUtc is not null)
+            {
+                <p class="muted small">
+                    انقضا: @Model.RefreshExpiresAtUtc.Value.ToLocalTime().ToString("HH:mm:ss")
+                    (@((int)(Model.RefreshExpiresAtUtc.Value - DateTime.UtcNow).TotalMinutes) دقیقه دیگر)
+                </p>
+            }
+            <form method="post" asp-page-handler="RefreshToken" style="margin-top:10px">
+                <button type="submit" class="btn btn-primary btn-block">صدور توکن جدید (Refresh)</button>
+            </form>
+        }
+        else
+        {
+            <p class="muted">توکن تمدیدی وجود ندارد.</p>
+        }
+
+        <div class="hint">
+            عمر توکن دسترسی طبق تنظیمات فقط 1 دقیقه است. بعد از انقضای آن، اولین درخواست بعدی
+            به صورت خودکار با توکن تمدید، جفت توکن جدید صادر می‌کند (تمدید خودکار — گام 21).
+            اگر توکن تمدید هم منقضی شود (60 دقیقه)، به صفحه‌ی ورود هدایت می‌شوید.
+        </div>
+    </aside>
+
+</div>

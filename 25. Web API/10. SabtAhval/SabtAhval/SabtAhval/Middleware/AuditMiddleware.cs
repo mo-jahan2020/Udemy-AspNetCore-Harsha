@@ -8,6 +8,7 @@ using SabtAhval.Services.Interfaces;
 
 namespace SabtAhval.Middlewares
 {
+    // اولین میان افزاری که اجرا می شود
     public class AuditMiddleware
     {
         private const int MaxBodyLength = 4000;   // سقف ذخیره بدنه‌ها تا جدول لاگ متورم نشود
@@ -21,12 +22,15 @@ namespace SabtAhval.Middlewares
 
         public async Task InvokeAsync(HttpContext context, IAuditService auditService)
         {
+            //آدرس هایی مانند زیر نبایددر این چرخه قرار گیرند و بلافاصله برای اجرا باید به بعدی بروند
+            // /health AND  /swagger /Login
             if (Constants.IsBypassedPath(context.Request.Path))
             {
                 await _next(context);
                 return;
             }
-
+            //از لحظه ورود درخواست این تایمر فهال شده تا پایان که استاپ میشود
+            // تا بتواند زمان اجرای درخواست را در لاگ بیندازد
             var stopwatch = Stopwatch.StartNew();
 
             // ۱) جریان اصلی پاسخ را نگه می‌داریم و به‌جایش بافر حافظه می‌گذاریم
@@ -37,14 +41,18 @@ namespace SabtAhval.Middlewares
             // ۲) بدنه درخواست فقط یک‌بار خواندنی است؛ EnableBuffering خواندن مجدد
             //    توسط Model Binding کنترلر را ممکن می‌کند
             context.Request.EnableBuffering();
+            // ابتدای اجرا این تهی برمیگرداند
             string? requestBody = await ReadRequestBodyAsync(context.Request);
 
             try
             {
+                // سپس چرخه درخواست را ادامه داده اعتبار سنجی ها انجام شده درخواست ارسال و پاسخ دریافت شده
                 await _next(context);
+                // مقدار دریافت شده در این مقدار ذخیره شده context.Response
             }
             finally
             {
+                // پاسخ آمده است پس تایمر خاموش شده
                 stopwatch.Stop();
 
                 // ۳) خواندن پاسخِ نوشته‌شده در بافر
@@ -75,6 +83,7 @@ namespace SabtAhval.Middlewares
                 // ۶) ثبت در دیتابیس — خطای داخلی آن به بیرون نشت نمی‌کند
                 await auditService.LogRequestAsync(log);
             }
+            // چرخه ارسال و دریافت به پایان رسیده است
         }
 
         private static async Task<string?> ReadRequestBodyAsync(HttpRequest request)
@@ -111,6 +120,9 @@ namespace SabtAhval.Middlewares
             => string.IsNullOrEmpty(text) ? null
              : text.Length <= MaxBodyLength ? text
              : text[..MaxBodyLength] + " ...[truncated]";
+        // text[..4000]   // از ابتدا (index 0) تا index 3999 → یعنی 4000 کاراکتر اول
+        // text[10..]     // از index 10 تا انتها
+        // text[..^5]     // از ابتدا تا 5 کاراکتر مانده به انتها
     }
 
     public static class AuditMiddlewareExtensions

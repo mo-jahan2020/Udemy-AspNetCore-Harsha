@@ -5,7 +5,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CitiesManager.Infrastructure.DatabaseContext
 {
- public class ApplicationDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, Guid>
+    // ارث بری این را از DbContext به کلاس های IdentityDbContext که ایجاد کردیم تغییر میدهیم
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, Guid> 
  {
   public ApplicationDbContext(DbContextOptions options) : base(options) 
   { 

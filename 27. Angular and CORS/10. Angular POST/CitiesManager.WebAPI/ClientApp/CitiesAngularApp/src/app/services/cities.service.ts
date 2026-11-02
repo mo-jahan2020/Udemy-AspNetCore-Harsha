@@ -3,7 +3,7 @@ import { City } from "../models/city";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Observable } from "rxjs";
 
-const API_BASE_URL: string = "https://localhost:7221/api/";
+const API_BASE_URL: string = "http://localhost:5063/api/";
 
 @Injectable({
   providedIn: 'root'
@@ -20,7 +20,7 @@ export class CitiesService {
 
     return this.httpClient.get<City[]>(`${API_BASE_URL}v1/cities`, { headers: headers })
   }
-
+  // 1 تعریف سرویس postCity
   public postCity(city: City): Observable<City> {
     let headers = new HttpHeaders();
     headers = headers.append("Authorization", "Bearer mytoken");

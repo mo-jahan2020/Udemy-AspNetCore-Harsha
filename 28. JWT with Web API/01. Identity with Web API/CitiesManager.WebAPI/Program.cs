@@ -1,3 +1,5 @@
+// in core , Infrastructure App install package:Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+// make folder Identity in Core Project
 using CitiesManager.Core.Identity;
 using CitiesManager.Infrastructure.DatabaseContext;
 using Microsoft.AspNetCore.Identity;
@@ -46,9 +48,9 @@ builder.Services.AddEndpointsApiExplorer(); //Generates description for all endp
 builder.Services.AddSwaggerGen(options => {
  options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, "api.xml"));
 
- options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo() { Title = "Cities Web API", Version = "1.0" });
+ options.SwaggerDoc("v1", new Microsoft.OpenApi.OpenApiInfo() { Title = "Cities Web API", Version = "1.0" });
 
- options.SwaggerDoc("v2", new Microsoft.OpenApi.Models.OpenApiInfo() { Title = "Cities Web API", Version = "2.0" });
+ options.SwaggerDoc("v2", new Microsoft.OpenApi.OpenApiInfo() { Title = "Cities Web API", Version = "2.0" });
 
 }); //generates OpenAPI specification
 
@@ -80,16 +82,20 @@ builder.Services.AddCors(options => {
 });
 
 
-//Identity
+//Identity مرحله بعد
 builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options => {
+    // تظیمات کلمه عبور
  options.Password.RequiredLength = 5;
  options.Password.RequireNonAlphanumeric = false;
  options.Password.RequireUppercase = false;
  options.Password.RequireLowercase = true;
  options.Password.RequireDigit = true;
 })
+    // محل ذخیره سازی ها
  .AddEntityFrameworkStores<ApplicationDbContext>()
+ // برای تغییر کلمه عبور و ایمیل
  .AddDefaultTokenProviders()
+ // محل ذخیره سازی ها
  .AddUserStore<UserStore<ApplicationUser, ApplicationRole, ApplicationDbContext, Guid>>()
  .AddRoleStore<RoleStore<ApplicationRole, ApplicationDbContext, Guid>>()
  ;
@@ -110,6 +116,7 @@ app.UseSwaggerUI(options  =>
 app.UseRouting();
 app.UseCors();
 
+// و قدم آخر . به محل آن دقت شود
 app.UseAuthentication();
 app.UseAuthorization();
 

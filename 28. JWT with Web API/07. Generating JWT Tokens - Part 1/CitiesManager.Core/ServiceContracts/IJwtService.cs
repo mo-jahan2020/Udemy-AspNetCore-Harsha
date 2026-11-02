@@ -4,6 +4,7 @@ using System;
 
 namespace CitiesManager.Core.ServiceContracts
 {
+    //3 - اینترفیس jwtService
  public interface IJwtService
  {
   AuthenticationResponse CreateJwtToken(ApplicationUser user);

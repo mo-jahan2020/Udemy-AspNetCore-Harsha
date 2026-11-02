@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms'; //1
 import { City } from '../models/city';
 import { CitiesService } from '../services/cities.service';
 
@@ -10,11 +10,12 @@ import { CitiesService } from '../services/cities.service';
 })
 export class CitiesComponent {
   cities: City[] = [];
-  postCityForm: FormGroup;
-  isPostCityFormSubmitted: boolean = false;
+  postCityForm: FormGroup; // 2
+  isPostCityFormSubmitted: boolean = false; //3
 
 
   constructor(private citiesService: CitiesService) {
+    //4
     this.postCityForm = new FormGroup({
       cityName: new FormControl(null, [ Validators.required ])
     });
@@ -36,17 +37,17 @@ export class CitiesComponent {
       });
   }
 
-
+  //5
   ngOnInit() {
     this.loadCities();
   }
 
-
+  //6
   get postCity_CityNameControl(): any {
     return this.postCityForm.controls['cityName'];
   }
 
-
+  //7
   public postCitySubmitted() {
     this.isPostCityFormSubmitted = true;
 

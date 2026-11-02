@@ -13,6 +13,6 @@ export class CitiesService {
   }
 
   public getCities(): Observable<City[]> {
-    return this.httpClient.get<City[]>("https://localhost:7221/api/v1/cities")
+    return this.httpClient.get<City[]>("http://localhost:5063/api/v1/cities") // مهم
   }
 }

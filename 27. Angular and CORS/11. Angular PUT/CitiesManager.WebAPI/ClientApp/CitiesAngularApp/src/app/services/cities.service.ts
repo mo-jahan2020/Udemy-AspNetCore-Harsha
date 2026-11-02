@@ -3,7 +3,7 @@ import { City } from "../models/city";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Observable } from "rxjs";
 
-const API_BASE_URL: string = "https://localhost:7221/api/";
+const API_BASE_URL: string = "http://localhost:5063/api/";
 
 @Injectable({
   providedIn: 'root'
@@ -27,7 +27,7 @@ export class CitiesService {
 
     return this.httpClient.post<City>(`${API_BASE_URL}v1/cities`, city, { headers: headers })
   }
-
+  // 1
   public putCity(city: City): Observable<string> {
     let headers = new HttpHeaders();
     headers = headers.append("Authorization", "Bearer mytoken");

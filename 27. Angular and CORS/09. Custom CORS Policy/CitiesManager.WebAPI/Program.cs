@@ -43,9 +43,9 @@ builder.Services.AddEndpointsApiExplorer(); //Generates description for all endp
 builder.Services.AddSwaggerGen(options => {
  options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, "api.xml"));
 
- options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo() { Title = "Cities Web API", Version = "1.0" });
+ options.SwaggerDoc("v1", new Microsoft.OpenApi.OpenApiInfo() { Title = "Cities Web API", Version = "1.0" });
 
- options.SwaggerDoc("v2", new Microsoft.OpenApi.Models.OpenApiInfo() { Title = "Cities Web API", Version = "2.0" });
+ options.SwaggerDoc("v2", new Microsoft.OpenApi.OpenApiInfo() { Title = "Cities Web API", Version = "2.0" });
 
 }); //generates OpenAPI specification
 
@@ -59,6 +59,7 @@ builder.Services.AddVersionedApiExplorer(options => {
 builder.Services.AddCors(options => {
  options.AddDefaultPolicy(policyBuilder =>
  {
+     // این آدرس میتواند چهار عمل اصلی را نجام دهد
   policyBuilder
   .WithOrigins(builder.Configuration.GetSection("AllowedOrigins").Get<string[]>())
   .WithHeaders("Authorization", "origin", "accept", "content-type")
@@ -68,6 +69,7 @@ builder.Services.AddCors(options => {
 
  options.AddPolicy("4100Client", policyBuilder =>
  {
+     // این آدرس فقط میتواند Get کند
   policyBuilder
   .WithOrigins(builder.Configuration.GetSection("AllowedOrigins2").Get<string[]>())
   .WithHeaders("Authorization", "origin", "accept")

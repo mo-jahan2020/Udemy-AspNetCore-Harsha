@@ -43,9 +43,9 @@ builder.Services.AddEndpointsApiExplorer(); //Generates description for all endp
 builder.Services.AddSwaggerGen(options => {
  options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, "api.xml"));
 
- options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo() { Title = "Cities Web API", Version = "1.0" });
+ options.SwaggerDoc("v1", new Microsoft.OpenApi.OpenApiInfo() { Title = "Cities Web API", Version = "1.0" });
 
- options.SwaggerDoc("v2", new Microsoft.OpenApi.Models.OpenApiInfo() { Title = "Cities Web API", Version = "2.0" });
+ options.SwaggerDoc("v2", new Microsoft.OpenApi.OpenApiInfo() { Title = "Cities Web API", Version = "2.0" });
 
 }); //generates OpenAPI specification
 
@@ -55,11 +55,13 @@ builder.Services.AddVersionedApiExplorer(options => {
  options.SubstituteApiVersionInUrl = true;
 });
 
-//CORS: localhost:4200
+//مهم   CORS: localhost:4200
+//قبل از var app = builder.Build(); 
+// با این خط بعد از اجرا این برنامه به این آدرس خارج از خودش سرویس خواهد داد
 builder.Services.AddCors(options => {
  options.AddDefaultPolicy(builder =>
  {
-  builder.WithOrigins("http://localhost:4200");
+  builder.WithOrigins("http://localhost:4200");// OR For All Address : *
  });
 });
 

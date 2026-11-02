@@ -1,3 +1,11 @@
+# برای ساختن کلاس Cities
+
+run : cd CitiesAngularApp -> ng g class model\City
+
+# بعد از ویرایش فایل model\City.ts در قدم بعد برای ساختن سرویس Cities:
+
+run : cd CitiesAngularApp -> ng g service services\Cities
+
 # CitiesAngularApp
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 15.2.0.

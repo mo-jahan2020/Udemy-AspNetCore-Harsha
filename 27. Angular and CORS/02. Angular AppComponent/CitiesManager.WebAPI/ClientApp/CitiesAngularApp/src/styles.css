@@ -1,3 +1,7 @@
+/* این مقادیر را عیناً از پروژه های قبلی ساخته شده خودمان آوردیم*/
+/*مجدد این دستور ا میزنیم تا پکیج های مورد نیاز نصب شوند*/
+/*cd CitiesAngularApp npm install */
+/*صفحه html, css طراحی شد و دستور بالا را زدید حالا با این دستور آن را اجرا کنید: ng serve --open*/
 body
 {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;

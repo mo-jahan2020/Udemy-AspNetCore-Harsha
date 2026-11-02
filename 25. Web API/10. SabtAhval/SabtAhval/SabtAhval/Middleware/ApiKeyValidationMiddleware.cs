@@ -5,6 +5,7 @@ using SabtAhval.Services.Interfaces;
 
 namespace SabtAhval.Middlewares
 {
+    // چهارمین میان افزاری که اجرا می شود
     public class ApiKeyValidationMiddleware
     {
         private readonly RequestDelegate _next;
@@ -23,8 +24,7 @@ namespace SabtAhval.Middlewares
             }
 
             // 1) هدر کلید وجود دارد؟
-            if (!context.Request.Headers.TryGetValue(Constants.ApiKeyHeader, out var apiKey) ||
-                string.IsNullOrWhiteSpace(apiKey))
+            if (!context.Request.Headers.TryGetValue(Constants.ApiKeyHeader, out var apiKey) || string.IsNullOrWhiteSpace(apiKey))
             {
                 await auditService.LogRejectedAsync("API key header is missing.");
                 context.Response.StatusCode = StatusCodes.Status401Unauthorized;

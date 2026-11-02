@@ -1,4 +1,5 @@
-﻿using System;
+﻿//2 - یرای نگهداری اطلاعات توکن 
+using System;
 
 namespace CitiesManager.Core.DTO
 {
