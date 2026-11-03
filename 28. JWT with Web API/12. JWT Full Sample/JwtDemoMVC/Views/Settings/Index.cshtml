@@ -1,0 +1,135 @@
+@model AllowedIpListViewModel
+@using System.Globalization
+@{
+    ViewData["Title"] = "تنظیمات — IPهای مجاز";
+
+    // نمایش تاریخ انقضا با تقویم شمسی (فرهنگ fa-IR به‌صورت پیش‌فرض از PersianCalendar استفاده می‌کند)
+    string Fa(DateTime utc) => utc.ToLocalTime().ToString("yyyy/MM/dd HH:mm", CultureInfo.CreateSpecificCulture("fa-IR"));
+
+    // زمان باقی‌مانده به‌صورت متن قابل فهم
+    string Remaining(DateTime utc)
+    {
+        var left = utc - DateTime.UtcNow;
+        if (left.TotalSeconds <= 0) return "تمام شده";
+        if (left.TotalMinutes < 1) return $"{(int)left.TotalSeconds} ثانیه مانده";
+        if (left.TotalHours < 1) return $"{(int)left.TotalMinutes} دقیقه مانده";
+        if (left.TotalDays < 1) return $"{(int)left.TotalHours} ساعت مانده";
+        return $"{(int)left.TotalDays} روز مانده";
+    }
+}
+
+<div class="page-grid">
+
+    @* ─────────── ستون اصلی: جدول IPهای مجاز ─────────── *@
+    <section class="card">
+        <h2>IPهای مجاز برای استفاده از JWT</h2>
+
+        @* وضعیت IP فعلی کاربر + افزودن سریع *@
+        <div class="ip-current @(Model.CurrentIpAllowed ? "ip-ok" : "ip-bad")">
+            <div>
+                IP فعلی شما: <strong dir="ltr">@Model.CurrentIp</strong>
+                @if (Model.CurrentIpAllowed)
+                {
+                    <span class="badge badge-success">مجاز</span>
+                }
+                else
+                {
+                    <span class="badge badge-danger">مجاز نیست</span>
+                }
+            </div>
+            <form asp-controller="Settings" asp-action="Add" method="post" class="inline-form">
+                <input type="hidden" name="NewIp" value="@Model.CurrentIp" />
+                <input type="hidden" name="ValidityMinutes" value="1440" />
+                <input type="hidden" name="Note" value="افزودن سریع خودم" />
+                <button type="submit" class="btn btn-ghost btn-sm">افزودن سریع این IP (24 ساعت)</button>
+            </form>
+        </div>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th class="col-id">#</th>
+                    <th>آدرس IP</th>
+                    <th>توضیح</th>
+                    <th>تاریخ اتمام اعتبار</th>
+                    <th>وضعیت</th>
+                    <th class="col-actions">عملیات</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Items)
+                {
+                    <tr>
+                        <td>@item.Id</td>
+                        <td dir="ltr">@item.IpAddress</td>
+                        <td>@item.Note</td>
+                        <td>
+                            @Fa(item.ExpiresAtUtc)
+                            <span class="muted small">(@Remaining(item.ExpiresAtUtc))</span>
+                        </td>
+                        <td>
+                            @if (item.IsActive)
+                            {
+                                <span class="badge badge-success">فعال</span>
+                            }
+                            else
+                            {
+                                <span class="badge badge-danger">منقضی</span>
+                            }
+                        </td>
+                        <td class="col-actions">
+                            <form asp-controller="Settings" asp-action="Delete" method="post" class="inline-form">
+                                <input type="hidden" name="id" value="@item.Id" />
+                                <button type="submit" class="btn btn-danger btn-sm">حذف</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+                @if (Model.Items.Count == 0)
+                {
+                    <tr>
+                        <td colspan="6" class="muted">
+                            هیچ IP مجازی ثبت نشده است؛ همه‌ی درخواست‌ها به بخش‌های محافظت‌شده رد می‌شوند.
+                            (پس از پاک‌کردن همه‌ی رکوردها و ری‌استارت برنامه، seed خودکار localhost برمی‌گردد.)
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </section>
+
+    @* ─────────── ستون کناری: فرم افزودن + راهنما ─────────── *@
+    <aside class="card">
+        <h2>افزودن IP مجاز</h2>
+
+        <form asp-controller="Settings" asp-action="Add" method="post" class="form">
+            <div class="form-group">
+                <label asp-for="NewIp"></label>
+                <input asp-for="NewIp" class="input" dir="ltr" required placeholder="192.168.1.10 یا ::1" />
+                <span asp-validation-for="NewIp" class="field-error"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ValidityMinutes"></label>
+                <input asp-for="ValidityMinutes" class="input" type="number" min="1" max="5256000" required />
+                <span asp-validation-for="ValidityMinutes" class="field-error"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Note"></label>
+                <input asp-for="Note" class="input" maxlength="200" placeholder="مثلاً: لپ‌تاپ دفتر" />
+                <span asp-validation-for="Note" class="field-error"></span>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">افزودن / تمدید</button>
+        </form>
+
+        <div class="hint">
+            پس از افزودن یا حذف، فهرست Middleware بی‌درنگ به‌روز می‌شود (کش ۳۰ ثانیه‌ای باطل می‌شود)؛
+            اما اگر اعتبار یک IP «خودبه‌خود» تمام شود، حداکثر ۳۰ ثانیه طول می‌کشد تا رد شدن دیده شود.
+        </div>
+
+        <div class="hint">
+            این صفحه خودش هم محافظت‌شده است: اول IP (Middleware)، بعد ورود با JWT ([Authorize]).
+            مسیرهای مستثنی: ورود/ثبت‌نام، api/auth، Swagger و فایل‌های استاتیک.
+        </div>
+    </aside>
+
+</div>

@@ -15,6 +15,7 @@
                 @if (User.Identity?.IsAuthenticated == true)
                 {
                     <a asp-controller="Person" asp-action="Index">اشخاص</a>
+                    <a asp-controller="Settings" asp-action="Index">تنظیمات IP</a>
                     <a href="/swagger" target="_blank" rel="noopener">Swagger</a>
                     <span class="nav-user">کاربر: @User.Identity.Name</span>
                     <form asp-controller="Account" asp-action="Logout" method="post" class="inline-form">

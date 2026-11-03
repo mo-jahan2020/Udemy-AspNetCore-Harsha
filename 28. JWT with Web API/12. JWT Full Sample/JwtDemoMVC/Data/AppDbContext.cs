@@ -15,6 +15,8 @@ public class AppDbContext : DbContext
     public DbSet<Person> Persons => Set<Person>();
     public DbSet<User> Users => Set<User>();
     public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
+    // ویژگی IP AllowList — لیست IPهای مجاز برای استفاده از بخش‌های محافظت‌شده
+    public DbSet<AllowedIp> AllowedIps => Set<AllowedIp>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -33,6 +35,14 @@ public class AppDbContext : DbContext
                   .WithMany(u => u.RefreshTokens)
                   .HasForeignKey(r => r.UserId)
                   .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<AllowedIp>(entity =>
+        {
+            // IP یکتا — دو رکورد برای یک آدرس معنا ندارد (تکرار، تمدید اعتبار همان رکورد است)
+            entity.Property(a => a.IpAddress).HasMaxLength(45).IsRequired();
+            entity.HasIndex(a => a.IpAddress).IsUnique();
+            entity.Property(a => a.Note).HasMaxLength(200);
         });
 
         base.OnModelCreating(modelBuilder);

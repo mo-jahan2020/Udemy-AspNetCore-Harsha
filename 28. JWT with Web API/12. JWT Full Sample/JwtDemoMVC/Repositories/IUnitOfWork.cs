@@ -9,5 +9,6 @@ public interface IUnitOfWork
     IPersonRepository Persons { get; }
     IUserRepository Users { get; }
     IRefreshTokenRepository RefreshTokens { get; }
+    IAllowedIpRepository AllowedIps { get; }
     Task<int> SaveChangesAsync();
 }

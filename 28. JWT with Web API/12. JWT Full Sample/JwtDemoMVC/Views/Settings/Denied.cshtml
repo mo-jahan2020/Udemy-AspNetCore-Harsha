@@ -1,0 +1,31 @@
+@model string?
+@{
+    ViewData["Title"] = "دسترسی رد شد";
+}
+
+<section class="card auth-card">
+    <h2>دسترسی رد شد — IP شما مجاز نیست</h2>
+
+    <p>
+        آدرس IP شما
+        @if (!string.IsNullOrEmpty(Model) && Model != "-")
+        {
+            <strong dir="ltr">@Model</strong>
+        }
+        در فهرست IPهای مجاز برای استفاده از این برنامه نیست یا تاریخ اعتبارش تمام شده است.
+    </p>
+
+    <p class="muted">
+        این بررسی قبل از احراز هویت JWT انجام می‌شود (Middleware IP AllowList)؛ یعنی حتی با توکن
+        معتبر هم از IP نامجاز نمی‌توان به بخش‌های محافظت‌شده دست برد. برای بازگشایی دسترسی،
+        مدیر برنامه باید این IP را در صفحه‌ی تنظیمات ثبت کند.
+    </p>
+
+    <p class="muted small">
+        راه برگشت برای دمو (وقتی همه‌ی IPها قفل شده‌اند): در دیتابیس دستور
+        <code dir="ltr">DELETE FROM AllowedIps;</code>
+        را اجرا و برنامه را ری‌استارت کنید — seed خودکار localhost دوباره ثبت می‌شود.
+    </p>
+
+    <a asp-controller="Account" asp-action="Login" class="btn btn-primary">صفحه‌ی ورود</a>
+</section>

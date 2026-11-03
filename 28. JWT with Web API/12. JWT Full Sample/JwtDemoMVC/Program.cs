@@ -9,6 +9,7 @@
 // ═══════════════════════════════════════════════════════════════════════════
 
 using JwtDemoMVC.Data;
+using JwtDemoMVC.Middleware;
 using JwtDemoMVC.Models;
 using JwtDemoMVC.Repositories;
 using JwtDemoMVC.Services;
@@ -22,6 +23,10 @@ var builder = WebApplication.CreateBuilder(args);
 // ═══ MVC: کنترلرها + Viewها ═══
 builder.Services.AddControllersWithViews();
 
+// کش در حافظه — Middleware IP AllowList لیست IPهای مجاز را با این کش می‌خواند
+// تا هر درخواست به دیتابیس نخورد (با هر تغییر در صفحه تنظیمات، کش باطل می‌شود)
+builder.Services.AddMemoryCache();
+
 // اتصال به SQL Server Express با Entity Framework Core
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("SqlServer")));
@@ -30,6 +35,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddScoped<IPersonRepository, PersonRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+// ویژگی IP AllowList — فهرست IPهای مجاز در دیتابیس (صفحه تنظیمات آن را مدیریت می‌کند)
+builder.Services.AddScoped<IAllowedIpRepository, AllowedIpRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 // سرویس‌های توکن و احراز هویت
@@ -101,6 +108,26 @@ builder.Services
 
         // ═══════════ گام 10 | Authorization with JWT: معیارهای اعتبارسنجی توکن ═══════════
         // سرور با این پارامترها تشخیص می‌دهد توکنِ دریافتی «معتبر» است یا جعلی/منقضی:
+        //
+        // ⚠️ سه اشتباه رایج که این پارامترها «برطرف نمی‌کنند» (و قرار هم نیست برطرف کنند):
+        //
+        //  ۱) ValidateIssuer جلوی «ساختنِ» توکن را نمی‌گیرد؛ فقط «توکنِ رسیده» را بررسی می‌کند.
+        //     ساختن رشته‌ی JWT هیچ رازی لازم ندارد (دو بخش اول فقط Base64 هستند)؛ هر کسی
+        //     می‌تواند توکنی با هر iss/aud دلخواه بسازد. آنچه جعل را بی‌فایده می‌کند «امضای
+        //     دیجیتال» است (ValidateIssuerSigningKey پایین) — توکنِ امضاشده با کلید اشتباه،
+        //     حتی با iss/aud کاملاً درست، با 401 رد می‌شود.
+        //
+        //  ۲) چون TokenService (تولید) و همین‌جا (اعتبارسنجی) هر دو از «همان یک مقدار appsettings»
+        //     می‌خوانند، تغییر Issuer از 7221 به 7222 هر دو سمت را با هم عوض می‌کند و توکن‌های
+        //     خود برنامه همچنان معتبر می‌مانند. برای دیدن رد شدنِ واقعی: سرور روی 7222 بماند و
+        //     توکنی با iss=7221 (با همان کلید) بفرستید → 401 با خطای IDX10214.
+        //
+        //  ۳) ValidateAudience یعنی «ادعای aud داخل توکن» باید برابر ValidAudience باشد؛
+        //     ربطی به آدرس/Origin فراخوان ندارد. JWT از نوع Bearer است: هر کس توکن را داشته
+        //     باشد تا انقضا می‌تواند از آن استفاده کند؛ aud فقط جلوی استفاده‌ی توکنِ یک API
+        //     در API دیگر را می‌گیرد (توکنِ aud=A در سروری که ValidAudience=B دارد رد می‌شود).
+        //
+        //  گزارش «کدام بررسی شکست خورد»: POST /api/debug/token-check (فقط Development)
         options.TokenValidationParameters = new TokenValidationParameters
         {
             // صادرکننده‌ی توکن باید دقیقاً Issuer تنظیمات باشد (گام 3)
@@ -123,6 +150,9 @@ builder.Services
             // دستکاری شده باشد، امضا معتبر نخواهد بود.
             ValidateIssuerSigningKey = true,
             IssuerSigningKey = TokenService.CreateSigningKey(builder.Configuration["Jwt:Key"]!),
+            // ⚠️ همین کلید «تنها محافظت واقعی در برابر جعل» است؛ اگر لو برود (مثل این دمو که
+            // داخل مخزن عمومی گیت‌هاب است)، هر کسی می‌تواند توکنِ کاملاً معتبر بسازد —
+            // با هر Issuer/Audience دلخواه! در پروژه‌ی واقعی: user-secrets / متغیر محیطی / Key Vault.
         };
 
         options.Events = new JwtBearerEvents
@@ -169,6 +199,7 @@ builder.Services
                     return Task.CompletedTask; // رفتار پیش‌فرض JwtBearer اجرا شود
 
                 context.HandleResponse();
+                // در غیر اینصورت چون توکن تهی است باید وارد شود
                 context.Response.Redirect("/Account/Login");
                 return Task.CompletedTask;
             },
@@ -186,12 +217,53 @@ using (var scope = app.Services.CreateScope())
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     db.Database.EnsureCreated();
 
+    // ویژگی IP AllowList: اگر دیتابیس از اجرای قبلی (نسخه‌ی قبل) از پیش ساخته شده باشد،
+    // EnsureCreated جدول جدید AllowedIps را نمی‌سازد؛ پس در دمو دستی می‌سازیم.
+    // در پروژه‌ی واقعی: dotnet ef migrations add AddAllowedIps → database update
+    db.Database.ExecuteSqlRaw("""
+        IF OBJECT_ID(N'dbo.AllowedIps', N'U') IS NULL
+        BEGIN
+            CREATE TABLE [dbo].[AllowedIps] (
+                [Id] int NOT NULL IDENTITY,
+                [IpAddress] nvarchar(45) NOT NULL,
+                [Note] nvarchar(200) NULL,
+                [CreatedAtUtc] datetime2 NOT NULL,
+                [ExpiresAtUtc] datetime2 NOT NULL,
+                CONSTRAINT [PK_AllowedIps] PRIMARY KEY ([Id])
+            );
+            CREATE UNIQUE INDEX [IX_AllowedIps_IpAddress] ON [dbo].[AllowedIps] ([IpAddress]);
+        END
+        """);
+
     if (!db.Persons.Any())
     {
         db.Persons.AddRange(
             new Person { FirstName = "علی", LastName = "رضایی", Age = 28 },
             new Person { FirstName = "سارا", LastName = "احمدی", Age = 34 },
             new Person { FirstName = "محمد", LastName = "کریمی", Age = 19 });
+        db.SaveChanges();
+    }
+
+    // Seed اولیه‌ی IPهای مجاز: localhost همیشه مجاز است — حل مساله‌ی مرغ و تخم‌مرغ:
+    // برای افزودن IP باید به صفحه تنظیمات برسی، و برای رسیدن به صفحه تنظیمات، IP باید مجاز باشد!
+    // (اگر همه‌ی رکوردها را حذف کرده‌اید، ری‌استارت کنید تا این seed دوباره اجرا شود)
+    if (!db.AllowedIps.Any())
+    {
+        db.AllowedIps.AddRange(
+            new AllowedIp
+            {
+                IpAddress = "127.0.0.1",
+                Note = "seed خودکار — localhost (IPv4)",
+                CreatedAtUtc = DateTime.UtcNow,
+                ExpiresAtUtc = DateTime.UtcNow.AddYears(10),
+            },
+            new AllowedIp
+            {
+                IpAddress = "::1",
+                Note = "seed خودکار — localhost (IPv6)",
+                CreatedAtUtc = DateTime.UtcNow,
+                ExpiresAtUtc = DateTime.UtcNow.AddYears(10),
+            });
         db.SaveChanges();
     }
 }
@@ -212,6 +284,14 @@ app.UseSwaggerUI(options =>
     options.SwaggerEndpoint("/swagger/v1/swagger.json", "API آموزشی JWT v1");
     options.DocumentTitle = "API آموزشی JWT";
 });
+
+// ═══════════ ویژگی IP AllowList: بررسی IPهای مجاز قبل از احراز هویت ═══════════
+// فهرست مجازها در جدول AllowedIps (دیتابیس) است و صفحه‌ی /Settings آن را مدیریت می‌کند.
+// جایگاه در خط لوله: بعد از UseStaticFiles و Swagger (تا عمومی بمانند) و
+// قبل از UseAuthentication (تا درخواست IP نامجاز قبل از هر پردازش توکن قطع شود):
+//   اول «کامپیوترِ فراخوان» بررسی می‌شود، بعد «توکنِ کاربر».
+// رفتار رد شدن: مسیرهای /api → 403 JSON؛ صفحات MVC → ریدایرکت به صفحه‌ی /Settings/Denied
+app.UseMiddleware<IpAllowListMiddleware>();
 
 // ═══════════ گام 12 | Authorization with JWT: قرارگیری Middlewareها در خط لوله ═══════════
 // ترتیب بسیار مهم است:

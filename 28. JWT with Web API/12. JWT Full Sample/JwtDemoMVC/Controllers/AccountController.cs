@@ -23,7 +23,7 @@ public class AccountController : Controller
     }
 
     // ───────────────────────────── ورود ─────────────────────────────
-
+    // همیشه اول لاگین اجرا میشود کاربر قبلاً ورود کرده بود به صفحه /person منتقل میشود . وگرنه در همین login باقی میماند
     [HttpGet]
     [AllowAnonymous] // صفحه‌ی ورود برای همه باز است (ویژگی از پکیج Microsoft.AspNetCore.Authorization)
     public IActionResult Login()

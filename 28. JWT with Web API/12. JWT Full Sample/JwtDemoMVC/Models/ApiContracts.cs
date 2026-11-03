@@ -42,3 +42,11 @@ public class RefreshRequest
     [Required(ErrorMessage = "توکن تمدید الزامی است")]
     public string RefreshToken { get; set; } = string.Empty;
 }
+
+/// <summary>درخواست ابزار آموزشی بررسی توکن — POST /api/debug/token-check</summary>
+public class TokenCheckRequest
+{
+    /// <summary>رشته‌ی کامل JWT (سه‌بخشی: Header.Payload.Signature)</summary>
+    [Required(ErrorMessage = "توکن الزامی است")]
+    public string Token { get; set; } = string.Empty;
+}
