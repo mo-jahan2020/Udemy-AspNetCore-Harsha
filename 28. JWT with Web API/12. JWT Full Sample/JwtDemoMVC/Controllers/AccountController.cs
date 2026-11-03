@@ -42,7 +42,8 @@ public class AccountController : Controller
         var user = await _unitOfWork.Users.GetByUsernameAsync(model.Username);
 
         // پیام خطا عمداً کلی است تا مهاجم متوجه نشود کدام فیلد اشتباه بوده است
-        if (user is null || !PasswordHasher.Verify(model.Password, user.PasswordSalt, user.PasswordHash))
+        // BCrypt: نمک داخل خود هش ذخیره شده است؛ فقط رمز خام و رشته‌ی هش کافی است.
+        if (user is null || !PasswordHasher.Verify(model.Password, user.PasswordHash))
         {
             ModelState.AddModelError(string.Empty, "نام کاربری یا رمز عبور اشتباه است.");
             return View(model);
@@ -79,13 +80,12 @@ public class AccountController : Controller
             return View(model);
         }
 
-        // ساخت کاربر با هش رمز عبور (این بخش جزو پیاده‌سازی JWT نیست)
-        var (hash, salt) = PasswordHasher.Hash(model.Password);
+        // ساخت کاربر با هش BCrypt رمز عبور (این بخش جزو پیاده‌سازی JWT نیست)
+        // نمک تصادفی داخل خود رشته‌ی هش جای می‌گیرد؛ دیگر فیلد PasswordSalt وجود ندارد.
         var user = new User
         {
             Username = model.Username.Trim(),
-            PasswordHash = hash,
-            PasswordSalt = salt,
+            PasswordHash = PasswordHasher.Hash(model.Password),
         };
         await _unitOfWork.Users.AddAsync(user);
         await _unitOfWork.SaveChangesAsync();

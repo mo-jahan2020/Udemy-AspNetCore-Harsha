@@ -39,12 +39,11 @@ public class AuthController : ControllerBase
         if (await _unitOfWork.Users.GetByUsernameAsync(request.Username) is not null)
             return BadRequest(new { message = "این نام کاربری قبلاً ثبت شده است." });
 
-        var (hash, salt) = PasswordHasher.Hash(request.Password);
+        // هش BCrypt — نمک تصادفی داخل خود رشته‌ی هش جای می‌گیرد؛ فیلد Salt لازم نیست
         var user = new User
         {
             Username = request.Username.Trim(),
-            PasswordHash = hash,
-            PasswordSalt = salt,
+            PasswordHash = PasswordHasher.Hash(request.Password),
         };
         await _unitOfWork.Users.AddAsync(user);
         await _unitOfWork.SaveChangesAsync();
@@ -63,7 +62,7 @@ public class AuthController : ControllerBase
     {
         var user = await _unitOfWork.Users.GetByUsernameAsync(request.Username);
 
-        if (user is null || !PasswordHasher.Verify(request.Password, user.PasswordSalt, user.PasswordHash))
+        if (user is null || !PasswordHasher.Verify(request.Password, user.PasswordHash))
             return Unauthorized(new { message = "نام کاربری یا رمز عبور اشتباه است." });
 
         var tokens = await _authService.IssueTokensForApiAsync(user);

@@ -10,9 +10,9 @@ public class User
 
     public string Username { get; set; } = string.Empty;
 
-    // هش و نمک رمز عبور (SHA256 + Salt — برای پروژه واقعی از BCrypt/PBKDF2 استفاده کنید)
+    // هش BCrypt رمز عبور — نمک و Work Factor «داخل خود رشته‌ی هش» ذخیره می‌شوند
+    // (فرمت $2b$12$...)؛ برخلاف روش قبلی (SHA256) دیگر ستون جداگانه‌ی PasswordSalt لازم نیست.
     public string PasswordHash { get; set; } = string.Empty;
-    public string PasswordSalt { get; set; } = string.Empty;
 
     // توکن‌های تمدید این کاربر — یک کاربر می‌تواند از چند دستگاه وارد شود
     public List<RefreshToken> RefreshTokens { get; set; } = new();

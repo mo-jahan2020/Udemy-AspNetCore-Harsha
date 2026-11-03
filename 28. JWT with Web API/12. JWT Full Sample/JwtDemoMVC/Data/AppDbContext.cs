@@ -24,8 +24,9 @@ public class AppDbContext : DbContext
         {
             entity.HasIndex(u => u.Username).IsUnique();
             entity.Property(u => u.Username).HasMaxLength(50).IsRequired();
+            // هش BCrypt همیشه 60 کاراکتر است (فرمت $2b$12$...)؛ طول 200 برای
+            // سازگاری با هش‌های طولانی‌ترِ آینده (مثل EnhancedHash) انتخاب شده است.
             entity.Property(u => u.PasswordHash).HasMaxLength(200).IsRequired();
-            entity.Property(u => u.PasswordSalt).HasMaxLength(200).IsRequired();
         });
 
         modelBuilder.Entity<RefreshToken>(entity =>

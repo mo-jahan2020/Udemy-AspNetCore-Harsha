@@ -11,6 +11,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove=".gitignore" />
+    <None Remove="JwtDemoMVC-Changed-Files-Only.zip" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- BCrypt: هش امن رمز عبور (جایگزین SHA256 ساده) — توصیه‌ی OWASP -->
+    <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
+
     <!-- پکیج استاندارد احراز هویت JWT Bearer -->
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.14" />
 
