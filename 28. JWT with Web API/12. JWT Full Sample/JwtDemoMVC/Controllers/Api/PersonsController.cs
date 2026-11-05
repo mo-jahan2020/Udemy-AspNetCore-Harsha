@@ -61,6 +61,7 @@ public class PersonsController : ControllerBase
 
     /// <summary>ویرایش شخص</summary>
     /// <param name="id">شناسه‌ی شخص</param>
+    /// <param name="person">اطلاعات جدید شخص</param>
     [HttpPut("{id:int}")]
     [ProducesResponseType(typeof(Person), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]

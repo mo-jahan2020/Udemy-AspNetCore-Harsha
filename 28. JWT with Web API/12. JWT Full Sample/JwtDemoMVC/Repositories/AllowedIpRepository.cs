@@ -25,16 +25,24 @@ public class AllowedIpRepository : Repository<AllowedIp>, IAllowedIpRepository
     {
     }
 
+    // ── بهینه‌سازی: این سه متد فقط «خواندن» هستند؛ AsNoTracking از هزینه‌ی
+    //    Change Tracking (کپی/مقایسه‌ی وضعیت Entityها) در هر درخواست کم می‌کند.
+    //    برای ویرایش از GetByIdAsync (tracked) استفاده می‌شود.
+
     public async Task<AllowedIp?> GetByIpAsync(string ipAddress)
-        => await Context.AllowedIps.FirstOrDefaultAsync(a => a.IpAddress == ipAddress);
+        => await Context.AllowedIps
+            .AsNoTracking()
+            .FirstOrDefaultAsync(a => a.IpAddress == ipAddress);
 
     public async Task<IReadOnlyList<AllowedIp>> GetActiveIpsAsync()
         => await Context.AllowedIps
+            .AsNoTracking()
             .Where(a => a.ExpiresAtUtc >= DateTime.UtcNow)
             .ToListAsync();
 
     public async Task<IReadOnlyList<AllowedIp>> GetAllSortedAsync()
         => await Context.AllowedIps
+            .AsNoTracking()
             .OrderBy(a => a.ExpiresAtUtc)
             .ToListAsync();
 }

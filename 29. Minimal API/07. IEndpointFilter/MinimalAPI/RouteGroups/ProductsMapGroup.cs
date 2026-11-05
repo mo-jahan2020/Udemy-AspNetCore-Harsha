@@ -53,7 +53,8 @@ namespace MinimalAPI.RouteGroups
 
     return Results.Ok(new { message = "Product Added" });
    })
-    .AddEndpointFilter<CustomEndpointFilter>()
+    .AddEndpointFilter<CustomEndpointFilter>() // این هم یک مدل دیگر از تعریف EndPointFilter است که در آن یک کلاس جداگانه تعریف شده است و
+                                               // در اینجا به عنوان یک فیلتر به متد MapPost اضافه شده است.
 
     .AddEndpointFilter(async (EndpointFilterInvocationContext context, EndpointFilterDelegate next) => {
      var product = context.Arguments.OfType<Product>().FirstOrDefault();

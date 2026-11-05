@@ -6,11 +6,7 @@ public class UnitOfWork : IUnitOfWork
 {
     private readonly AppDbContext _context;
 
-    public UnitOfWork(AppDbContext context,
-        IPersonRepository persons,
-        IUserRepository users,
-        IRefreshTokenRepository refreshTokens,
-        IAllowedIpRepository allowedIps)
+    public UnitOfWork(AppDbContext context, IPersonRepository persons, IUserRepository users, IRefreshTokenRepository refreshTokens, IAllowedIpRepository allowedIps)
     {
         _context = context;
         Persons = persons;

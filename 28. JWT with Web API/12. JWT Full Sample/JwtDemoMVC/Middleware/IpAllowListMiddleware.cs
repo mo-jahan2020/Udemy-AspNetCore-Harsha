@@ -27,8 +27,9 @@ public class IpAllowListMiddleware
 {
     // مسیرهایی که «استفاده از JWT» حساب می‌شوند و IPشان بررسی می‌شود.
     // برای تغییر دامنه‌ی محدودسازی فقط همین دو آرایه را ویرایش کنید.
+    // /api/settings هم‌سطح صفحه‌ی MVC /Settings محافظت می‌شود (هر دو یک جدول را مدیریت می‌کنند).
     public static readonly string[] ProtectedPrefixes =
-        ["/Person", "/Settings", "/api/persons", "/api/debug"];
+        ["/Person", "/Settings", "/api/persons", "/api/debug", "/api/settings"];
 
     // صفحه‌ی «دسترسی رد شد» از بررسی مستثنی است؛ وگرنه ریدایرکت به خودش،
     // دوباره رد می‌شد و حلقه‌ی بی‌نهایت ساخته می‌شد!

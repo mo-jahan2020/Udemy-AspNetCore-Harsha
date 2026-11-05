@@ -1,12 +1,11 @@
-﻿
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using MinimalAPI.Models;
 using System.Text.Json;
 
 namespace MinimalAPI.RouteGroups
 {
  public static class ProductsMapGroup
- {
+    {
   private static List<Product> products = new List<Product>() {
    new Product() { Id = 1, ProductName = "Smart Phone" },
    new Product() { Id = 2, ProductName = "Smart TV" }
@@ -22,6 +21,7 @@ namespace MinimalAPI.RouteGroups
     //[{ "Id": 1, "ProductName": "Smart Phone" }, { "Id": 2, "ProductName": "Smart TV" }]
 
     await context.Response.WriteAsync(JsonSerializer.Serialize(products));
+       
    });
 
 

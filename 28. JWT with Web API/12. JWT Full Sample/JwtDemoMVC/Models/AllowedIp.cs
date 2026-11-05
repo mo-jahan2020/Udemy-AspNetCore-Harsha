@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace JwtDemoMVC.Models;
@@ -16,10 +17,12 @@ public class AllowedIp
     [MaxLength(45, ErrorMessage = "آدرس IP حداکثر 45 کاراکتر است")]
     public string IpAddress { get; set; } = string.Empty;
 
+    
     // توضیح اختیاری — مثلاً «لپ‌تاپ دفتر» یا «سرور تست»
     [MaxLength(200, ErrorMessage = "توضیح حداکثر 200 کاراکتر است")]
     public string? Note { get; set; }
 
+    
     public DateTime CreatedAtUtc { get; set; }
 
     // تاریخ اتمام اعتبار — بعد از این زمان Middleware دیگر اجازه‌ی عبور نمی‌دهد.
